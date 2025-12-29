@@ -1,6 +1,6 @@
 # CN UI
 
-Flutter UI library inspired by shadcn/ui, with a web demo that mirrors the component documentation and examples, created by Codex 5.2, with a tiny bit of help by a human as a test whether an AI is capable to do such a task.
+Flutter UI library inspired by shadcn/ui, with a web demo that mirrors the component documentation and examples, **created by Codex 5.2**, with a tiny bit of help by a human **as a test** whether an AI is capable to do such a task.
 
 Starting with an initial prompt to port, this has been refined by 10 additional prompts. The human added line numbers to the code block widget, fixed the collapsible and wrote the avatar group widget which was then integrated by the AI.
 
@@ -30,7 +30,7 @@ MaterialApp(
 
 ## Demo
 
-Run the web demo:
+Run the [web demo](https://sma.github.io/cn_ui/):
 
 ```bash
 flutter pub get
@@ -53,4 +53,4 @@ See [components.md](components.md) for a list of supported components.
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. See [LICENSE](LICENSE).
