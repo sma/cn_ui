@@ -184,11 +184,7 @@ class _ButtonContent extends StatelessWidget {
     return Row(
       mainAxisSize: .min,
       spacing: 8,
-      children: [
-        if (leading != null) leading!,
-        child,
-        if (trailing != null) trailing!,
-      ],
+      children: [?leading, child, ?trailing],
     );
   }
 }

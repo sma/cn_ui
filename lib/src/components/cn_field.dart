@@ -148,7 +148,7 @@ class CnField extends StatelessWidget {
       spacing: 6,
       children: [
         child,
-        if (resolvedDescription != null) resolvedDescription,
+        ?resolvedDescription,
         if (errorText != null) CnFieldError(child: Text(errorText!)),
       ],
     );

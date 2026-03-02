@@ -48,13 +48,7 @@ class CnEmpty extends StatelessWidget {
           crossAxisAlignment: crossAxisAlignment,
           mainAxisAlignment: mainAxisAlignment,
           spacing: 12,
-          children: [
-            if (media != null) media!,
-            if (title != null) title!,
-            if (description != null) description!,
-            if (content != null) content!,
-            if (actions != null) actions!,
-          ],
+          children: [?media, ?title, ?description, ?content, ?actions],
         );
 
     return Padding(padding: padding, child: body);

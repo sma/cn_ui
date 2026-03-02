@@ -32,8 +32,8 @@ class CnCard extends StatelessWidget {
           crossAxisAlignment: .start,
           spacing: 12,
           children: [
-            if (header != null) header!,
-            if (content != null) content!,
+            ?header,
+            ?content,
             if (footer != null)
               hasBody
                   ? Padding(

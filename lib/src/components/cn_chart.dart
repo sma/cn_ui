@@ -106,7 +106,7 @@ class CnChart extends StatelessWidget {
       spacing: 12,
       children: [
         chart,
-        if (labelRow != null) labelRow,
+        ?labelRow,
         if (showLegend) CnChartLegend(items: legendItems),
       ],
     );

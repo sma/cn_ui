@@ -96,18 +96,15 @@ class CnItem extends StatelessWidget {
           crossAxisAlignment: .start,
           spacing: 12,
           children: [
-            if (media != null) media!,
+            ?media,
             Expanded(
               child: Column(
                 crossAxisAlignment: .start,
                 spacing: 6,
-                children: [
-                  if (title != null) title!,
-                  if (description != null) description!,
-                ],
+                children: [?title, ?description],
               ),
             ),
-            if (actions != null) actions!,
+            ?actions,
           ],
         );
 

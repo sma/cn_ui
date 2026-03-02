@@ -98,8 +98,8 @@ class CnDialog extends StatelessWidget {
                   crossAxisAlignment: .start,
                   spacing: 16,
                   children: [
-                    if (header != null) header,
-                    if (content != null) content!,
+                    ?header,
+                    ?content,
                     if (actions.isNotEmpty)
                       Padding(
                         padding: (actionsPadding ?? .zero).add(

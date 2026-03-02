@@ -90,7 +90,7 @@ class CnFormField extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 6,
         children: [
-          if (resolvedLabel != null) resolvedLabel,
+          ?resolvedLabel,
           child,
           if (resolvedDescription != null)
             DefaultTextStyle(

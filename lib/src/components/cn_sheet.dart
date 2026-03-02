@@ -107,11 +107,7 @@ class CnSheet extends StatelessWidget {
           )
         : null;
 
-    final bodyChildren = <Widget>[
-      if (header != null) header,
-      if (contentWidget != null) contentWidget,
-      if (actionsWidget != null) actionsWidget,
-    ];
+    final bodyChildren = <Widget>[?header, ?contentWidget, ?actionsWidget];
     final body = bodyChildren.isEmpty
         ? null
         : Column(
@@ -164,7 +160,7 @@ class CnSheet extends StatelessWidget {
               mainAxisSize: .min,
               crossAxisAlignment: .start,
               children: [
-                if (top != null) top,
+                ?top,
                 if (body != null)
                   Padding(
                     padding: EdgeInsets.only(top: bodyTopPadding),

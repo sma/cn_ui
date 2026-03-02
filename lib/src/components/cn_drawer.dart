@@ -200,11 +200,7 @@ class _DrawerBody extends StatelessWidget {
           )
         : null;
 
-    final bodyChildren = <Widget>[
-      if (header != null) header,
-      if (contentWidget != null) contentWidget,
-      if (actionsWidget != null) actionsWidget,
-    ];
+    final bodyChildren = <Widget>[?header, ?contentWidget, ?actionsWidget];
 
     if (bodyChildren.isEmpty) {
       return const SizedBox.shrink();
