@@ -10,11 +10,10 @@ import 'package:flutter/material.dart';
 ///  * [CnToggle], for toggle buttons.
 ///  * [Switch], the underlying Material widget.
 class CnSwitch extends StatelessWidget {
+  const CnSwitch({super.key, required this.value, this.onChanged, this.label});
   final bool value;
   final ValueChanged<bool>? onChanged;
   final Widget? label;
-
-  const CnSwitch({super.key, required this.value, this.onChanged, this.label});
 
   @override
   Widget build(BuildContext context) {

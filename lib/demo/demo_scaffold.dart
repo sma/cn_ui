@@ -3,28 +3,26 @@ import 'package:flutter/material.dart';
 import '../cn_ui.dart';
 
 class DemoDestination {
-  final String label;
-  final IconData icon;
-  final Widget page;
-
   const DemoDestination({
     required this.label,
     required this.icon,
     required this.page,
   });
+  final String label;
+  final IconData icon;
+  final Widget page;
 }
 
 class CnDemoScaffold extends StatelessWidget {
-  final List<DemoDestination> destinations;
-  final int selectedIndex;
-  final ValueChanged<int> onSelected;
-
   const CnDemoScaffold({
     super.key,
     required this.destinations,
     required this.selectedIndex,
     required this.onSelected,
   });
+  final List<DemoDestination> destinations;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -73,15 +71,14 @@ class CnDemoScaffold extends StatelessWidget {
 }
 
 class _SidebarList extends StatelessWidget {
-  final List<DemoDestination> destinations;
-  final int selectedIndex;
-  final ValueChanged<int> onSelected;
-
   const _SidebarList({
     required this.destinations,
     required this.selectedIndex,
     required this.onSelected,
   });
+  final List<DemoDestination> destinations;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
 
   @override
   Widget build(BuildContext context) {

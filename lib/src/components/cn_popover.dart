@@ -12,15 +12,6 @@ import '../theme/cn_theme.dart';
 ///  * [CnHoverCard], for hover-triggered popovers.
 ///  * [CnDropdownMenu], for menu-style popovers.
 class CnPopover extends StatelessWidget {
-  final Widget content;
-  final Widget? trigger;
-  final Widget Function(BuildContext context, MenuController controller)?
-  triggerBuilder;
-  final EdgeInsetsGeometry? padding;
-  final MenuStyle? style;
-  final double? width;
-  final Offset? alignmentOffset;
-
   const CnPopover({
     super.key,
     required this.content,
@@ -34,6 +25,14 @@ class CnPopover extends StatelessWidget {
          trigger != null || triggerBuilder != null,
          'Provide a trigger or triggerBuilder.',
        );
+  final Widget content;
+  final Widget? trigger;
+  final Widget Function(BuildContext context, MenuController controller)?
+  triggerBuilder;
+  final EdgeInsetsGeometry? padding;
+  final MenuStyle? style;
+  final double? width;
+  final Offset? alignmentOffset;
 
   @override
   Widget build(BuildContext context) {

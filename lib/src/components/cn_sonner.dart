@@ -242,12 +242,6 @@ class CnSonner {
 }
 
 class _CnSonnerVisuals {
-  final Color background;
-  final Color foreground;
-  final Color muted;
-  final Color accent;
-  final Color border;
-
   const _CnSonnerVisuals({
     required this.background,
     required this.foreground,
@@ -255,4 +249,9 @@ class _CnSonnerVisuals {
     required this.accent,
     required this.border,
   });
+  final Color background;
+  final Color foreground;
+  final Color muted;
+  final Color accent;
+  final Color border;
 }

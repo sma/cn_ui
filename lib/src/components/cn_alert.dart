@@ -15,13 +15,6 @@ enum CnAlertVariant { neutral, info, success, warning, destructive }
 ///  * [CnToast], for temporary notification messages.
 ///  * [CnSonner], for toast-style notifications.
 class CnAlert extends StatelessWidget {
-  final CnAlertVariant variant;
-  final Widget? title;
-  final Widget? description;
-  final Widget? leading;
-  final Widget? trailing;
-  final EdgeInsetsGeometry? padding;
-
   const CnAlert({
     super.key,
     this.variant = .neutral,
@@ -31,6 +24,12 @@ class CnAlert extends StatelessWidget {
     this.trailing,
     this.padding,
   });
+  final CnAlertVariant variant;
+  final Widget? title;
+  final Widget? description;
+  final Widget? leading;
+  final Widget? trailing;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -149,12 +148,6 @@ class CnAlert extends StatelessWidget {
 }
 
 class _AlertVisuals {
-  final Color background;
-  final Color border;
-  final Color foreground;
-  final Color accent;
-  final Widget? icon;
-
   const _AlertVisuals({
     required this.background,
     required this.border,
@@ -162,4 +155,9 @@ class _AlertVisuals {
     required this.accent,
     required this.icon,
   });
+  final Color background;
+  final Color border;
+  final Color foreground;
+  final Color accent;
+  final Widget? icon;
 }

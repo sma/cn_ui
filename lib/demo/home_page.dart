@@ -4,10 +4,9 @@ import '../cn_ui.dart';
 import 'component_page.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key, this.onBrowseComponents, this.onViewThemeTokens});
   final VoidCallback? onBrowseComponents;
   final VoidCallback? onViewThemeTokens;
-
-  const HomePage({super.key, this.onBrowseComponents, this.onViewThemeTokens});
 
   @override
   Widget build(BuildContext context) {
@@ -110,13 +109,12 @@ MaterialApp(
 }
 
 class _HeroCopy extends StatelessWidget {
-  final VoidCallback? onBrowseComponents;
-  final VoidCallback? onViewThemeTokens;
-
   const _HeroCopy({
     required this.onBrowseComponents,
     required this.onViewThemeTokens,
   });
+  final VoidCallback? onBrowseComponents;
+  final VoidCallback? onViewThemeTokens;
 
   @override
   Widget build(BuildContext context) {
@@ -166,10 +164,9 @@ class _HeroCopy extends StatelessWidget {
 }
 
 class _Section extends StatelessWidget {
+  const _Section({required this.title, required this.child});
   final String title;
   final Widget child;
-
-  const _Section({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -185,15 +182,14 @@ class _Section extends StatelessWidget {
 }
 
 class _FeatureCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-
   const _FeatureCard({
     required this.icon,
     required this.title,
     required this.description,
   });
+  final IconData icon;
+  final String title;
+  final String description;
 
   @override
   Widget build(BuildContext context) {

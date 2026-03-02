@@ -9,16 +9,15 @@ import 'package:flutter/material.dart';
 ///  * [CnPopover], for more complex popover content.
 ///  * [CnHoverCard], for rich hover content.
 class CnTooltip extends StatelessWidget {
-  final String message;
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-
   const CnTooltip({
     super.key,
     required this.message,
     required this.child,
     this.padding,
   });
+  final String message;
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {

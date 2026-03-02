@@ -17,16 +17,6 @@ enum CnEmptyMediaVariant { icon, image, defaultStyle }
 ///  * [CnEmptyTitle], for empty state titles.
 ///  * [CnEmptyDescription], for empty state descriptions.
 class CnEmpty extends StatelessWidget {
-  final Widget? media;
-  final Widget? title;
-  final Widget? description;
-  final Widget? content;
-  final Widget? actions;
-  final EdgeInsetsGeometry padding;
-  final CrossAxisAlignment crossAxisAlignment;
-  final MainAxisAlignment mainAxisAlignment;
-  final Widget? child;
-
   const CnEmpty({
     super.key,
     this.media,
@@ -39,6 +29,15 @@ class CnEmpty extends StatelessWidget {
     this.mainAxisAlignment = .start,
     this.child,
   });
+  final Widget? media;
+  final Widget? title;
+  final Widget? description;
+  final Widget? content;
+  final Widget? actions;
+  final EdgeInsetsGeometry padding;
+  final CrossAxisAlignment crossAxisAlignment;
+  final MainAxisAlignment mainAxisAlignment;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +56,8 @@ class CnEmpty extends StatelessWidget {
 
 /// A header section for [CnEmpty] combining title and description.
 class CnEmptyHeader extends StatelessWidget {
-  final List<Widget> children;
-
   const CnEmptyHeader({super.key, required this.children});
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +67,6 @@ class CnEmptyHeader extends StatelessWidget {
 
 /// A media component for [CnEmpty] displaying icons or images.
 class CnEmptyMedia extends StatelessWidget {
-  final Widget child;
-  final CnEmptyMediaVariant variant;
-  final double size;
-  final EdgeInsetsGeometry? padding;
-
   const CnEmptyMedia({
     super.key,
     required this.child,
@@ -81,6 +74,10 @@ class CnEmptyMedia extends StatelessWidget {
     this.size = 64,
     this.padding,
   });
+  final Widget child;
+  final CnEmptyMediaVariant variant;
+  final double size;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +114,8 @@ class CnEmptyMedia extends StatelessWidget {
 
 /// A title component for [CnEmpty].
 class CnEmptyTitle extends StatelessWidget {
-  final Widget child;
-
   const CnEmptyTitle({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -137,9 +133,8 @@ class CnEmptyTitle extends StatelessWidget {
 
 /// A description component for [CnEmpty].
 class CnEmptyDescription extends StatelessWidget {
-  final Widget child;
-
   const CnEmptyDescription({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -158,9 +153,8 @@ class CnEmptyDescription extends StatelessWidget {
 
 /// A content wrapper for [CnEmpty].
 class CnEmptyContent extends StatelessWidget {
-  final Widget child;
-
   const CnEmptyContent({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {

@@ -8,12 +8,6 @@ import 'package:flutter/material.dart';
 ///
 ///  * [CnInput], for text-based numeric input.
 class CnSlider extends StatelessWidget {
-  final double value;
-  final ValueChanged<double>? onChanged;
-  final double min;
-  final double max;
-  final int? divisions;
-
   const CnSlider({
     super.key,
     required this.value,
@@ -22,6 +16,11 @@ class CnSlider extends StatelessWidget {
     this.max = 100,
     this.divisions,
   });
+  final double value;
+  final ValueChanged<double>? onChanged;
+  final double min;
+  final double max;
+  final int? divisions;
 
   @override
   Widget build(BuildContext context) {

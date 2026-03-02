@@ -13,15 +13,6 @@ import '../theme/cn_theme.dart';
 ///  * [CnSpinner], for loading spinners.
 ///  * [CnProgress], for progress indicators.
 class CnSkeleton extends StatefulWidget {
-  final double? width;
-  final double? height;
-  final BorderRadius? borderRadius;
-  final bool isCircle;
-  final bool animate;
-  final Duration duration;
-  final Color? baseColor;
-  final Color? highlightColor;
-
   const CnSkeleton({
     super.key,
     this.width,
@@ -33,6 +24,14 @@ class CnSkeleton extends StatefulWidget {
     this.baseColor,
     this.highlightColor,
   });
+  final double? width;
+  final double? height;
+  final BorderRadius? borderRadius;
+  final bool isCircle;
+  final bool animate;
+  final Duration duration;
+  final Color? baseColor;
+  final Color? highlightColor;
 
   @override
   State<CnSkeleton> createState() => _CnSkeletonState();
@@ -120,16 +119,15 @@ class _CnSkeletonState extends State<CnSkeleton>
 }
 
 class CnSkeletonLine extends StatelessWidget {
-  final double? width;
-  final double height;
-  final bool animate;
-
   const CnSkeletonLine({
     super.key,
     this.width,
     this.height = 12,
     this.animate = true,
   });
+  final double? width;
+  final double height;
+  final bool animate;
 
   @override
   Widget build(BuildContext context) {
@@ -143,10 +141,9 @@ class CnSkeletonLine extends StatelessWidget {
 }
 
 class CnSkeletonAvatar extends StatelessWidget {
+  const CnSkeletonAvatar({super.key, this.size = 40, this.animate = true});
   final double size;
   final bool animate;
-
-  const CnSkeletonAvatar({super.key, this.size = 40, this.animate = true});
 
   @override
   Widget build(BuildContext context) {

@@ -9,11 +9,6 @@ enum CnItemMediaVariant { standard, icon, image }
 
 /// A container for grouping multiple [CnItem] components with optional dividers.
 class CnItemGroup extends StatelessWidget {
-  final List<Widget> children;
-  final bool showDividers;
-  final double spacing;
-  final Widget? divider;
-
   const CnItemGroup({
     super.key,
     required this.children,
@@ -21,6 +16,10 @@ class CnItemGroup extends StatelessWidget {
     this.spacing = 0,
     this.divider,
   });
+  final List<Widget> children;
+  final bool showDividers;
+  final double spacing;
+  final Widget? divider;
 
   @override
   Widget build(BuildContext context) {
@@ -64,15 +63,6 @@ class CnItemSeparator extends StatelessWidget {
 ///  * [CnItemGroup], for grouping multiple items.
 ///  * [CnItemMedia], for item media (icons or images).
 class CnItem extends StatelessWidget {
-  final Widget? media;
-  final Widget? title;
-  final Widget? description;
-  final Widget? actions;
-  final Widget? child;
-  final EdgeInsetsGeometry padding;
-  final VoidCallback? onTap;
-  final bool selected;
-
   const CnItem({
     super.key,
     this.media,
@@ -84,6 +74,14 @@ class CnItem extends StatelessWidget {
     this.onTap,
     this.selected = false,
   });
+  final Widget? media;
+  final Widget? title;
+  final Widget? description;
+  final Widget? actions;
+  final Widget? child;
+  final EdgeInsetsGeometry padding;
+  final VoidCallback? onTap;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -126,16 +124,15 @@ class CnItem extends StatelessWidget {
 
 /// A media component for [CnItem] displaying icons or images.
 class CnItemMedia extends StatelessWidget {
-  final Widget child;
-  final CnItemMediaVariant variant;
-  final double size;
-
   const CnItemMedia({
     super.key,
     required this.child,
     this.variant = .standard,
     this.size = 44,
   });
+  final Widget child;
+  final CnItemMediaVariant variant;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -170,9 +167,8 @@ class CnItemMedia extends StatelessWidget {
 
 /// A content wrapper for [CnItem].
 class CnItemContent extends StatelessWidget {
-  final List<Widget> children;
-
   const CnItemContent({super.key, required this.children});
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
@@ -182,9 +178,8 @@ class CnItemContent extends StatelessWidget {
 
 /// A title component for [CnItem].
 class CnItemTitle extends StatelessWidget {
-  final Widget child;
-
   const CnItemTitle({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -201,9 +196,8 @@ class CnItemTitle extends StatelessWidget {
 
 /// A description component for [CnItem].
 class CnItemDescription extends StatelessWidget {
-  final Widget child;
-
   const CnItemDescription({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -221,9 +215,8 @@ class CnItemDescription extends StatelessWidget {
 
 /// An actions wrapper for [CnItem].
 class CnItemActions extends StatelessWidget {
-  final Widget child;
-
   const CnItemActions({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -233,9 +226,8 @@ class CnItemActions extends StatelessWidget {
 
 /// A header section for [CnItem].
 class CnItemHeader extends StatelessWidget {
-  final List<Widget> children;
-
   const CnItemHeader({super.key, required this.children});
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
@@ -245,9 +237,8 @@ class CnItemHeader extends StatelessWidget {
 
 /// A footer section for [CnItem].
 class CnItemFooter extends StatelessWidget {
-  final List<Widget> children;
-
   const CnItemFooter({super.key, required this.children});
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {

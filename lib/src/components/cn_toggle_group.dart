@@ -14,17 +14,6 @@ import 'cn_toggle.dart';
 ///  * [CnToggle], for individual toggle buttons.
 ///  * [CnRadioGroup], for single-selection radio buttons.
 class CnToggleGroup extends StatelessWidget {
-  final List<CnToggleGroupItem> items;
-  final Set<Object?> selectedValues;
-  final ValueChanged<Set<Object?>> onChanged;
-  final bool allowMultiple;
-  final bool allowEmpty;
-  final bool joined;
-  final CnToggleVariant variant;
-  final CnToggleSize size;
-  final double spacing;
-  final double runSpacing;
-
   const CnToggleGroup({
     super.key,
     required this.items,
@@ -38,6 +27,16 @@ class CnToggleGroup extends StatelessWidget {
     this.spacing = 8,
     this.runSpacing = 8,
   });
+  final List<CnToggleGroupItem> items;
+  final Set<Object?> selectedValues;
+  final ValueChanged<Set<Object?>> onChanged;
+  final bool allowMultiple;
+  final bool allowEmpty;
+  final bool joined;
+  final CnToggleVariant variant;
+  final CnToggleSize size;
+  final double spacing;
+  final double runSpacing;
 
   @override
   Widget build(BuildContext context) {
@@ -98,26 +97,17 @@ class CnToggleGroup extends StatelessWidget {
 
 /// An item in a [CnToggleGroup].
 class CnToggleGroupItem {
-  final Object? value;
-  final Widget child;
-  final bool enabled;
-
   const CnToggleGroupItem({
     required this.value,
     required this.child,
     this.enabled = true,
   });
+  final Object? value;
+  final Widget child;
+  final bool enabled;
 }
 
 class _JoinedToggleGroup extends StatelessWidget {
-  final List<CnToggleGroupItem> items;
-  final Set<Object?> selectedValues;
-  final ValueChanged<Set<Object?>> onChanged;
-  final bool allowMultiple;
-  final bool allowEmpty;
-  final CnToggleVariant variant;
-  final CnToggleSize size;
-
   const _JoinedToggleGroup({
     required this.items,
     required this.selectedValues,
@@ -127,6 +117,13 @@ class _JoinedToggleGroup extends StatelessWidget {
     required this.variant,
     required this.size,
   });
+  final List<CnToggleGroupItem> items;
+  final Set<Object?> selectedValues;
+  final ValueChanged<Set<Object?>> onChanged;
+  final bool allowMultiple;
+  final bool allowEmpty;
+  final CnToggleVariant variant;
+  final CnToggleSize size;
 
   @override
   Widget build(BuildContext context) {
@@ -194,15 +191,6 @@ class _JoinedToggleGroup extends StatelessWidget {
 }
 
 class _JoinedToggleItem extends StatelessWidget {
-  final CnToggleGroupItem item;
-  final bool selected;
-  final bool isFirst;
-  final bool isLast;
-  final double radius;
-  final CnToggleVariant variant;
-  final CnToggleSize size;
-  final ValueChanged<bool> onChanged;
-
   const _JoinedToggleItem({
     required this.item,
     required this.selected,
@@ -213,6 +201,14 @@ class _JoinedToggleItem extends StatelessWidget {
     required this.size,
     required this.onChanged,
   });
+  final CnToggleGroupItem item;
+  final bool selected;
+  final bool isFirst;
+  final bool isLast;
+  final double radius;
+  final CnToggleVariant variant;
+  final CnToggleSize size;
+  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {

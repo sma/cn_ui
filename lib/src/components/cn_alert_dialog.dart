@@ -20,9 +20,8 @@ Future<T?> showCnDialog<T>({
 
 /// A controller for managing dialog interactions and results.
 class CnDialogController {
-  final BuildContext _context;
-
   CnDialogController(this._context);
+  final BuildContext _context;
 
   void cancel<T extends Object?>([T? result]) {
     Navigator.of(_context).pop(result);
@@ -42,16 +41,15 @@ class CnDialogController {
 ///  * [CnDialog], for more customizable dialogs.
 ///  * [showCnDialog], for showing dialogs programmatically.
 class CnAlertDialog extends StatelessWidget {
-  final List<Widget> actions;
-  final Widget? content;
-  final Widget? title;
-
   const CnAlertDialog({
     super.key,
     this.actions = const [],
     this.content,
     this.title,
   });
+  final List<Widget> actions;
+  final Widget? content;
+  final Widget? title;
 
   @override
   Widget build(BuildContext context) {

@@ -13,14 +13,6 @@ import '../theme/cn_theme.dart';
 ///  * [CnTooltip], for simple text tooltips.
 ///  * [CnPopover], for click-triggered popovers.
 class CnHoverCard extends StatefulWidget {
-  final Widget child;
-  final Widget content;
-  final Offset offset;
-  final Duration openDelay;
-  final Duration closeDelay;
-  final EdgeInsetsGeometry? padding;
-  final double? width;
-
   const CnHoverCard({
     super.key,
     required this.child,
@@ -31,6 +23,13 @@ class CnHoverCard extends StatefulWidget {
     this.padding,
     this.width,
   });
+  final Widget child;
+  final Widget content;
+  final Offset offset;
+  final Duration openDelay;
+  final Duration closeDelay;
+  final EdgeInsetsGeometry? padding;
+  final double? width;
 
   @override
   State<CnHoverCard> createState() => _CnHoverCardState();
@@ -129,11 +128,10 @@ class _CnHoverCardState extends State<CnHoverCard> {
 }
 
 class _HoverCardSurface extends StatelessWidget {
+  const _HoverCardSurface({required this.child, this.padding, this.width});
   final Widget child;
   final EdgeInsetsGeometry? padding;
   final double? width;
-
-  const _HoverCardSurface({required this.child, this.padding, this.width});
 
   @override
   Widget build(BuildContext context) {

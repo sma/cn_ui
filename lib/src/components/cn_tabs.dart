@@ -9,11 +9,6 @@ import 'package:flutter/material.dart';
 ///  * [CnToggleGroup], for toggle-based selection.
 ///  * [CnNavigationMenu], for menu-based navigation.
 class CnTabs extends StatelessWidget {
-  final List<CnTab> tabs;
-  final int initialIndex;
-  final bool isScrollable;
-  final double? contentHeight;
-
   const CnTabs({
     super.key,
     required this.tabs,
@@ -21,6 +16,10 @@ class CnTabs extends StatelessWidget {
     this.isScrollable = false,
     this.contentHeight,
   });
+  final List<CnTab> tabs;
+  final int initialIndex;
+  final bool isScrollable;
+  final double? contentHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +48,7 @@ class CnTabs extends StatelessWidget {
 
 /// A tab entry in [CnTabs].
 class CnTab {
+  const CnTab({required this.label, required this.child});
   final String label;
   final Widget child;
-
-  const CnTab({required this.label, required this.child});
 }

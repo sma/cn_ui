@@ -20,12 +20,6 @@ enum CnInputGroupAddonAlign { center, start, end }
 ///  * [CnInputGroupAddon], for decorative addons like labels or icons.
 ///  * [CnInputGroupButton], for buttons within a group.
 class CnInputGroup extends StatefulWidget {
-  final List<Widget> children;
-  final CnInputGroupOrientation orientation;
-  final EdgeInsetsGeometry? padding;
-  final BorderRadiusGeometry? borderRadius;
-  final Color? backgroundColor;
-
   const CnInputGroup({
     super.key,
     required this.children,
@@ -34,6 +28,11 @@ class CnInputGroup extends StatefulWidget {
     this.borderRadius,
     this.backgroundColor,
   });
+  final List<Widget> children;
+  final CnInputGroupOrientation orientation;
+  final EdgeInsetsGeometry? padding;
+  final BorderRadiusGeometry? borderRadius;
+  final Color? backgroundColor;
 
   @override
   State<CnInputGroup> createState() => _CnInputGroupState();
@@ -105,11 +104,6 @@ class _CnInputGroupState extends State<CnInputGroup> {
 
 /// A decorative addon within a [CnInputGroup] for labels, icons, or other content.
 class CnInputGroupAddon extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-  final Color? backgroundColor;
-  final CnInputGroupAddonAlign align;
-
   const CnInputGroupAddon({
     super.key,
     required this.child,
@@ -117,6 +111,10 @@ class CnInputGroupAddon extends StatelessWidget {
     this.backgroundColor,
     this.align = .center,
   });
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final Color? backgroundColor;
+  final CnInputGroupAddonAlign align;
 
   @override
   Widget build(BuildContext context) {
@@ -154,9 +152,8 @@ class CnInputGroupAddon extends StatelessWidget {
 
 /// A text addon within a [CnInputGroup].
 class CnInputGroupText extends StatelessWidget {
-  final String text;
-
   const CnInputGroupText({super.key, required this.text});
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -166,16 +163,15 @@ class CnInputGroupText extends StatelessWidget {
 
 /// A button within a [CnInputGroup].
 class CnInputGroupButton extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-  final bool expand;
-
   const CnInputGroupButton({
     super.key,
     required this.child,
     this.padding,
     this.expand = false,
   });
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final bool expand;
 
   @override
   Widget build(BuildContext context) {
@@ -192,17 +188,6 @@ class CnInputGroupButton extends StatelessWidget {
 
 /// A text input within a [CnInputGroup].
 class CnInputGroupInput extends StatelessWidget {
-  final TextEditingController? controller;
-  final String? placeholder;
-  final bool enabled;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final ValueChanged<String>? onChanged;
-  final bool expand;
-  final EdgeInsetsGeometry? contentPadding;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
-
   const CnInputGroupInput({
     super.key,
     this.controller,
@@ -216,6 +201,16 @@ class CnInputGroupInput extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
   });
+  final TextEditingController? controller;
+  final String? placeholder;
+  final bool enabled;
+  final bool obscureText;
+  final TextInputType? keyboardType;
+  final ValueChanged<String>? onChanged;
+  final bool expand;
+  final EdgeInsetsGeometry? contentPadding;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -245,14 +240,6 @@ class CnInputGroupInput extends StatelessWidget {
 
 /// A multiline text input within a [CnInputGroup].
 class CnInputGroupTextarea extends StatelessWidget {
-  final TextEditingController? controller;
-  final String? placeholder;
-  final bool enabled;
-  final ValueChanged<String>? onChanged;
-  final int minLines;
-  final int maxLines;
-  final bool expand;
-
   const CnInputGroupTextarea({
     super.key,
     this.controller,
@@ -263,6 +250,13 @@ class CnInputGroupTextarea extends StatelessWidget {
     this.maxLines = 5,
     this.expand = true,
   });
+  final TextEditingController? controller;
+  final String? placeholder;
+  final bool enabled;
+  final ValueChanged<String>? onChanged;
+  final int minLines;
+  final int maxLines;
+  final bool expand;
 
   @override
   Widget build(BuildContext context) {
@@ -290,10 +284,9 @@ class CnInputGroupTextarea extends StatelessWidget {
 }
 
 class _CnInputGroupDivider extends StatelessWidget {
+  const _CnInputGroupDivider({required this.orientation, required this.color});
   final CnInputGroupOrientation orientation;
   final Color color;
-
-  const _CnInputGroupDivider({required this.orientation, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -305,9 +298,8 @@ class _CnInputGroupDivider extends StatelessWidget {
 }
 
 class _CnInputGroupScope extends InheritedWidget {
-  final CnInputGroupOrientation orientation;
-
   const _CnInputGroupScope({required this.orientation, required super.child});
+  final CnInputGroupOrientation orientation;
 
   static _CnInputGroupScope? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<_CnInputGroupScope>();

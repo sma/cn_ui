@@ -11,24 +11,6 @@ import '../theme/cn_theme.dart';
 ///
 ///  * [CnAccordion], for a group of collapsible panels.
 class CnCollapsible extends StatefulWidget {
-  final Widget Function(BuildContext context, bool isOpen)? headerBuilder;
-  final Widget? title;
-  final Widget? subtitle;
-  final Widget? leading;
-  final Widget? trailing;
-  final Widget child;
-  final bool initiallyExpanded;
-  final ValueChanged<bool>? onChanged;
-  final Duration duration;
-  final Curve curve;
-  final EdgeInsetsGeometry? headerPadding;
-  final EdgeInsetsGeometry? contentPadding;
-  final bool enabled;
-  final bool showBorder;
-  final bool showDivider;
-  final Color? backgroundColor;
-  final double? radius;
-
   const CnCollapsible({
     super.key,
     this.headerBuilder,
@@ -52,6 +34,23 @@ class CnCollapsible extends StatefulWidget {
          headerBuilder != null || title != null,
          'Provide a headerBuilder or a title.',
        );
+  final Widget Function(BuildContext context, bool isOpen)? headerBuilder;
+  final Widget? title;
+  final Widget? subtitle;
+  final Widget? leading;
+  final Widget? trailing;
+  final Widget child;
+  final bool initiallyExpanded;
+  final ValueChanged<bool>? onChanged;
+  final Duration duration;
+  final Curve curve;
+  final EdgeInsetsGeometry? headerPadding;
+  final EdgeInsetsGeometry? contentPadding;
+  final bool enabled;
+  final bool showBorder;
+  final bool showDivider;
+  final Color? backgroundColor;
+  final double? radius;
 
   @override
   State<CnCollapsible> createState() => _CnCollapsibleState();
@@ -162,14 +161,6 @@ class _CnCollapsibleState extends State<CnCollapsible>
 }
 
 class _DefaultCollapsibleHeader extends StatelessWidget {
-  final Widget title;
-  final Widget? subtitle;
-  final Widget? leading;
-  final Widget? trailing;
-  final bool isOpen;
-  final bool enabled;
-  final Duration duration;
-
   const _DefaultCollapsibleHeader({
     required this.title,
     this.subtitle,
@@ -179,6 +170,13 @@ class _DefaultCollapsibleHeader extends StatelessWidget {
     required this.enabled,
     required this.duration,
   });
+  final Widget title;
+  final Widget? subtitle;
+  final Widget? leading;
+  final Widget? trailing;
+  final bool isOpen;
+  final bool enabled;
+  final Duration duration;
 
   @override
   Widget build(BuildContext context) {

@@ -10,13 +10,6 @@ import '../../cn_ui.dart';
 ///
 ///  * [CnAvatarGroup], for displaying multiple overlapping avatars.
 class CnAvatar extends StatelessWidget {
-  final ImageProvider? image;
-  final String? initials;
-  final double size;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
-  final Widget? child;
-
   const CnAvatar({
     super.key,
     this.image,
@@ -26,6 +19,12 @@ class CnAvatar extends StatelessWidget {
     this.foregroundColor,
     this.child,
   });
+  final ImageProvider? image;
+  final String? initials;
+  final double size;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {

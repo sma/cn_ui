@@ -13,18 +13,6 @@ import '../theme/cn_theme.dart';
 ///
 ///  * [CnInput], for standard text input.
 class CnInputOtp extends StatefulWidget {
-  final int length;
-  final String? value;
-  final ValueChanged<String>? onChanged;
-  final bool enabled;
-  final bool autofocus;
-  final bool obscureText;
-  final bool numericOnly;
-  final double boxSize;
-  final TextStyle? textStyle;
-  final int? groupSize;
-  final Widget? separator;
-
   const CnInputOtp({
     super.key,
     required this.length,
@@ -39,6 +27,17 @@ class CnInputOtp extends StatefulWidget {
     this.groupSize,
     this.separator,
   }) : assert(length > 0, 'length must be greater than zero');
+  final int length;
+  final String? value;
+  final ValueChanged<String>? onChanged;
+  final bool enabled;
+  final bool autofocus;
+  final bool obscureText;
+  final bool numericOnly;
+  final double boxSize;
+  final TextStyle? textStyle;
+  final int? groupSize;
+  final Widget? separator;
 
   @override
   State<CnInputOtp> createState() => _CnInputOtpState();
@@ -204,19 +203,6 @@ class _CnInputOtpState extends State<CnInputOtp> {
 }
 
 class _OtpSlot extends StatelessWidget {
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final bool enabled;
-  final bool autofocus;
-  final bool obscureText;
-  final bool numericOnly;
-  final double size;
-  final TextStyle? textStyle;
-  final double radius;
-  final Color borderColor;
-  final Color fillColor;
-  final ValueChanged<String> onChanged;
-
   const _OtpSlot({
     required this.controller,
     required this.focusNode,
@@ -231,6 +217,18 @@ class _OtpSlot extends StatelessWidget {
     required this.fillColor,
     required this.onChanged,
   });
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final bool enabled;
+  final bool autofocus;
+  final bool obscureText;
+  final bool numericOnly;
+  final double size;
+  final TextStyle? textStyle;
+  final double radius;
+  final Color borderColor;
+  final Color fillColor;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {

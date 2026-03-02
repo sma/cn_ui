@@ -10,15 +10,6 @@ import 'package:flutter/material.dart';
 ///  * [CnInputGroup], for composing multiple inputs together.
 ///  * [TextField], the underlying Material widget.
 class CnInput extends StatelessWidget {
-  final TextEditingController? controller;
-  final String? placeholder;
-  final bool enabled;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final ValueChanged<String>? onChanged;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
-
   const CnInput({
     super.key,
     this.controller,
@@ -30,6 +21,14 @@ class CnInput extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
   });
+  final TextEditingController? controller;
+  final String? placeholder;
+  final bool enabled;
+  final bool obscureText;
+  final TextInputType? keyboardType;
+  final ValueChanged<String>? onChanged;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {

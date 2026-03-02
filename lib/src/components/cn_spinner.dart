@@ -10,16 +10,15 @@ import '../../cn_ui.dart';
 ///
 ///  * [CnProgress], for linear progress indicators.
 class CnSpinner extends StatelessWidget {
-  final double size;
-  final double strokeWidth;
-  final Color? color;
-
   const CnSpinner({
     super.key,
     this.size = 20,
     this.strokeWidth = 2.5,
     this.color,
   });
+  final double size;
+  final double strokeWidth;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {

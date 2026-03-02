@@ -11,12 +11,6 @@ import 'cn_button.dart';
 ///  * [CnBreadcrumb], for hierarchical navigation.
 ///  * [CnTable], which often uses pagination.
 class CnPagination extends StatelessWidget {
-  final int currentPage;
-  final int totalPages;
-  final ValueChanged<int> onPageChanged;
-  final int maxButtons;
-  final bool showPrevNext;
-
   const CnPagination({
     super.key,
     required this.currentPage,
@@ -25,6 +19,11 @@ class CnPagination extends StatelessWidget {
     this.maxButtons = 5,
     this.showPrevNext = true,
   });
+  final int currentPage;
+  final int totalPages;
+  final ValueChanged<int> onPageChanged;
+  final int maxButtons;
+  final bool showPrevNext;
 
   @override
   Widget build(BuildContext context) {
@@ -123,10 +122,9 @@ class CnPagination extends StatelessWidget {
 }
 
 class _PageEntry {
-  final int page;
-  final bool isEllipsis;
-
   const _PageEntry.page(this.page) : isEllipsis = false;
 
   const _PageEntry.ellipsis() : page = 0, isEllipsis = true;
+  final int page;
+  final bool isEllipsis;
 }

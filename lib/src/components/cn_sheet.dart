@@ -36,15 +36,6 @@ Future<T?> showCnSheet<T>({
 ///  * [CnDrawer], for side panel drawers.
 ///  * [showCnSheet], for showing sheets programmatically.
 class CnSheet extends StatelessWidget {
-  final Widget? title;
-  final Widget? description;
-  final Widget? content;
-  final List<Widget> actions;
-  final double heightFactor;
-  final bool showHandle;
-  final bool showCloseButton;
-  final VoidCallback? onClose;
-
   const CnSheet({
     super.key,
     this.title,
@@ -56,6 +47,14 @@ class CnSheet extends StatelessWidget {
     this.showCloseButton = true,
     this.onClose,
   });
+  final Widget? title;
+  final Widget? description;
+  final Widget? content;
+  final List<Widget> actions;
+  final double heightFactor;
+  final bool showHandle;
+  final bool showCloseButton;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {

@@ -23,16 +23,6 @@ typedef CnCalendarDayBuilder =
 /// State information for a calendar day in [CnCalendar].
 @immutable
 class CnCalendarDayState {
-  final DateTime date;
-  final bool isOutside;
-  final bool isDisabled;
-  final bool isToday;
-  final bool isSelected;
-  final bool inRange;
-  final bool isRangeStart;
-  final bool isRangeEnd;
-  final TextStyle? textStyle;
-
   const CnCalendarDayState({
     required this.date,
     required this.isOutside,
@@ -44,6 +34,15 @@ class CnCalendarDayState {
     required this.isRangeEnd,
     required this.textStyle,
   });
+  final DateTime date;
+  final bool isOutside;
+  final bool isDisabled;
+  final bool isToday;
+  final bool isSelected;
+  final bool inRange;
+  final bool isRangeStart;
+  final bool isRangeEnd;
+  final TextStyle? textStyle;
 
   bool get isRangeEdge => isRangeStart || isRangeEnd;
   bool get isRangeMiddle => inRange && !isRangeEdge;
@@ -57,30 +56,6 @@ class CnCalendarDayState {
 ///
 ///  * [CnDatePickerField], for a date picker input field.
 class CnCalendar extends StatefulWidget {
-  final CnCalendarSelectionMode selectionMode;
-  final DateTime? selectedDate;
-  final DateTimeRange? selectedRange;
-  final Set<DateTime>? selectedDates;
-  final ValueChanged<DateTime>? onDateSelected;
-  final ValueChanged<DateTimeRange>? onRangeSelected;
-  final ValueChanged<Set<DateTime>>? onDatesSelected;
-  final DateTime? focusedMonth;
-  final ValueChanged<DateTime>? onMonthChanged;
-  final bool showOutsideDays;
-  final bool showWeekdayLabels;
-  final int firstDayOfWeek;
-  final List<String>? weekdayLabels;
-  final bool Function(DateTime date)? isDateDisabled;
-  final bool Function(DateTime date)? isDateSelectable;
-  final CnCalendarDayBuilder? dayBuilder;
-  final int monthsToDisplay;
-  final CnCalendarHeaderVariant headerVariant;
-  final int? firstYear;
-  final int? lastYear;
-  final EdgeInsetsGeometry padding;
-  final double daySize;
-  final double gridSpacing;
-
   const CnCalendar({
     super.key,
     this.selectionMode = .single,
@@ -107,6 +82,29 @@ class CnCalendar extends StatefulWidget {
     this.daySize = 40,
     this.gridSpacing = 6,
   }) : assert(monthsToDisplay > 0, 'monthsToDisplay must be at least 1.');
+  final CnCalendarSelectionMode selectionMode;
+  final DateTime? selectedDate;
+  final DateTimeRange? selectedRange;
+  final Set<DateTime>? selectedDates;
+  final ValueChanged<DateTime>? onDateSelected;
+  final ValueChanged<DateTimeRange>? onRangeSelected;
+  final ValueChanged<Set<DateTime>>? onDatesSelected;
+  final DateTime? focusedMonth;
+  final ValueChanged<DateTime>? onMonthChanged;
+  final bool showOutsideDays;
+  final bool showWeekdayLabels;
+  final int firstDayOfWeek;
+  final List<String>? weekdayLabels;
+  final bool Function(DateTime date)? isDateDisabled;
+  final bool Function(DateTime date)? isDateSelectable;
+  final CnCalendarDayBuilder? dayBuilder;
+  final int monthsToDisplay;
+  final CnCalendarHeaderVariant headerVariant;
+  final int? firstYear;
+  final int? lastYear;
+  final EdgeInsetsGeometry padding;
+  final double daySize;
+  final double gridSpacing;
 
   @override
   State<CnCalendar> createState() => _CnCalendarState();
@@ -669,8 +667,7 @@ class _CnCalendarState extends State<CnCalendar> {
 }
 
 class _CalendarDayInfo {
+  const _CalendarDayInfo({required this.date, required this.isOutside});
   final DateTime date;
   final bool isOutside;
-
-  const _CalendarDayInfo({required this.date, required this.isOutside});
 }

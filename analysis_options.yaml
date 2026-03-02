@@ -1,4 +1,8 @@
 include: package:flutter_lints/flutter.yaml
 
+linter:
+  rules:
+    sort_constructors_first: true
+
 formatter:
   page_width: 80

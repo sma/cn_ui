@@ -9,26 +9,6 @@ import 'cn_button.dart';
 ///
 /// Provides navigation arrows, indicators, autoplay, and looping functionality for cycling through items.
 class CnCarousel extends StatefulWidget {
-  final List<Widget> items;
-  final PageController? controller;
-  final int initialPage;
-  final double viewportFraction;
-  final double? height;
-  final double? aspectRatio;
-  final EdgeInsetsGeometry padding;
-  final bool showIndicators;
-  final bool showArrows;
-  final bool loop;
-  final bool autoPlay;
-  final Duration autoPlayInterval;
-  final Duration autoPlayAnimation;
-  final Curve autoPlayCurve;
-  final ValueChanged<int>? onPageChanged;
-  final double indicatorSize;
-  final double indicatorSpacing;
-  final double indicatorActiveWidth;
-  final double indicatorPadding;
-
   const CnCarousel({
     super.key,
     required this.items,
@@ -51,6 +31,25 @@ class CnCarousel extends StatefulWidget {
     this.indicatorActiveWidth = 20,
     this.indicatorPadding = 12,
   }) : assert(items.length > 0, 'CnCarousel requires at least one item.');
+  final List<Widget> items;
+  final PageController? controller;
+  final int initialPage;
+  final double viewportFraction;
+  final double? height;
+  final double? aspectRatio;
+  final EdgeInsetsGeometry padding;
+  final bool showIndicators;
+  final bool showArrows;
+  final bool loop;
+  final bool autoPlay;
+  final Duration autoPlayInterval;
+  final Duration autoPlayAnimation;
+  final Curve autoPlayCurve;
+  final ValueChanged<int>? onPageChanged;
+  final double indicatorSize;
+  final double indicatorSpacing;
+  final double indicatorActiveWidth;
+  final double indicatorPadding;
 
   @override
   State<CnCarousel> createState() => _CnCarouselState();

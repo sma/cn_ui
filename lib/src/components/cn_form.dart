@@ -12,11 +12,6 @@ import 'cn_label.dart';
 ///  * [CnFormField], for individual form fields with labels and validation.
 ///  * [Form], the underlying Material widget.
 class CnForm extends StatelessWidget {
-  final Widget child;
-  final GlobalKey<FormState>? formKey;
-  final AutovalidateMode? autovalidateMode;
-  final VoidCallback? onChanged;
-
   const CnForm({
     super.key,
     required this.child,
@@ -24,6 +19,10 @@ class CnForm extends StatelessWidget {
     this.autovalidateMode,
     this.onChanged,
   });
+  final Widget child;
+  final GlobalKey<FormState>? formKey;
+  final AutovalidateMode? autovalidateMode;
+  final VoidCallback? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -45,15 +44,6 @@ class CnForm extends StatelessWidget {
 ///  * [CnForm], for wrapping multiple form fields.
 ///  * [CnLabel], for standalone labels.
 class CnFormField extends StatelessWidget {
-  final Widget child;
-  final Widget? label;
-  final String? labelText;
-  final bool required;
-  final Widget? description;
-  final String? descriptionText;
-  final String? errorText;
-  final EdgeInsetsGeometry? padding;
-
   const CnFormField({
     super.key,
     required this.child,
@@ -65,6 +55,14 @@ class CnFormField extends StatelessWidget {
     this.errorText,
     this.padding,
   });
+  final Widget child;
+  final Widget? label;
+  final String? labelText;
+  final bool required;
+  final Widget? description;
+  final String? descriptionText;
+  final String? errorText;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {

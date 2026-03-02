@@ -4,17 +4,16 @@ import '../theme/cn_theme.dart';
 
 /// An item in a [CnCombobox].
 class CnComboboxItem<T> {
-  final T value;
-  final String label;
-  final Widget? leading;
-  final bool enabled;
-
   const CnComboboxItem({
     required this.value,
     required this.label,
     this.leading,
     this.enabled = true,
   });
+  final T value;
+  final String label;
+  final Widget? leading;
+  final bool enabled;
 }
 
 /// A searchable dropdown select component with autocomplete functionality.
@@ -26,16 +25,6 @@ class CnComboboxItem<T> {
 ///  * [CnSelect], for simple dropdown selection.
 ///  * [CnCommand], for command palette-style selection.
 class CnCombobox<T> extends StatefulWidget {
-  final List<CnComboboxItem<T>> items;
-  final T? value;
-  final ValueChanged<T?>? onChanged;
-  final String? placeholder;
-  final bool enabled;
-  final bool autofocus;
-  final bool allowCustom;
-  final double menuMaxHeight;
-  final double? menuWidth;
-
   const CnCombobox({
     super.key,
     required this.items,
@@ -48,6 +37,15 @@ class CnCombobox<T> extends StatefulWidget {
     this.menuMaxHeight = 240,
     this.menuWidth,
   });
+  final List<CnComboboxItem<T>> items;
+  final T? value;
+  final ValueChanged<T?>? onChanged;
+  final String? placeholder;
+  final bool enabled;
+  final bool autofocus;
+  final bool allowCustom;
+  final double menuMaxHeight;
+  final double? menuWidth;
 
   @override
   State<CnCombobox<T>> createState() => _CnComboboxState<T>();

@@ -4,10 +4,9 @@ import '../cn_ui.dart';
 import 'component_catalog.dart';
 
 class ComponentIndexPage extends StatefulWidget {
+  const ComponentIndexPage({super.key, required this.entries, this.onSelect});
   final List<ComponentEntry> entries;
   final ValueChanged<int>? onSelect;
-
-  const ComponentIndexPage({super.key, required this.entries, this.onSelect});
 
   @override
   State<ComponentIndexPage> createState() => _ComponentIndexPageState();
@@ -137,10 +136,9 @@ class _ComponentIndexPageState extends State<ComponentIndexPage> {
 }
 
 class _ComponentCard extends StatelessWidget {
+  const _ComponentCard({required this.entry, this.onTap});
   final ComponentEntry entry;
   final VoidCallback? onTap;
-
-  const _ComponentCard({required this.entry, this.onTap});
 
   @override
   Widget build(BuildContext context) {

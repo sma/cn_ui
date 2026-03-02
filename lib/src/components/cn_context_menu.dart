@@ -12,13 +12,6 @@ import 'cn_menu_styles.dart';
 ///  * [CnDropdownMenu], for click-triggered dropdown menus.
 ///  * [CnMenubar], for horizontal menu bars.
 class CnContextMenu extends StatelessWidget {
-  final Widget child;
-  final List<CnDropdownMenuEntry> entries;
-  final MenuStyle? style;
-  final Offset? alignmentOffset;
-  final double? menuWidth;
-  final bool openOnTap;
-
   const CnContextMenu({
     super.key,
     required this.child,
@@ -28,6 +21,12 @@ class CnContextMenu extends StatelessWidget {
     this.menuWidth,
     this.openOnTap = false,
   });
+  final Widget child;
+  final List<CnDropdownMenuEntry> entries;
+  final MenuStyle? style;
+  final Offset? alignmentOffset;
+  final double? menuWidth;
+  final bool openOnTap;
 
   @override
   Widget build(BuildContext context) {

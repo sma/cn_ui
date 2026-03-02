@@ -18,16 +18,6 @@ enum CnButtonSize { sm, md, lg, icon }
 ///  * [CnButtonGroup], which groups multiple buttons together.
 ///  * [CnToggle], for toggle buttons.
 class CnButton extends StatelessWidget {
-  final CnButtonVariant variant;
-  final CnButtonSize size;
-  final VoidCallback? onPressed;
-  final Widget child;
-  final Widget? leading;
-  final Widget? trailing;
-  final bool fullWidth;
-  final EdgeInsetsGeometry? padding;
-  final BorderRadiusGeometry? borderRadius;
-
   const CnButton({
     super.key,
     this.variant = .primary,
@@ -40,6 +30,15 @@ class CnButton extends StatelessWidget {
     this.padding,
     this.borderRadius,
   });
+  final CnButtonVariant variant;
+  final CnButtonSize size;
+  final VoidCallback? onPressed;
+  final Widget child;
+  final Widget? leading;
+  final Widget? trailing;
+  final bool fullWidth;
+  final EdgeInsetsGeometry? padding;
+  final BorderRadiusGeometry? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -170,11 +169,10 @@ class CnButton extends StatelessWidget {
 }
 
 class _ButtonContent extends StatelessWidget {
+  const _ButtonContent({required this.child, this.leading, this.trailing});
   final Widget? leading;
   final Widget? trailing;
   final Widget child;
-
-  const _ButtonContent({required this.child, this.leading, this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -190,13 +188,12 @@ class _ButtonContent extends StatelessWidget {
 }
 
 class _CnButtonVisuals {
-  final Color background;
-  final Color foreground;
-  final Color border;
-
   const _CnButtonVisuals({
     required this.background,
     required this.foreground,
     required this.border,
   });
+  final Color background;
+  final Color foreground;
+  final Color border;
 }

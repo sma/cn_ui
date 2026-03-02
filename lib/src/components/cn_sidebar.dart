@@ -6,9 +6,8 @@ import '../theme/cn_theme.dart';
 
 /// A controller for managing sidebar collapse state.
 class CnSidebarController extends ChangeNotifier {
-  bool _collapsed;
-
   CnSidebarController({bool collapsed = false}) : _collapsed = collapsed;
+  bool _collapsed;
 
   bool get collapsed => _collapsed;
 
@@ -50,17 +49,6 @@ class CnSidebarProvider extends InheritedNotifier<CnSidebarController> {
 ///  * [CnSidebarGroup], for grouping sidebar items.
 ///  * [CnNavigationMenu], for horizontal navigation.
 class CnSidebar extends StatefulWidget {
-  final CnSidebarController? controller;
-  final Widget child;
-  final double expandedWidth;
-  final double collapsedWidth;
-  final Duration duration;
-  final Curve curve;
-  final EdgeInsetsGeometry? padding;
-  final Color? backgroundColor;
-  final Color? borderColor;
-  final BorderRadiusGeometry? borderRadius;
-
   const CnSidebar({
     super.key,
     this.controller,
@@ -74,6 +62,16 @@ class CnSidebar extends StatefulWidget {
     this.borderColor,
     this.borderRadius,
   });
+  final CnSidebarController? controller;
+  final Widget child;
+  final double expandedWidth;
+  final double collapsedWidth;
+  final Duration duration;
+  final Curve curve;
+  final EdgeInsetsGeometry? padding;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final BorderRadiusGeometry? borderRadius;
 
   @override
   State<CnSidebar> createState() => _CnSidebarState();
@@ -171,10 +169,9 @@ class _CnSidebarState extends State<CnSidebar> {
 
 /// A button for toggling sidebar collapse state.
 class CnSidebarTrigger extends StatelessWidget {
+  const CnSidebarTrigger({super.key, this.icon, this.tooltip});
   final Widget? icon;
   final String? tooltip;
-
-  const CnSidebarTrigger({super.key, this.icon, this.tooltip});
 
   @override
   Widget build(BuildContext context) {
@@ -191,9 +188,8 @@ class CnSidebarTrigger extends StatelessWidget {
 
 /// A header section for [CnSidebar].
 class CnSidebarHeader extends StatelessWidget {
-  final Widget child;
-
   const CnSidebarHeader({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -206,10 +202,9 @@ class CnSidebarHeader extends StatelessWidget {
 
 /// A scrollable content section for [CnSidebar].
 class CnSidebarContent extends StatelessWidget {
+  const CnSidebarContent({super.key, required this.children, this.spacing = 6});
   final List<Widget> children;
   final double spacing;
-
-  const CnSidebarContent({super.key, required this.children, this.spacing = 6});
 
   @override
   Widget build(BuildContext context) {
@@ -228,9 +223,8 @@ class CnSidebarContent extends StatelessWidget {
 
 /// A footer section for [CnSidebar].
 class CnSidebarFooter extends StatelessWidget {
-  final Widget child;
-
   const CnSidebarFooter({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -243,16 +237,15 @@ class CnSidebarFooter extends StatelessWidget {
 
 /// A group of sidebar items with an optional title.
 class CnSidebarGroup extends StatelessWidget {
-  final String? title;
-  final List<Widget> children;
-  final double spacing;
-
   const CnSidebarGroup({
     super.key,
     this.title,
     required this.children,
     this.spacing = 4,
   });
+  final String? title;
+  final List<Widget> children;
+  final double spacing;
 
   @override
   Widget build(BuildContext context) {
@@ -282,9 +275,8 @@ class CnSidebarGroup extends StatelessWidget {
 
 /// A visual separator for [CnSidebar].
 class CnSidebarSeparator extends StatelessWidget {
-  final EdgeInsetsGeometry? padding;
-
   const CnSidebarSeparator({super.key, this.padding});
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -301,14 +293,6 @@ class CnSidebarSeparator extends StatelessWidget {
 
 /// A search input for [CnSidebar].
 class CnSidebarSearch extends StatelessWidget {
-  final TextEditingController? controller;
-  final String? placeholder;
-  final ValueChanged<String>? onChanged;
-  final Widget? leading;
-  final Widget? trailing;
-  final bool enabled;
-  final bool hideWhenCollapsed;
-
   const CnSidebarSearch({
     super.key,
     this.controller,
@@ -319,6 +303,13 @@ class CnSidebarSearch extends StatelessWidget {
     this.enabled = true,
     this.hideWhenCollapsed = true,
   });
+  final TextEditingController? controller;
+  final String? placeholder;
+  final ValueChanged<String>? onChanged;
+  final Widget? leading;
+  final Widget? trailing;
+  final bool enabled;
+  final bool hideWhenCollapsed;
 
   @override
   Widget build(BuildContext context) {
@@ -364,13 +355,6 @@ class CnSidebarSearch extends StatelessWidget {
 
 /// A sub-item within a [CnSidebar], typically indented under a parent item.
 class CnSidebarSubItem extends StatelessWidget {
-  final Widget label;
-  final bool selected;
-  final VoidCallback? onTap;
-  final double indent;
-  final bool hideWhenCollapsed;
-  final Widget? trailing;
-
   const CnSidebarSubItem({
     super.key,
     required this.label,
@@ -380,6 +364,12 @@ class CnSidebarSubItem extends StatelessWidget {
     this.hideWhenCollapsed = true,
     this.trailing,
   });
+  final Widget label;
+  final bool selected;
+  final VoidCallback? onTap;
+  final double indent;
+  final bool hideWhenCollapsed;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -403,13 +393,6 @@ class CnSidebarSubItem extends StatelessWidget {
 
 /// A clickable navigation item in a [CnSidebar].
 class CnSidebarItem extends StatelessWidget {
-  final Widget label;
-  final Widget? icon;
-  final Widget? trailing;
-  final bool selected;
-  final VoidCallback? onTap;
-  final EdgeInsetsGeometry? padding;
-
   const CnSidebarItem({
     super.key,
     required this.label,
@@ -419,6 +402,12 @@ class CnSidebarItem extends StatelessWidget {
     this.onTap,
     this.padding,
   });
+  final Widget label;
+  final Widget? icon;
+  final Widget? trailing;
+  final bool selected;
+  final VoidCallback? onTap;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -492,14 +481,13 @@ class CnSidebarItem extends StatelessWidget {
 }
 
 class _CnSidebarScope extends InheritedWidget {
-  final CnSidebarController controller;
-  final bool collapsed;
-
   const _CnSidebarScope({
     required this.controller,
     required this.collapsed,
     required super.child,
   });
+  final CnSidebarController controller;
+  final bool collapsed;
 
   static _CnSidebarScope? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<_CnSidebarScope>();

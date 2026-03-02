@@ -12,16 +12,6 @@ import '../theme/cn_theme.dart';
 ///  * [CnSheet], for bottom sheet dialogs.
 ///  * [CnDrawer], for side panel dialogs.
 class CnDialog extends StatelessWidget {
-  final Widget? title;
-  final Widget? description;
-  final Widget? content;
-  final List<Widget> actions;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? actionsPadding;
-  final double maxWidth;
-  final bool showCloseButton;
-  final VoidCallback? onClose;
-
   const CnDialog({
     super.key,
     this.title,
@@ -34,6 +24,15 @@ class CnDialog extends StatelessWidget {
     this.showCloseButton = true,
     this.onClose,
   });
+  final Widget? title;
+  final Widget? description;
+  final Widget? content;
+  final List<Widget> actions;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? actionsPadding;
+  final double maxWidth;
+  final bool showCloseButton;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {

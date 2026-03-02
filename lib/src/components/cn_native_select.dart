@@ -9,23 +9,21 @@ sealed class CnNativeSelectEntry<T> {
 
 /// A single selectable option in a [CnNativeSelect].
 class CnNativeSelectOption<T> extends CnNativeSelectEntry<T> {
-  final T value;
-  final String label;
-  final bool enabled;
-
   const CnNativeSelectOption({
     required this.value,
     required this.label,
     this.enabled = true,
   });
+  final T value;
+  final String label;
+  final bool enabled;
 }
 
 /// A group of options in a [CnNativeSelect].
 class CnNativeSelectOptGroup<T> extends CnNativeSelectEntry<T> {
+  const CnNativeSelectOptGroup({required this.label, required this.options});
   final String label;
   final List<CnNativeSelectOption<T>> options;
-
-  const CnNativeSelectOptGroup({required this.label, required this.options});
 }
 
 /// Size variants for [CnNativeSelect].
@@ -40,13 +38,6 @@ enum CnNativeSelectSize { sm, md }
 ///  * [CnSelect], for a simpler select component.
 ///  * [CnCombobox], for a searchable select component.
 class CnNativeSelect<T extends Object?> extends StatelessWidget {
-  final List<CnNativeSelectEntry<T>> entries;
-  final T? value;
-  final ValueChanged<T?>? onChanged;
-  final String? placeholder;
-  final bool isExpanded;
-  final CnNativeSelectSize size;
-
   const CnNativeSelect({
     super.key,
     required this.entries,
@@ -56,6 +47,12 @@ class CnNativeSelect<T extends Object?> extends StatelessWidget {
     this.isExpanded = true,
     this.size = .md,
   });
+  final List<CnNativeSelectEntry<T>> entries;
+  final T? value;
+  final ValueChanged<T?>? onChanged;
+  final String? placeholder;
+  final bool isExpanded;
+  final CnNativeSelectSize size;
 
   @override
   Widget build(BuildContext context) {

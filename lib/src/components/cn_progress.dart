@@ -10,10 +10,9 @@ import '../theme/cn_theme.dart';
 ///
 ///  * [CnSpinner], for circular loading indicators.
 class CnProgress extends StatelessWidget {
+  const CnProgress({super.key, this.value, this.height = 8});
   final double? value;
   final double height;
-
-  const CnProgress({super.key, this.value, this.height = 8});
 
   @override
   Widget build(BuildContext context) {

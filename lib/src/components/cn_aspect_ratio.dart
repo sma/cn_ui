@@ -10,16 +10,15 @@ import '../theme/cn_theme.dart';
 ///
 ///  * [AspectRatio], the underlying aspect ratio widget.
 class CnAspectRatio extends StatelessWidget {
-  final double aspectRatio;
-  final Widget child;
-  final double? radius;
-
   const CnAspectRatio({
     super.key,
     required this.aspectRatio,
     required this.child,
     this.radius,
   });
+  final double aspectRatio;
+  final Widget child;
+  final double? radius;
 
   @override
   Widget build(BuildContext context) {

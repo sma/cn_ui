@@ -16,14 +16,6 @@ enum CnDropdownMenuRole { standard, destructive }
 ///  * [CnMenubar], for horizontal menu bars.
 ///  * [CnPopover], for simpler popover content.
 class CnDropdownMenu extends StatelessWidget {
-  final List<CnDropdownMenuEntry> entries;
-  final Widget? trigger;
-  final Widget Function(BuildContext context, MenuController controller)?
-  triggerBuilder;
-  final MenuStyle? style;
-  final Offset? alignmentOffset;
-  final double? menuWidth;
-
   const CnDropdownMenu({
     super.key,
     required this.entries,
@@ -36,6 +28,13 @@ class CnDropdownMenu extends StatelessWidget {
          trigger != null || triggerBuilder != null,
          'Provide a trigger or triggerBuilder.',
        );
+  final List<CnDropdownMenuEntry> entries;
+  final Widget? trigger;
+  final Widget Function(BuildContext context, MenuController controller)?
+  triggerBuilder;
+  final MenuStyle? style;
+  final Offset? alignmentOffset;
+  final double? menuWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -175,15 +174,6 @@ sealed class CnDropdownMenuEntry {
 
 /// An action entry in a dropdown menu.
 class CnDropdownMenuAction extends CnDropdownMenuEntry {
-  final String? label;
-  final VoidCallback? onSelected;
-  final Widget? leading;
-  final Widget? trailing;
-  final MenuSerializableShortcut? shortcut;
-  final CnDropdownMenuRole role;
-  final bool closeOnActivate;
-  final Widget? child;
-
   const CnDropdownMenuAction({
     this.label,
     this.onSelected,
@@ -194,16 +184,18 @@ class CnDropdownMenuAction extends CnDropdownMenuEntry {
     this.closeOnActivate = true,
     this.child,
   }) : assert(label != null || child != null);
+  final String? label;
+  final VoidCallback? onSelected;
+  final Widget? leading;
+  final Widget? trailing;
+  final MenuSerializableShortcut? shortcut;
+  final CnDropdownMenuRole role;
+  final bool closeOnActivate;
+  final Widget? child;
 }
 
 /// A checkbox entry in a dropdown menu.
 class CnDropdownMenuCheckboxItem extends CnDropdownMenuEntry {
-  final String label;
-  final bool checked;
-  final ValueChanged<bool>? onChanged;
-  final Widget? leading;
-  final bool closeOnActivate;
-
   const CnDropdownMenuCheckboxItem({
     required this.label,
     required this.checked,
@@ -211,17 +203,15 @@ class CnDropdownMenuCheckboxItem extends CnDropdownMenuEntry {
     this.leading,
     this.closeOnActivate = false,
   });
+  final String label;
+  final bool checked;
+  final ValueChanged<bool>? onChanged;
+  final Widget? leading;
+  final bool closeOnActivate;
 }
 
 /// A radio button entry in a dropdown menu.
 class CnDropdownMenuRadioItem extends CnDropdownMenuEntry {
-  final String label;
-  final Object? value;
-  final Object? groupValue;
-  final ValueChanged<Object?>? onSelected;
-  final Widget? leading;
-  final bool closeOnActivate;
-
   const CnDropdownMenuRadioItem({
     required this.label,
     required this.value,
@@ -230,6 +220,12 @@ class CnDropdownMenuRadioItem extends CnDropdownMenuEntry {
     this.leading,
     this.closeOnActivate = false,
   });
+  final String label;
+  final Object? value;
+  final Object? groupValue;
+  final ValueChanged<Object?>? onSelected;
+  final Widget? leading;
+  final bool closeOnActivate;
 
   bool get isSelected => value == groupValue;
 }
@@ -241,17 +237,16 @@ class CnDropdownMenuSeparator extends CnDropdownMenuEntry {
 
 /// A submenu entry in a dropdown menu.
 class CnDropdownMenuSubmenu extends CnDropdownMenuEntry {
-  final String label;
-  final List<CnDropdownMenuEntry> entries;
-  final Widget? leading;
-  final Widget? trailing;
-
   const CnDropdownMenuSubmenu({
     required this.label,
     required this.entries,
     this.leading,
     this.trailing,
   });
+  final String label;
+  final List<CnDropdownMenuEntry> entries;
+  final Widget? leading;
+  final Widget? trailing;
 }
 
 class _DropdownDivider extends StatelessWidget {

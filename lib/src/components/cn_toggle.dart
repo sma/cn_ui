@@ -20,16 +20,6 @@ enum CnToggleSize { sm, md, lg }
 ///  * [CnSwitch], for a switch-style toggle.
 ///  * [CnCheckbox], for checkbox-style selection.
 class CnToggle extends StatelessWidget {
-  final bool value;
-  final ValueChanged<bool>? onChanged;
-  final Widget child;
-  final CnToggleVariant variant;
-  final CnToggleSize size;
-  final bool enabled;
-  final EdgeInsetsGeometry? padding;
-  final BorderRadius? borderRadius;
-  final bool showBorder;
-
   const CnToggle({
     super.key,
     required this.value,
@@ -42,6 +32,15 @@ class CnToggle extends StatelessWidget {
     this.borderRadius,
     this.showBorder = true,
   });
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  final Widget child;
+  final CnToggleVariant variant;
+  final CnToggleSize size;
+  final bool enabled;
+  final EdgeInsetsGeometry? padding;
+  final BorderRadius? borderRadius;
+  final bool showBorder;
 
   @override
   Widget build(BuildContext context) {
@@ -144,13 +143,12 @@ class CnToggle extends StatelessWidget {
 }
 
 class _ToggleVisuals {
-  final Color background;
-  final Color border;
-  final Color foreground;
-
   const _ToggleVisuals({
     required this.background,
     required this.border,
     required this.foreground,
   });
+  final Color background;
+  final Color border;
+  final Color foreground;
 }

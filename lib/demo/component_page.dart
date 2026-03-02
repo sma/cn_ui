@@ -6,9 +6,8 @@ import '../cn_ui.dart';
 import 'component_catalog.dart';
 
 class ComponentPage extends StatelessWidget {
-  final ComponentEntry entry;
-
   const ComponentPage({super.key, required this.entry});
+  final ComponentEntry entry;
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +34,8 @@ class ComponentPage extends StatelessWidget {
 }
 
 class _ExampleBlock extends StatelessWidget {
-  final ComponentExample example;
-
   const _ExampleBlock({required this.example});
+  final ComponentExample example;
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +86,9 @@ class _ExampleBlock extends StatelessWidget {
 }
 
 class _Section extends StatelessWidget {
+  const _Section({required this.title, required this.child});
   final String title;
   final Widget child;
-
-  const _Section({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -107,9 +104,8 @@ class _Section extends StatelessWidget {
 }
 
 class CnCodeBlock extends StatefulWidget {
-  final String code;
-
   const CnCodeBlock({super.key, required this.code});
+  final String code;
 
   @override
   State<CnCodeBlock> createState() => _CnCodeBlockState();

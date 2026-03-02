@@ -9,17 +9,6 @@ import 'package:flutter/material.dart';
 ///  * [SingleChildScrollView], the underlying scroll widget.
 ///  * [Scrollbar], for scrollbar customization.
 class CnScrollArea extends StatelessWidget {
-  final Widget child;
-  final Axis direction;
-  final double? height;
-  final double? width;
-  final EdgeInsetsGeometry? padding;
-  final ScrollController? controller;
-  final bool thumbVisibility;
-  final bool trackVisibility;
-  final bool? interactive;
-  final ScrollbarOrientation? scrollbarOrientation;
-
   const CnScrollArea({
     super.key,
     required this.child,
@@ -33,6 +22,16 @@ class CnScrollArea extends StatelessWidget {
     this.interactive,
     this.scrollbarOrientation,
   });
+  final Widget child;
+  final Axis direction;
+  final double? height;
+  final double? width;
+  final EdgeInsetsGeometry? padding;
+  final ScrollController? controller;
+  final bool thumbVisibility;
+  final bool trackVisibility;
+  final bool? interactive;
+  final ScrollbarOrientation? scrollbarOrientation;
 
   @override
   Widget build(BuildContext context) {

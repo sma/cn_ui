@@ -8,11 +8,6 @@ import '../../cn_ui.dart';
 ///
 ///  * [CnFormField], which automatically includes labels.
 class CnLabel extends StatelessWidget {
-  final Widget child;
-  final bool required;
-  final Color? requiredColor;
-  final TextStyle? style;
-
   const CnLabel({
     super.key,
     required this.child,
@@ -20,6 +15,10 @@ class CnLabel extends StatelessWidget {
     this.requiredColor,
     this.style,
   });
+  final Widget child;
+  final bool required;
+  final Color? requiredColor;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {

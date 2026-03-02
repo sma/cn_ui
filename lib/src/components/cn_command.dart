@@ -13,14 +13,6 @@ import 'cn_input.dart';
 ///
 ///  * [CnCombobox], for searchable dropdown selection.
 class CnCommand extends StatefulWidget {
-  final List<CnCommandGroup> groups;
-  final String placeholder;
-  final String emptyText;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onQueryChanged;
-  final double maxHeight;
-  final EdgeInsetsGeometry? padding;
-
   const CnCommand({
     super.key,
     required this.groups,
@@ -31,6 +23,13 @@ class CnCommand extends StatefulWidget {
     this.maxHeight = 280,
     this.padding,
   });
+  final List<CnCommandGroup> groups;
+  final String placeholder;
+  final String emptyText;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onQueryChanged;
+  final double maxHeight;
+  final EdgeInsetsGeometry? padding;
 
   @override
   State<CnCommand> createState() => _CnCommandState();
@@ -136,10 +135,9 @@ class _CnCommandState extends State<CnCommand> {
 
 /// A group of command items in [CnCommand].
 class CnCommandGroup {
+  const CnCommandGroup({this.label, required this.items});
   final String? label;
   final List<CnCommandItem> items;
-
-  const CnCommandGroup({this.label, required this.items});
 
   CnCommandGroup filter(String query) {
     if (query.isEmpty) {
@@ -152,14 +150,6 @@ class CnCommandGroup {
 
 /// An individual command item in [CnCommandGroup].
 class CnCommandItem {
-  final String label;
-  final String? description;
-  final List<String> keywords;
-  final VoidCallback? onSelected;
-  final Widget? leading;
-  final Widget? trailing;
-  final bool disabled;
-
   const CnCommandItem({
     required this.label,
     this.description,
@@ -169,6 +159,13 @@ class CnCommandItem {
     this.trailing,
     this.disabled = false,
   });
+  final String label;
+  final String? description;
+  final List<String> keywords;
+  final VoidCallback? onSelected;
+  final Widget? leading;
+  final Widget? trailing;
+  final bool disabled;
 
   bool matches(String query) {
     final searchSpace = [
@@ -181,9 +178,8 @@ class CnCommandItem {
 }
 
 class _CommandGroupList extends StatelessWidget {
-  final CnCommandGroup group;
-
   const _CommandGroupList({required this.group});
+  final CnCommandGroup group;
 
   @override
   Widget build(BuildContext context) {
@@ -209,9 +205,8 @@ class _CommandGroupList extends StatelessWidget {
 }
 
 class _CommandItemTile extends StatelessWidget {
-  final CnCommandItem item;
-
   const _CommandItemTile({required this.item});
+  final CnCommandItem item;
 
   @override
   Widget build(BuildContext context) {

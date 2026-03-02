@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import '../cn_ui.dart';
 
 class ThemePlayground extends StatelessWidget {
-  final CnTheme theme;
-  final ValueChanged<CnTheme> onChanged;
-
   const ThemePlayground({
     super.key,
     required this.theme,
     required this.onChanged,
   });
+  final CnTheme theme;
+  final ValueChanged<CnTheme> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -162,10 +161,9 @@ class ThemePlayground extends StatelessWidget {
 }
 
 class _Section extends StatelessWidget {
+  const _Section({required this.title, required this.child});
   final String title;
   final Widget child;
-
-  const _Section({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -181,10 +179,9 @@ class _Section extends StatelessWidget {
 }
 
 class _TokenCard extends StatelessWidget {
+  const _TokenCard({required this.title, required this.child});
   final String title;
   final Widget child;
-
-  const _TokenCard({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -199,22 +196,20 @@ class _TokenCard extends StatelessWidget {
 }
 
 class _ColorOption {
+  const _ColorOption(this.label, this.color);
   final String label;
   final Color color;
-
-  const _ColorOption(this.label, this.color);
 }
 
 class _ColorSelect extends StatelessWidget {
-  final Color value;
-  final List<_ColorOption> options;
-  final ValueChanged<Color> onChanged;
-
   const _ColorSelect({
     required this.value,
     required this.options,
     required this.onChanged,
   });
+  final Color value;
+  final List<_ColorOption> options;
+  final ValueChanged<Color> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -253,10 +248,9 @@ class _ColorSelect extends StatelessWidget {
 }
 
 class _FontSelect extends StatelessWidget {
+  const _FontSelect({required this.value, required this.onChanged});
   final String value;
   final ValueChanged<String> onChanged;
-
-  const _FontSelect({required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -276,10 +270,9 @@ class _FontSelect extends StatelessWidget {
 }
 
 class _TokenPreviewCard extends StatelessWidget {
+  const _TokenPreviewCard({required this.title, required this.child});
   final String title;
   final Widget child;
-
-  const _TokenPreviewCard({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -563,10 +556,9 @@ class _TokenOverlayPreview extends StatelessWidget {
 }
 
 class _TokenTableRow extends StatelessWidget {
+  const _TokenTableRow({required this.leading, required this.trailing});
   final Widget leading;
   final Widget trailing;
-
-  const _TokenTableRow({required this.leading, required this.trailing});
 
   @override
   Widget build(BuildContext context) {

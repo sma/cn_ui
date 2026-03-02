@@ -90,17 +90,16 @@ class CnBreadcrumb extends StatelessWidget {
 
 /// An item in a [CnBreadcrumb].
 class CnBreadcrumbItem {
-  final Widget label;
-  final VoidCallback? onTap;
-  final bool enabled;
-  final Widget? leading;
-
   const CnBreadcrumbItem({
     required this.label,
     this.onTap,
     this.enabled = true,
     this.leading,
   });
+  final Widget label;
+  final VoidCallback? onTap;
+  final bool enabled;
+  final Widget? leading;
 }
 
 class _BreadcrumbItem extends StatelessWidget {

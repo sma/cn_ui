@@ -10,13 +10,6 @@ import '../theme/cn_theme.dart';
 ///
 ///  * [CnCollapsible], for a single collapsible panel.
 class CnAccordion extends StatefulWidget {
-  final List<CnAccordionItem> items;
-  final bool allowMultiple;
-  final Set<int> initialOpenIndices;
-  final ValueChanged<Set<int>>? onChanged;
-  final EdgeInsetsGeometry? headerPadding;
-  final EdgeInsetsGeometry? contentPadding;
-
   const CnAccordion({
     super.key,
     required this.items,
@@ -26,6 +19,12 @@ class CnAccordion extends StatefulWidget {
     this.headerPadding,
     this.contentPadding,
   });
+  final List<CnAccordionItem> items;
+  final bool allowMultiple;
+  final Set<int> initialOpenIndices;
+  final ValueChanged<Set<int>>? onChanged;
+  final EdgeInsetsGeometry? headerPadding;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   State<CnAccordion> createState() => _CnAccordionState();
@@ -171,15 +170,14 @@ class _CnAccordionState extends State<CnAccordion> {
 
 /// An item in a [CnAccordion].
 class CnAccordionItem {
-  final Widget title;
-  final Widget content;
-  final Widget? trailing;
-  final bool isDisabled;
-
   const CnAccordionItem({
     required this.title,
     required this.content,
     this.trailing,
     this.isDisabled = false,
   });
+  final Widget title;
+  final Widget content;
+  final Widget? trailing;
+  final bool isDisabled;
 }

@@ -5,22 +5,13 @@ enum CnChartType { bar, line, area }
 
 /// A data point in a [CnChartSeries].
 class CnChartPoint {
+  const CnChartPoint(this.label, this.value);
   final String label;
   final double value;
-
-  const CnChartPoint(this.label, this.value);
 }
 
 /// A data series for [CnChart].
 class CnChartSeries {
-  final String name;
-  final List<CnChartPoint> data;
-  final CnChartType type;
-  final Color? color;
-  final double lineWidth;
-  final Color? fillColor;
-  final bool showPoints;
-
   const CnChartSeries({
     required this.name,
     required this.data,
@@ -30,20 +21,19 @@ class CnChartSeries {
     this.fillColor,
     this.showPoints = true,
   });
+  final String name;
+  final List<CnChartPoint> data;
+  final CnChartType type;
+  final Color? color;
+  final double lineWidth;
+  final Color? fillColor;
+  final bool showPoints;
 }
 
 /// A simple chart component for displaying bar, line, and area charts.
 ///
 /// Provides basic charting functionality with customizable series, grid, and legend.
 class CnChart extends StatelessWidget {
-  final List<CnChartSeries> series;
-  final double height;
-  final EdgeInsetsGeometry padding;
-  final bool showLegend;
-  final bool showGrid;
-  final int gridLines;
-  final TextStyle? labelStyle;
-
   const CnChart({
     super.key,
     required this.series,
@@ -54,6 +44,13 @@ class CnChart extends StatelessWidget {
     this.gridLines = 4,
     this.labelStyle,
   });
+  final List<CnChartSeries> series;
+  final double height;
+  final EdgeInsetsGeometry padding;
+  final bool showLegend;
+  final bool showGrid;
+  final int gridLines;
+  final TextStyle? labelStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -162,16 +159,15 @@ class CnChart extends StatelessWidget {
 }
 
 class CnChartLegend extends StatelessWidget {
-  final List<CnChartLegendItem> items;
-  final double spacing;
-  final double runSpacing;
-
   const CnChartLegend({
     super.key,
     required this.items,
     this.spacing = 12,
     this.runSpacing = 8,
   });
+  final List<CnChartLegendItem> items;
+  final double spacing;
+  final double runSpacing;
 
   @override
   Widget build(BuildContext context) {
@@ -205,21 +201,12 @@ class CnChartLegend extends StatelessWidget {
 }
 
 class CnChartLegendItem {
+  const CnChartLegendItem({required this.label, required this.color});
   final String label;
   final Color color;
-
-  const CnChartLegendItem({required this.label, required this.color});
 }
 
 class _CnChartSeriesLayout {
-  final String name;
-  final List<double> values;
-  final CnChartType type;
-  final Color color;
-  final double lineWidth;
-  final Color? fillColor;
-  final bool showPoints;
-
   const _CnChartSeriesLayout({
     required this.name,
     required this.values,
@@ -229,16 +216,16 @@ class _CnChartSeriesLayout {
     required this.fillColor,
     required this.showPoints,
   });
+  final String name;
+  final List<double> values;
+  final CnChartType type;
+  final Color color;
+  final double lineWidth;
+  final Color? fillColor;
+  final bool showPoints;
 }
 
 class _CnChartPainter extends CustomPainter {
-  final List<String> labels;
-  final List<_CnChartSeriesLayout> series;
-  final EdgeInsets padding;
-  final bool showGrid;
-  final int gridLines;
-  final Color gridColor;
-
   const _CnChartPainter({
     required this.labels,
     required this.series,
@@ -247,6 +234,12 @@ class _CnChartPainter extends CustomPainter {
     required this.gridLines,
     required this.gridColor,
   });
+  final List<String> labels;
+  final List<_CnChartSeriesLayout> series;
+  final EdgeInsets padding;
+  final bool showGrid;
+  final int gridLines;
+  final Color gridColor;
 
   @override
   void paint(Canvas canvas, Size size) {

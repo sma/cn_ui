@@ -16,11 +16,10 @@ enum CnMenuRole { standard, destructive }
 ///  * [CnContextMenu], for context menus.
 ///  * [CnNavigationMenu], for navigation-focused menus.
 class CnMenubar extends StatelessWidget {
+  const CnMenubar({super.key, required this.menus, this.style, this.menuStyle});
   final List<CnMenu> menus;
   final MenuStyle? style;
   final MenuStyle? menuStyle;
-
-  const CnMenubar({super.key, required this.menus, this.style, this.menuStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -118,11 +117,10 @@ class CnMenubar extends StatelessWidget {
 
 /// A top-level menu in a [CnMenubar].
 class CnMenu {
+  const CnMenu({required this.label, required this.entries, this.leading});
   final String label;
   final List<CnMenuEntry> entries;
   final Widget? leading;
-
-  const CnMenu({required this.label, required this.entries, this.leading});
 }
 
 /// Base class for menu entries in a [CnMenubar].
@@ -132,14 +130,6 @@ sealed class CnMenuEntry {
 
 /// An action entry in a menu.
 class CnMenuAction extends CnMenuEntry {
-  final String label;
-  final VoidCallback? onSelected;
-  final Widget? leading;
-  final Widget? trailing;
-  final MenuSerializableShortcut? shortcut;
-  final CnMenuRole role;
-  final bool closeOnActivate;
-
   const CnMenuAction({
     required this.label,
     this.onSelected,
@@ -149,6 +139,13 @@ class CnMenuAction extends CnMenuEntry {
     this.role = .standard,
     this.closeOnActivate = true,
   });
+  final String label;
+  final VoidCallback? onSelected;
+  final Widget? leading;
+  final Widget? trailing;
+  final MenuSerializableShortcut? shortcut;
+  final CnMenuRole role;
+  final bool closeOnActivate;
 }
 
 /// A separator entry in a menu.
@@ -158,17 +155,16 @@ class CnMenuSeparator extends CnMenuEntry {
 
 /// A submenu entry in a menu.
 class CnMenuSubmenu extends CnMenuEntry {
-  final String label;
-  final List<CnMenuEntry> entries;
-  final Widget? leading;
-  final Widget? trailing;
-
   const CnMenuSubmenu({
     required this.label,
     required this.entries,
     this.leading,
     this.trailing,
   });
+  final String label;
+  final List<CnMenuEntry> entries;
+  final Widget? leading;
+  final Widget? trailing;
 }
 
 class _MenuDivider extends StatelessWidget {

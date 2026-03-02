@@ -9,16 +9,15 @@ import 'package:flutter/material.dart';
 ///  * [Divider], the underlying horizontal separator widget.
 ///  * [VerticalDivider], the underlying vertical separator widget.
 class CnSeparator extends StatelessWidget {
-  final Axis direction;
-  final double thickness;
-  final double? length;
-
   const CnSeparator({
     super.key,
     this.direction = .horizontal,
     this.thickness = 1,
     this.length,
   });
+  final Axis direction;
+  final double thickness;
+  final double? length;
 
   @override
   Widget build(BuildContext context) {

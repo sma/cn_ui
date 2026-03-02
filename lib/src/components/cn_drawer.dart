@@ -66,15 +66,6 @@ Future<T?> showCnDrawer<T>({
 ///  * [CnSheet], for bottom sheet dialogs.
 ///  * [showCnDrawer], for showing drawers programmatically.
 class CnDrawer extends StatelessWidget {
-  final CnDrawerSide side;
-  final Widget? title;
-  final Widget? description;
-  final Widget? content;
-  final List<Widget> actions;
-  final bool showCloseButton;
-  final VoidCallback? onClose;
-  final EdgeInsetsGeometry? padding;
-
   const CnDrawer({
     super.key,
     this.side = .left,
@@ -86,6 +77,14 @@ class CnDrawer extends StatelessWidget {
     this.onClose,
     this.padding,
   });
+  final CnDrawerSide side;
+  final Widget? title;
+  final Widget? description;
+  final Widget? content;
+  final List<Widget> actions;
+  final bool showCloseButton;
+  final VoidCallback? onClose;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -139,17 +138,16 @@ class CnDrawer extends StatelessWidget {
 }
 
 class _DrawerBody extends StatelessWidget {
-  final Widget? title;
-  final Widget? description;
-  final Widget? content;
-  final List<Widget> actions;
-
   const _DrawerBody({
     required this.title,
     required this.description,
     required this.content,
     required this.actions,
   });
+  final Widget? title;
+  final Widget? description;
+  final Widget? content;
+  final List<Widget> actions;
 
   @override
   Widget build(BuildContext context) {

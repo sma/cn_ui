@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 
 class CnCheckbox extends StatelessWidget {
-  final bool value;
-  final ValueChanged<bool?>? onChanged;
-  final Widget? label;
-
   const CnCheckbox({
     super.key,
     required this.value,
     this.onChanged,
     this.label,
   });
+  final bool value;
+  final ValueChanged<bool?>? onChanged;
+  final Widget? label;
 
   @override
   Widget build(BuildContext context) {

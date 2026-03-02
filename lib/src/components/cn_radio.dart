@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
 class CnRadioGroup<T> extends StatelessWidget {
-  final T? groupValue;
-  final ValueChanged<T?> onChanged;
-  final Widget child;
-
   const CnRadioGroup({
     super.key,
     required this.groupValue,
     required this.onChanged,
     required this.child,
   });
+  final T? groupValue;
+  final ValueChanged<T?> onChanged;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +22,10 @@ class CnRadioGroup<T> extends StatelessWidget {
 }
 
 class CnRadio<T> extends StatelessWidget {
+  const CnRadio({super.key, required this.value, this.enabled, this.label});
   final T value;
   final bool? enabled;
   final Widget? label;
-
-  const CnRadio({super.key, required this.value, this.enabled, this.label});
 
   @override
   Widget build(BuildContext context) {

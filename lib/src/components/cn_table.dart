@@ -8,28 +8,26 @@ import 'cn_select.dart';
 
 /// A column definition for [CnTable].
 class CnTableColumn {
-  final Widget label;
-  final Alignment alignment;
-  final TableColumnWidth? width;
-
   const CnTableColumn({
     required this.label,
     this.alignment = Alignment.centerLeft,
     this.width,
   });
+  final Widget label;
+  final Alignment alignment;
+  final TableColumnWidth? width;
 }
 
 /// A row definition for [CnTable].
 class CnTableRow {
-  final List<Widget> cells;
-  final bool selected;
-  final Decoration? decoration;
-
   const CnTableRow({
     required this.cells,
     this.selected = false,
     this.decoration,
   });
+  final List<Widget> cells;
+  final bool selected;
+  final Decoration? decoration;
 }
 
 /// A simple table component for displaying tabular data.
@@ -40,18 +38,6 @@ class CnTableRow {
 ///
 ///  * [CnDataTable], for a feature-rich data table with sorting, filtering, and pagination.
 class CnTable extends StatelessWidget {
-  final List<CnTableColumn> columns;
-  final List<CnTableRow> rows;
-  final bool showHeader;
-  final bool striped;
-  final bool showRowDividers;
-  final bool showColumnDividers;
-  final EdgeInsets cellPadding;
-  final TableColumnWidth? defaultColumnWidth;
-  final Color? headerColor;
-  final TextStyle? headerTextStyle;
-  final TextStyle? cellTextStyle;
-
   const CnTable({
     super.key,
     required this.columns,
@@ -66,6 +52,17 @@ class CnTable extends StatelessWidget {
     this.headerTextStyle,
     this.cellTextStyle,
   }) : assert(columns.length > 0, 'CnTable requires at least one column.');
+  final List<CnTableColumn> columns;
+  final List<CnTableRow> rows;
+  final bool showHeader;
+  final bool striped;
+  final bool showRowDividers;
+  final bool showColumnDividers;
+  final EdgeInsets cellPadding;
+  final TableColumnWidth? defaultColumnWidth;
+  final Color? headerColor;
+  final TextStyle? headerTextStyle;
+  final TextStyle? cellTextStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -189,17 +186,6 @@ class CnTable extends StatelessWidget {
 
 /// A column definition for [CnDataTable].
 class CnDataTableColumn<T> {
-  final String id;
-  final Widget label;
-  final String? toggleLabel;
-  final Widget Function(BuildContext context, T row) cellBuilder;
-  final bool sortable;
-  final int Function(T a, T b)? sortComparator;
-  final Comparable Function(T row)? sortValue;
-  final bool numeric;
-  final Alignment? alignment;
-  final TableColumnWidth? width;
-
   const CnDataTableColumn({
     required this.id,
     required this.label,
@@ -212,6 +198,16 @@ class CnDataTableColumn<T> {
     this.alignment,
     this.width,
   });
+  final String id;
+  final Widget label;
+  final String? toggleLabel;
+  final Widget Function(BuildContext context, T row) cellBuilder;
+  final bool sortable;
+  final int Function(T a, T b)? sortComparator;
+  final Comparable Function(T row)? sortValue;
+  final bool numeric;
+  final Alignment? alignment;
+  final TableColumnWidth? width;
 
   Alignment get resolvedAlignment {
     return alignment ??
@@ -230,39 +226,6 @@ class CnDataTableColumn<T> {
 ///  * [CnTable], for a simpler table component.
 ///  * [CnPagination], for standalone pagination controls.
 class CnDataTable<T> extends StatefulWidget {
-  final List<CnDataTableColumn<T>> columns;
-  final List<T> rows;
-  final String Function(T row)? rowId;
-  final Widget? title;
-  final Widget? actions;
-  final bool searchable;
-  final TextEditingController? searchController;
-  final String searchPlaceholder;
-  final String Function(T row)? searchValue;
-  final bool enableSelection;
-  final Set<String>? selectedRowIds;
-  final ValueChanged<Set<String>>? onSelectionChanged;
-  final int? rowsPerPage;
-  final List<int>? rowsPerPageOptions;
-  final ValueChanged<int>? onRowsPerPageChanged;
-  final String rowsPerPageLabel;
-  final bool showPageInfo;
-  final int initialPage;
-  final ValueChanged<int>? onPageChanged;
-  final Widget Function(BuildContext context, T row)? rowActionsBuilder;
-  final TableColumnWidth? actionsColumnWidth;
-  final bool enableColumnVisibility;
-  final Map<String, bool>? columnVisibility;
-  final ValueChanged<Map<String, bool>>? onColumnVisibilityChanged;
-  final String columnVisibilityLabel;
-  final Widget? columnVisibilityTrigger;
-  final bool striped;
-  final bool showRowDividers;
-  final bool showColumnDividers;
-  final bool enableHorizontalScroll;
-  final double? minTableWidth;
-  final Widget? emptyState;
-
   const CnDataTable({
     super.key,
     required this.columns,
@@ -302,6 +265,38 @@ class CnDataTable<T> extends StatefulWidget {
          !enableSelection || rowId != null,
          'Provide rowId when selection is enabled.',
        );
+  final List<CnDataTableColumn<T>> columns;
+  final List<T> rows;
+  final String Function(T row)? rowId;
+  final Widget? title;
+  final Widget? actions;
+  final bool searchable;
+  final TextEditingController? searchController;
+  final String searchPlaceholder;
+  final String Function(T row)? searchValue;
+  final bool enableSelection;
+  final Set<String>? selectedRowIds;
+  final ValueChanged<Set<String>>? onSelectionChanged;
+  final int? rowsPerPage;
+  final List<int>? rowsPerPageOptions;
+  final ValueChanged<int>? onRowsPerPageChanged;
+  final String rowsPerPageLabel;
+  final bool showPageInfo;
+  final int initialPage;
+  final ValueChanged<int>? onPageChanged;
+  final Widget Function(BuildContext context, T row)? rowActionsBuilder;
+  final TableColumnWidth? actionsColumnWidth;
+  final bool enableColumnVisibility;
+  final Map<String, bool>? columnVisibility;
+  final ValueChanged<Map<String, bool>>? onColumnVisibilityChanged;
+  final String columnVisibilityLabel;
+  final Widget? columnVisibilityTrigger;
+  final bool striped;
+  final bool showRowDividers;
+  final bool showColumnDividers;
+  final bool enableHorizontalScroll;
+  final double? minTableWidth;
+  final Widget? emptyState;
 
   @override
   State<CnDataTable<T>> createState() => _CnDataTableState<T>();

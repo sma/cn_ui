@@ -17,15 +17,6 @@ enum CnTextVariant { h1, h2, h3, h4, lead, p, large, small, muted }
 ///  * [CnBlockquote], for quoted text.
 ///  * [CnList], for bulleted lists.
 class CnText extends StatelessWidget {
-  final CnTextVariant variant;
-  final String? text;
-  final Widget? child;
-  final TextStyle? style;
-  final TextAlign? textAlign;
-  final int? maxLines;
-  final TextOverflow? overflow;
-  final bool selectable;
-
   const CnText({
     super.key,
     required this.variant,
@@ -37,6 +28,14 @@ class CnText extends StatelessWidget {
     this.overflow,
     this.selectable = false,
   }) : assert(text != null || child != null, 'Provide text or child.');
+  final CnTextVariant variant;
+  final String? text;
+  final Widget? child;
+  final TextStyle? style;
+  final TextAlign? textAlign;
+  final int? maxLines;
+  final TextOverflow? overflow;
+  final bool selectable;
 
   @override
   Widget build(BuildContext context) {
@@ -113,10 +112,9 @@ class CnText extends StatelessWidget {
 
 /// An inline code snippet component for displaying code within text.
 class CnInlineCode extends StatelessWidget {
+  const CnInlineCode({super.key, required this.code, this.style});
   final String code;
   final TextStyle? style;
-
-  const CnInlineCode({super.key, required this.code, this.style});
 
   @override
   Widget build(BuildContext context) {
@@ -146,9 +144,8 @@ class CnInlineCode extends StatelessWidget {
 
 /// A blockquote component for displaying quoted text.
 class CnBlockquote extends StatelessWidget {
-  final Widget child;
-
   const CnBlockquote({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -176,11 +173,6 @@ class CnBlockquote extends StatelessWidget {
 
 /// A bulleted list component for displaying items with markers.
 class CnList extends StatelessWidget {
-  final List<Widget> items;
-  final Widget? marker;
-  final double spacing;
-  final double indent;
-
   const CnList({
     super.key,
     required this.items,
@@ -188,6 +180,10 @@ class CnList extends StatelessWidget {
     this.spacing = 8,
     this.indent = 8,
   });
+  final List<Widget> items;
+  final Widget? marker;
+  final double spacing;
+  final double indent;
 
   @override
   Widget build(BuildContext context) {

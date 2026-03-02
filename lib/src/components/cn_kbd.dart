@@ -12,11 +12,6 @@ import '../theme/cn_theme.dart';
 ///
 ///  * [CnKbdGroup], for grouping multiple keyboard keys.
 class CnKbd extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-  final Color? backgroundColor;
-  final Color? borderColor;
-
   const CnKbd({
     super.key,
     required this.child,
@@ -24,6 +19,10 @@ class CnKbd extends StatelessWidget {
     this.backgroundColor,
     this.borderColor,
   });
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final Color? backgroundColor;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +51,9 @@ class CnKbd extends StatelessWidget {
 
 /// A group of keyboard keys for [CnKbd].
 class CnKbdGroup extends StatelessWidget {
+  const CnKbdGroup({super.key, required this.children, this.spacing = 6});
   final List<Widget> children;
   final double spacing;
-
-  const CnKbdGroup({super.key, required this.children, this.spacing = 6});
 
   @override
   Widget build(BuildContext context) {

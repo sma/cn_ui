@@ -16,10 +16,9 @@ enum CnBadgeVariant { primary, secondary, outline, destructive }
 ///
 ///  * [CnButton], for actionable elements with similar visual variants.
 class CnBadge extends StatelessWidget {
+  const CnBadge({super.key, this.variant = .primary, required this.child});
   final CnBadgeVariant variant;
   final Widget child;
-
-  const CnBadge({super.key, this.variant = .primary, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -83,13 +82,12 @@ class CnBadge extends StatelessWidget {
 }
 
 class _CnBadgeVisuals {
-  final Color background;
-  final Color foreground;
-  final Color border;
-
   const _CnBadgeVisuals({
     required this.background,
     required this.foreground,
     required this.border,
   });
+  final Color background;
+  final Color foreground;
+  final Color border;
 }

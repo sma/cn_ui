@@ -3,29 +3,27 @@ import 'package:flutter/material.dart';
 import '../cn_ui.dart';
 
 class ComponentEntry {
-  final String name;
-  final String description;
-  final List<ComponentExample> examples;
-
   const ComponentEntry({
     required this.name,
     required this.description,
     required this.examples,
   });
+  final String name;
+  final String description;
+  final List<ComponentExample> examples;
 }
 
 class ComponentExample {
-  final String title;
-  final String? description;
-  final Widget Function(BuildContext context) preview;
-  final String code;
-
   const ComponentExample({
     required this.title,
     this.description,
     required this.preview,
     required this.code,
   });
+  final String title;
+  final String? description;
+  final Widget Function(BuildContext context) preview;
+  final String code;
 }
 
 final List<ComponentEntry> componentCatalog = [
@@ -3126,13 +3124,6 @@ final List<_InvoiceRow> _invoiceRows = [
 ];
 
 class _InvoiceRow {
-  final String id;
-  final String invoice;
-  final String status;
-  final String email;
-  final double amount;
-  final DateTime date;
-
   _InvoiceRow({
     required this.id,
     required this.invoice,
@@ -3141,6 +3132,12 @@ class _InvoiceRow {
     required this.amount,
     required this.date,
   });
+  final String id;
+  final String invoice;
+  final String status;
+  final String email;
+  final double amount;
+  final DateTime date;
 }
 
 String _formatCurrency(double amount) {
@@ -3372,12 +3369,6 @@ class _CarouselPreview extends StatelessWidget {
 }
 
 class _CarouselSlide extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final Color background;
-  final Color foreground;
-
   const _CarouselSlide({
     required this.icon,
     required this.title,
@@ -3385,6 +3376,11 @@ class _CarouselSlide extends StatelessWidget {
     required this.background,
     required this.foreground,
   });
+  final IconData icon;
+  final String title;
+  final String description;
+  final Color background;
+  final Color foreground;
 
   @override
   Widget build(BuildContext context) {
@@ -3701,10 +3697,9 @@ class _ResizablePreview extends StatelessWidget {
 }
 
 class _ResizablePanel extends StatelessWidget {
+  const _ResizablePanel({required this.title, required this.color});
   final String title;
   final Color color;
-
-  const _ResizablePanel({required this.title, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -5148,10 +5143,9 @@ class _CalendarPresetsPreviewState extends State<_CalendarPresetsPreview> {
 }
 
 class _PresetButton extends StatelessWidget {
+  const _PresetButton({required this.label, required this.onPressed});
   final String label;
   final VoidCallback onPressed;
-
-  const _PresetButton({required this.label, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

@@ -8,15 +8,6 @@ import 'package:flutter/material.dart';
 ///
 ///  * [CnCalendar], for inline calendar selection.
 class CnDatePickerField extends StatefulWidget {
-  final DateTime? value;
-  final ValueChanged<DateTime?>? onChanged;
-  final DateTime firstDate;
-  final DateTime lastDate;
-  final DateTime? initialDate;
-  final String? placeholder;
-  final bool enabled;
-  final bool allowClear;
-
   CnDatePickerField({
     super.key,
     this.value,
@@ -29,6 +20,14 @@ class CnDatePickerField extends StatefulWidget {
     this.allowClear = true,
   }) : firstDate = firstDate ?? DateTime(2000),
        lastDate = lastDate ?? DateTime(2100);
+  final DateTime? value;
+  final ValueChanged<DateTime?>? onChanged;
+  final DateTime firstDate;
+  final DateTime lastDate;
+  final DateTime? initialDate;
+  final String? placeholder;
+  final bool enabled;
+  final bool allowClear;
 
   @override
   State<CnDatePickerField> createState() => _CnDatePickerFieldState();

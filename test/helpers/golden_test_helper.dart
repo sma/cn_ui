@@ -4,15 +4,15 @@ import 'package:cn_ui/src/theme/cn_theme.dart';
 
 /// Configuration for a theme variant in golden tests
 class ThemeVariantConfig {
-  final String name;
-  final CnTheme cnTheme;
-  final Brightness brightness;
 
   const ThemeVariantConfig({
     required this.name,
     required this.cnTheme,
     required this.brightness,
   });
+  final String name;
+  final CnTheme cnTheme;
+  final Brightness brightness;
 }
 
 /// The three theme variants used in golden tests

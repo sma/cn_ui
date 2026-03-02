@@ -359,13 +359,6 @@ class _SummaryRow extends StatelessWidget {
 }
 
 class _MetricCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final String delta;
-  final Color deltaColor;
-  final String headline;
-  final String subtext;
-
   const _MetricCard({
     required this.title,
     required this.value,
@@ -374,6 +367,12 @@ class _MetricCard extends StatelessWidget {
     required this.headline,
     required this.subtext,
   });
+  final String title;
+  final String value;
+  final String delta;
+  final Color deltaColor;
+  final String headline;
+  final String subtext;
 
   @override
   Widget build(BuildContext context) {
@@ -452,10 +451,9 @@ class _MetricCard extends StatelessWidget {
 }
 
 class _VisitorsChart extends StatelessWidget {
+  const _VisitorsChart({required this.range, required this.onRangeChanged});
   final String range;
   final ValueChanged<String> onRangeChanged;
-
-  const _VisitorsChart({required this.range, required this.onRangeChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -553,17 +551,16 @@ class _VisitorsChart extends StatelessWidget {
 }
 
 class _SectionTable extends StatelessWidget {
-  final String selectedTab;
-  final ValueChanged<String> onTabChanged;
-  final int rowsPerPage;
-  final ValueChanged<int> onRowsPerPageChanged;
-
   const _SectionTable({
     required this.selectedTab,
     required this.onTabChanged,
     required this.rowsPerPage,
     required this.onRowsPerPageChanged,
   });
+  final String selectedTab;
+  final ValueChanged<String> onTabChanged;
+  final int rowsPerPage;
+  final ValueChanged<int> onRowsPerPageChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -710,12 +707,6 @@ class _SectionTable extends StatelessWidget {
 }
 
 class _DocumentRow {
-  final String id;
-  final String section;
-  final String type;
-  final int limit;
-  final String owner;
-
   const _DocumentRow({
     required this.id,
     required this.section,
@@ -723,6 +714,11 @@ class _DocumentRow {
     required this.limit,
     required this.owner,
   });
+  final String id;
+  final String section;
+  final String type;
+  final int limit;
+  final String owner;
 }
 
 final List<_DocumentRow> _documentRows = List.generate(68, (index) {

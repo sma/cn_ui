@@ -9,12 +9,6 @@ import 'package:flutter/material.dart';
 ///  * [CnNativeSelect], which provides a more feature-rich select with option groups.
 ///  * [CnCombobox], for a searchable select component.
 class CnSelect<T> extends StatelessWidget {
-  final List<DropdownMenuItem<T>> items;
-  final T? value;
-  final ValueChanged<T?>? onChanged;
-  final String? placeholder;
-  final bool isExpanded;
-
   const CnSelect({
     super.key,
     required this.items,
@@ -23,6 +17,11 @@ class CnSelect<T> extends StatelessWidget {
     this.placeholder,
     this.isExpanded = true,
   });
+  final List<DropdownMenuItem<T>> items;
+  final T? value;
+  final ValueChanged<T?>? onChanged;
+  final String? placeholder;
+  final bool isExpanded;
 
   @override
   Widget build(BuildContext context) {

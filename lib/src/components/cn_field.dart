@@ -13,13 +13,6 @@ enum CnFieldLayout { vertical, horizontal, responsive }
 ///  * [CnFieldGroup], for vertical stacking of fields without borders.
 ///  * [CnField], for individual form fields.
 class CnFieldSet extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry padding;
-  final bool showBorder;
-  final BorderRadiusGeometry? borderRadius;
-  final Color? backgroundColor;
-  final Color? borderColor;
-
   const CnFieldSet({
     super.key,
     required this.child,
@@ -29,6 +22,12 @@ class CnFieldSet extends StatelessWidget {
     this.backgroundColor,
     this.borderColor,
   });
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+  final bool showBorder;
+  final BorderRadiusGeometry? borderRadius;
+  final Color? backgroundColor;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +54,8 @@ class CnFieldSet extends StatelessWidget {
 ///
 ///  * [CnFieldSet], which uses this for its title.
 class CnFieldLegend extends StatelessWidget {
-  final Widget child;
-
   const CnFieldLegend({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +77,9 @@ class CnFieldLegend extends StatelessWidget {
 ///  * [CnFieldSet], for grouped fields with a border.
 ///  * [CnField], for individual form fields.
 class CnFieldGroup extends StatelessWidget {
+  const CnFieldGroup({super.key, required this.children, this.spacing = 16});
   final List<Widget> children;
   final double spacing;
-
-  const CnFieldGroup({super.key, required this.children, this.spacing = 16});
 
   @override
   Widget build(BuildContext context) {
@@ -103,17 +100,6 @@ class CnFieldGroup extends StatelessWidget {
 ///  * [CnFormField], an alternative field wrapper.
 ///  * [CnFieldGroup], for grouping multiple fields.
 class CnField extends StatelessWidget {
-  final Widget child;
-  final Widget? label;
-  final String? labelText;
-  final bool required;
-  final Widget? description;
-  final String? descriptionText;
-  final String? errorText;
-  final CnFieldLayout layout;
-  final double labelWidth;
-  final EdgeInsetsGeometry? padding;
-
   const CnField({
     super.key,
     required this.child,
@@ -127,6 +113,16 @@ class CnField extends StatelessWidget {
     this.labelWidth = 180,
     this.padding,
   });
+  final Widget child;
+  final Widget? label;
+  final String? labelText;
+  final bool required;
+  final Widget? description;
+  final String? descriptionText;
+  final String? errorText;
+  final CnFieldLayout layout;
+  final double labelWidth;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -208,9 +204,8 @@ class CnField extends StatelessWidget {
 
 /// A wrapper for field content in custom field layouts.
 class CnFieldContent extends StatelessWidget {
-  final Widget child;
-
   const CnFieldContent({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -220,9 +215,8 @@ class CnFieldContent extends StatelessWidget {
 
 /// A styled label component for form fields.
 class CnFieldLabel extends StatelessWidget {
-  final Widget child;
-
   const CnFieldLabel({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -239,9 +233,8 @@ class CnFieldLabel extends StatelessWidget {
 
 /// A title component for field sections.
 class CnFieldTitle extends StatelessWidget {
-  final Widget child;
-
   const CnFieldTitle({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -258,9 +251,8 @@ class CnFieldTitle extends StatelessWidget {
 
 /// A description text component for providing field help text.
 class CnFieldDescription extends StatelessWidget {
-  final Widget child;
-
   const CnFieldDescription({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -288,9 +280,8 @@ class CnFieldSeparator extends StatelessWidget {
 
 /// An error message component for displaying field validation errors.
 class CnFieldError extends StatelessWidget {
-  final Widget child;
-
   const CnFieldError({super.key, required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {

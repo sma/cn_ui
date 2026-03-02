@@ -9,12 +9,6 @@ import 'package:flutter/widget_previews.dart';
 ///
 ///  * [Card], the underlying Material widget.
 class CnCard extends StatelessWidget {
-  final Widget? header;
-  final Widget? content;
-  final Widget? footer;
-  final EdgeInsetsGeometry padding;
-  final Widget? child;
-
   const CnCard({
     super.key,
     this.header,
@@ -23,6 +17,11 @@ class CnCard extends StatelessWidget {
     this.padding = const .all(20),
     this.child,
   });
+  final Widget? header;
+  final Widget? content;
+  final Widget? footer;
+  final EdgeInsetsGeometry padding;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {

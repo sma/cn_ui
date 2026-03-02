@@ -18,14 +18,6 @@ enum CnStyle { classic, newYork }
 ///  * [ColorScheme], for Material 3 color configuration.
 @immutable
 class CnTheme extends ThemeExtension<CnTheme> {
-  final CnStyle style;
-  final Color baseColor;
-  final Color themeColor;
-  final String fontFamily;
-  final double radius;
-  final Color menuColor;
-  final Color menuAccent;
-
   const CnTheme({
     this.style = .classic,
     this.baseColor = const Color(0xFFF7F4EF),
@@ -35,6 +27,13 @@ class CnTheme extends ThemeExtension<CnTheme> {
     this.menuColor = const Color(0xFFFDFBF7),
     this.menuAccent = const Color(0xFF1D4ED8),
   });
+  final CnStyle style;
+  final Color baseColor;
+  final Color themeColor;
+  final String fontFamily;
+  final double radius;
+  final Color menuColor;
+  final Color menuAccent;
 
   static CnTheme of(BuildContext context) {
     final theme = Theme.of(context);

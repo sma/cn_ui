@@ -10,16 +10,6 @@ import '../theme/cn_theme.dart';
 ///
 ///  * [CnResizeHandle], the visual handle for dragging.
 class CnResizable extends StatefulWidget {
-  final Axis direction;
-  final Widget primary;
-  final Widget secondary;
-  final double initialRatio;
-  final double minRatio;
-  final double maxRatio;
-  final double handleSize;
-  final ValueChanged<double>? onChanged;
-  final Widget? handle;
-
   const CnResizable({
     super.key,
     required this.primary,
@@ -32,6 +22,15 @@ class CnResizable extends StatefulWidget {
     this.onChanged,
     this.handle,
   });
+  final Axis direction;
+  final Widget primary;
+  final Widget secondary;
+  final double initialRatio;
+  final double minRatio;
+  final double maxRatio;
+  final double handleSize;
+  final ValueChanged<double>? onChanged;
+  final Widget? handle;
 
   @override
   State<CnResizable> createState() => _CnResizableState();
@@ -124,17 +123,16 @@ class _CnResizableState extends State<CnResizable> {
 }
 
 class _ResizeHandleArea extends StatelessWidget {
-  final Axis direction;
-  final double size;
-  final Widget? handle;
-  final ValueChanged<double> onDrag;
-
   const _ResizeHandleArea({
     required this.direction,
     required this.size,
     required this.handle,
     required this.onDrag,
   });
+  final Axis direction;
+  final double size;
+  final Widget? handle;
+  final ValueChanged<double> onDrag;
 
   @override
   Widget build(BuildContext context) {
@@ -165,11 +163,6 @@ class _ResizeHandleArea extends StatelessWidget {
 
 /// A visual handle for resizing panels in a [CnResizable].
 class CnResizeHandle extends StatelessWidget {
-  final Axis direction;
-  final double thickness;
-  final double length;
-  final Color? color;
-
   const CnResizeHandle({
     super.key,
     this.direction = .horizontal,
@@ -177,6 +170,10 @@ class CnResizeHandle extends StatelessWidget {
     this.length = 36,
     this.color,
   });
+  final Axis direction;
+  final double thickness;
+  final double length;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {

@@ -13,11 +13,6 @@ import 'cn_button.dart';
 ///  * [CnSidebar], for sidebar navigation.
 ///  * [CnTabs], for tab navigation.
 class CnNavigationMenu extends StatelessWidget {
-  final List<CnNavigationMenuItem> items;
-  final double spacing;
-  final EdgeInsetsGeometry? padding;
-  final double menuWidth;
-
   const CnNavigationMenu({
     super.key,
     required this.items,
@@ -25,6 +20,10 @@ class CnNavigationMenu extends StatelessWidget {
     this.padding,
     this.menuWidth = 320,
   });
+  final List<CnNavigationMenuItem> items;
+  final double spacing;
+  final EdgeInsetsGeometry? padding;
+  final double menuWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -45,39 +44,36 @@ class CnNavigationMenu extends StatelessWidget {
 
 /// A menu item in a [CnNavigationMenu].
 class CnNavigationMenuItem {
-  final String label;
-  final VoidCallback? onTap;
-  final Widget? leading;
-  final List<CnNavigationMenuLink> links;
-
   const CnNavigationMenuItem({
     required this.label,
     this.onTap,
     this.leading,
     this.links = const [],
   });
+  final String label;
+  final VoidCallback? onTap;
+  final Widget? leading;
+  final List<CnNavigationMenuLink> links;
 }
 
 /// A link within a [CnNavigationMenuItem] dropdown menu.
 class CnNavigationMenuLink {
-  final String title;
-  final String? description;
-  final VoidCallback? onTap;
-  final Widget? leading;
-
   const CnNavigationMenuLink({
     required this.title,
     this.description,
     this.onTap,
     this.leading,
   });
+  final String title;
+  final String? description;
+  final VoidCallback? onTap;
+  final Widget? leading;
 }
 
 class _NavigationMenuItem extends StatelessWidget {
+  const _NavigationMenuItem({required this.item, required this.menuWidth});
   final CnNavigationMenuItem item;
   final double menuWidth;
-
-  const _NavigationMenuItem({required this.item, required this.menuWidth});
 
   @override
   Widget build(BuildContext context) {
