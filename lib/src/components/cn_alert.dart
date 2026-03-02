@@ -1,3 +1,4 @@
+import 'package:cn_ui/previews.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/cn_theme.dart';
@@ -126,6 +127,24 @@ class CnAlert extends StatelessWidget {
         icon: const Icon(Icons.error_outline),
       ),
     };
+  }
+
+  @Preview()
+  static Widget preview() {
+    return Column(
+      spacing: 8,
+      children: [
+        for (final v in CnAlertVariant.values)
+          CnAlert(
+            variant: v,
+            leading: Icon(Icons.hail),
+            title: Text('Title'),
+            description: Text(
+              'Description in multiple lines. Description in multiple lines.',
+            ),
+          ),
+      ],
+    );
   }
 }
 

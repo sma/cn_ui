@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:cn_ui/previews.dart';
 import 'package:flutter/material.dart';
 
 import '../theme/cn_theme.dart';
@@ -67,6 +68,17 @@ class CnBadge extends StatelessWidget {
         border: scheme.error,
       ),
     };
+  }
+
+  @Preview()
+  static Widget preview() {
+    return Column(
+      spacing: 8,
+      children: [
+        for (final v in CnBadgeVariant.values)
+          CnBadge(variant: v, child: Text('Badge')),
+      ],
+    );
   }
 }
 

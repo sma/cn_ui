@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 
 class CnCheckbox extends StatelessWidget {
   final bool value;
@@ -19,7 +20,25 @@ class CnCheckbox extends StatelessWidget {
       spacing: 8,
       children: [
         Checkbox(value: value, onChanged: onChanged),
-        if (label != null) Flexible(child: label!),
+        if (label != null)
+          DefaultTextStyle.merge(
+            style: TextStyle(
+              color: onChanged != null ? null : Theme.of(context).disabledColor,
+            ),
+            child: Flexible(child: label!),
+          ),
+      ],
+    );
+  }
+
+  @Preview()
+  static Widget preview() {
+    return Column(
+      children: [
+        CnCheckbox(value: true, onChanged: (_) {}, label: Text('Label')),
+        CnCheckbox(value: false, onChanged: (_) {}, label: Text('Label')),
+        CnCheckbox(value: true, label: Text('Label')),
+        CnCheckbox(value: false, label: Text('Label')),
       ],
     );
   }

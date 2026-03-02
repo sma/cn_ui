@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 
 /// A container component that displays content with optional header and footer.
 ///
@@ -46,6 +47,24 @@ class CnCard extends StatelessWidget {
 
     return Card(
       child: Padding(padding: padding, child: body),
+    );
+  }
+
+  @Preview()
+  static Widget preview1() {
+    return CnCard(
+      header: Text('Header'),
+      content: Text('The content of the card, multiple lines.'),
+      footer: Text('Footer'),
+    );
+  }
+
+  @Preview()
+  static Widget preview2() {
+    return CnCard(
+      child: Column(
+        children: [Text('A custom child'), Icon(Icons.qr_code, size: 48)],
+      ),
     );
   }
 }
