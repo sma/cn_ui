@@ -15,11 +15,11 @@ enum CnBadgeVariant { primary, secondary, outline, destructive }
 /// See also:
 ///
 ///  * [CnButton], for actionable elements with similar visual variants.
-class CnBadge extends StatelessWidget {
-  const CnBadge({super.key, this.variant = .primary, required this.child});
-  final CnBadgeVariant variant;
-  final Widget child;
-
+class const CnBadge({
+  super.key,
+  final CnBadgeVariant variant = .primary,
+  required final Widget child,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = CnTheme.colorSchemeOf(context);
@@ -31,43 +31,45 @@ class CnBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: visuals.background,
         borderRadius: .circular(math.max(0, cnTheme.radius - 4)),
-        border: Border.all(color: visuals.border),
+        border: .all(color: visuals.border),
       ),
-      child: DefaultTextStyle(
-        style:
-            CnTheme.textThemeOf(
-              context,
-            ).labelSmall?.copyWith(color: visuals.foreground) ??
-            TextStyle(color: visuals.foreground),
-        child: child,
+      child: IconTheme.merge(
+        data: IconThemeData(color: visuals.foreground, size: 16),
+        child: DefaultTextStyle(
+          style:
+              CnTheme.textThemeOf(
+                context,
+              ).labelSmall?.copyWith(color: visuals.foreground) ??
+              TextStyle(color: visuals.foreground),
+          child: child,
+        ),
       ),
     );
   }
 
-  _CnBadgeVisuals _resolveVisuals(CnBadgeVariant variant, ColorScheme scheme) {
-    return switch (variant) {
-      .primary => _CnBadgeVisuals(
-        background: scheme.primary,
-        foreground: scheme.onPrimary,
-        border: scheme.primary,
-      ),
-      .secondary => _CnBadgeVisuals(
-        background: scheme.secondaryContainer,
-        foreground: scheme.onSecondaryContainer,
-        border: scheme.secondaryContainer,
-      ),
-      .outline => _CnBadgeVisuals(
-        background: Colors.transparent,
-        foreground: scheme.onSurface,
-        border: scheme.outline,
-      ),
-      .destructive => _CnBadgeVisuals(
-        background: scheme.error,
-        foreground: scheme.onError,
-        border: scheme.error,
-      ),
-    };
-  }
+  _CnBadgeVisuals _resolveVisuals(CnBadgeVariant variant, ColorScheme scheme) =>
+      switch (variant) {
+        .primary => _CnBadgeVisuals(
+          background: scheme.primary,
+          foreground: scheme.onPrimary,
+          border: scheme.primary,
+        ),
+        .secondary => _CnBadgeVisuals(
+          background: scheme.secondaryContainer,
+          foreground: scheme.onSecondaryContainer,
+          border: scheme.secondaryContainer,
+        ),
+        .outline => _CnBadgeVisuals(
+          background: Colors.transparent,
+          foreground: scheme.onSurface,
+          border: scheme.outline,
+        ),
+        .destructive => _CnBadgeVisuals(
+          background: scheme.error,
+          foreground: scheme.onError,
+          border: scheme.error,
+        ),
+      };
 
   @Preview()
   static Widget preview() {
@@ -81,13 +83,8 @@ class CnBadge extends StatelessWidget {
   }
 }
 
-class _CnBadgeVisuals {
-  const _CnBadgeVisuals({
-    required this.background,
-    required this.foreground,
-    required this.border,
-  });
-  final Color background;
-  final Color foreground;
-  final Color border;
-}
+class const _CnBadgeVisuals({
+  required final Color background,
+  required final Color foreground,
+  required final Color border,
+});

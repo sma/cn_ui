@@ -15,23 +15,15 @@ enum CnButtonGroupOrientation { horizontal, vertical }
 ///
 ///  * [CnToggleGroup], for toggle button groups.
 ///  * [CnButton], for individual buttons.
-class CnButtonGroup extends StatelessWidget {
-  const CnButtonGroup({
-    super.key,
-    required this.children,
-    this.orientation = .horizontal,
-    this.padding,
-    this.borderRadius,
-    this.backgroundColor,
-    this.borderColor,
-  });
-  final List<Widget> children;
-  final CnButtonGroupOrientation orientation;
-  final EdgeInsetsGeometry? padding;
-  final BorderRadiusGeometry? borderRadius;
-  final Color? backgroundColor;
-  final Color? borderColor;
-
+class const CnButtonGroup({
+  super.key,
+  required final List<Widget> children,
+  final CnButtonGroupOrientation orientation = .horizontal,
+  final EdgeInsetsGeometry? padding,
+  final BorderRadiusGeometry? borderRadius,
+  final Color? backgroundColor,
+  final Color? borderColor,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = CnTheme.colorSchemeOf(context);
@@ -42,8 +34,20 @@ class CnButtonGroup extends StatelessWidget {
     final resolvedBorder = borderColor ?? scheme.outlineVariant;
 
     final content = orientation == .horizontal
-        ? Row(mainAxisSize: .min, children: children)
-        : Column(mainAxisSize: .min, children: children);
+        ? IntrinsicHeight(
+            child: Row(
+              mainAxisSize: .min,
+              crossAxisAlignment: .stretch,
+              children: children,
+            ),
+          )
+        : IntrinsicWidth(
+            child: Column(
+              mainAxisSize: .min,
+              crossAxisAlignment: .stretch,
+              children: children,
+            ),
+          );
 
     return _CnButtonGroupScope(
       orientation: orientation,
@@ -53,7 +57,7 @@ class CnButtonGroup extends StatelessWidget {
           borderRadius: resolvedRadius,
           side: BorderSide(color: resolvedBorder),
         ),
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: .antiAlias,
         child: Padding(padding: padding ?? .zero, child: content),
       ),
     );
@@ -61,17 +65,12 @@ class CnButtonGroup extends StatelessWidget {
 }
 
 /// A divider for separating buttons in a [CnButtonGroup].
-class CnButtonGroupSeparator extends StatelessWidget {
-  const CnButtonGroupSeparator({
-    super.key,
-    this.orientation,
-    this.thickness = 1,
-    this.color,
-  });
-  final CnButtonGroupOrientation? orientation;
-  final double thickness;
-  final Color? color;
-
+class const CnButtonGroupSeparator({
+  super.key,
+  final CnButtonGroupOrientation? orientation,
+  final double thickness = 1,
+  final Color? color,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = CnTheme.colorSchemeOf(context);
@@ -98,17 +97,12 @@ class CnButtonGroupSeparator extends StatelessWidget {
 }
 
 /// A text label within a [CnButtonGroup].
-class CnButtonGroupText extends StatelessWidget {
-  const CnButtonGroupText({
-    super.key,
-    required this.child,
-    this.padding,
-    this.style,
-  });
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-  final TextStyle? style;
-
+class const CnButtonGroupText({
+  super.key,
+  required final Widget child,
+  final EdgeInsetsGeometry? padding,
+  final TextStyle? style,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = CnTheme.colorSchemeOf(context);
@@ -121,19 +115,20 @@ class CnButtonGroupText extends StatelessWidget {
 
     return Padding(
       padding:
-          padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: DefaultTextStyle(
         style: resolvedStyle ?? TextStyle(color: scheme.onSurfaceVariant),
+        textAlign: .center,
         child: child,
       ),
     );
   }
 }
 
-class _CnButtonGroupScope extends InheritedWidget {
-  const _CnButtonGroupScope({required this.orientation, required super.child});
-  final CnButtonGroupOrientation orientation;
-
+class const _CnButtonGroupScope({
+  required final CnButtonGroupOrientation orientation,
+  required super.child,
+}) extends InheritedWidget {
   static _CnButtonGroupScope? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<_CnButtonGroupScope>();
   }

@@ -123,21 +123,21 @@ CnButtonGroup(
   children: [
     CnButton(
       variant: .ghost,
-      borderRadius: BorderRadius.horizontal(left: Radius.circular(radius)),
+      borderRadius: .horizontal(left: .circular(radius)),
       onPressed: () {},
       child: Text('Back'),
     ),
     CnButtonGroupSeparator(),
     CnButton(
       variant: .ghost,
-      borderRadius: BorderRadius.zero,
+      borderRadius: .zero,
       onPressed: () {},
       child: Text('Details'),
     ),
     CnButtonGroupSeparator(),
     CnButton(
       variant: .ghost,
-      borderRadius: BorderRadius.horizontal(right: Radius.circular(radius)),
+      borderRadius: .horizontal(right: .circular(radius)),
       onPressed: () {},
       child: Text('Next'),
     ),
@@ -192,7 +192,7 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
             CnBadge(
               child: Row(
                 mainAxisSize: .min,
-                spacing: 6,
+                spacing: 4,
                 children: const [
                   Icon(Icons.fiber_manual_record, size: 10),
                   Text('Live'),
@@ -203,9 +203,9 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
               variant: .outline,
               child: Row(
                 mainAxisSize: .min,
-                spacing: 6,
+                spacing: 4,
                 children: const [
-                  Icon(Icons.local_fire_department_outlined, size: 14),
+                  Icon(Icons.local_fire_department_outlined),
                   Text('Trending'),
                 ],
               ),
@@ -215,9 +215,9 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         code: '''CnBadge(
   child: Row(
     mainAxisSize: .min,
-    spacing: 6,
+    spacing: 4,
     children: [
-      Icon(Icons.fiber_manual_record, size: 10),
+      Icon(Icons.fiber_manual_record),
       Text('Live'),
     ],
   ),
@@ -5556,31 +5556,26 @@ class _TypographyRichPreview extends StatelessWidget {
   }
 }
 
-class _ButtonGroupJoinedPreview extends StatelessWidget {
-  const _ButtonGroupJoinedPreview();
-
+class const _ButtonGroupJoinedPreview() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radius = CnTheme.of(context).radius - 4;
-    final padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 10);
 
     return CnButtonGroup(
       children: [
         CnButton(
           variant: .ghost,
-          padding: padding,
-          borderRadius: BorderRadius.horizontal(left: Radius.circular(radius)),
+          borderRadius: .horizontal(left: .circular(radius)),
           onPressed: () {},
           child: Row(
             mainAxisSize: .min,
-            spacing: 6,
-            children: const [Icon(Icons.chevron_left, size: 18), Text('Back')],
+            spacing: 4,
+            children: const [Icon(Icons.chevron_left), Text('Back')],
           ),
         ),
         const CnButtonGroupSeparator(),
         CnButton(
           variant: .ghost,
-          padding: padding,
           borderRadius: BorderRadius.zero,
           onPressed: () {},
           child: const Text('Details'),
@@ -5588,13 +5583,12 @@ class _ButtonGroupJoinedPreview extends StatelessWidget {
         const CnButtonGroupSeparator(),
         CnButton(
           variant: .ghost,
-          padding: padding,
-          borderRadius: BorderRadius.horizontal(right: Radius.circular(radius)),
+          borderRadius: .horizontal(right: .circular(radius)),
           onPressed: () {},
           child: Row(
             mainAxisSize: .min,
-            spacing: 6,
-            children: const [Text('Next'), Icon(Icons.chevron_right, size: 18)],
+            spacing: 4,
+            children: const [Text('Next'), Icon(Icons.chevron_right)],
           ),
         ),
       ],
@@ -5602,23 +5596,29 @@ class _ButtonGroupJoinedPreview extends StatelessWidget {
   }
 }
 
-class _ButtonGroupStackedPreview extends StatelessWidget {
-  const _ButtonGroupStackedPreview();
-
+class const _ButtonGroupStackedPreview() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final radius = CnTheme.of(context).radius - 4;
+
     return CnButtonGroup(
       orientation: .vertical,
       children: [
         CnButton(
           variant: .ghost,
+          borderRadius: .vertical(top: .circular(radius)),
           onPressed: () {},
           child: const Text('Personal'),
         ),
         const CnButtonGroupSeparator(),
         const CnButtonGroupText(child: Text('or')),
         const CnButtonGroupSeparator(),
-        CnButton(variant: .ghost, onPressed: () {}, child: const Text('Team')),
+        CnButton(
+          variant: .ghost,
+          borderRadius: .vertical(bottom: .circular(radius)),
+          onPressed: () {},
+          child: const Text('Team'),
+        ),
       ],
     );
   }
