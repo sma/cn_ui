@@ -17,43 +17,56 @@ enum CnStyle { classic, newYork }
 ///  * [ThemeExtension], the Flutter base class for theme extensions.
 ///  * [ColorScheme], for Material 3 color configuration.
 @immutable
-class CnTheme extends ThemeExtension<CnTheme> {
-  const CnTheme({
-    this.style = .classic,
-    this.baseColor = const Color(0xFFF7F4EF),
-    this.themeColor = const Color(0xFF1D4ED8),
-    this.fontFamily = 'Space Grotesk',
-    this.radius = 12,
-    this.menuColor = const Color(0xFFFDFBF7),
-    this.menuAccent = const Color(0xFF1D4ED8),
-  });
-  final CnStyle style;
-  final Color baseColor;
-  final Color themeColor;
-  final String fontFamily;
-  final double radius;
-  final Color menuColor;
-  final Color menuAccent;
-
+class const CnTheme({
+  final CnStyle style = .classic,
+  final Color baseColor = const Color(0xFFF7F4EF),
+  final Color themeColor = const Color(0xFF1D4ED8),
+  final String fontFamily = 'Space Grotesk',
+  final double radius = 12,
+  final Color menuColor = const Color(0xFFFDFBF7),
+  final Color menuAccent = const Color(0xFF1D4ED8),
+}) extends ThemeExtension<CnTheme> {
+  /// Returns the current [CnTheme].
   static CnTheme of(BuildContext context) {
     final theme = Theme.of(context);
     return theme.extension<CnTheme>() ?? const CnTheme();
   }
 
+  /// Returns the current Material text theme.
   static TextTheme textThemeOf(BuildContext context) {
     return TextTheme.of(context);
   }
 
+  /// Returns the current Material color scheme.
   static ColorScheme colorSchemeOf(BuildContext context) {
     return ColorScheme.of(context);
   }
 
-  ThemeData toThemeData({Brightness brightness = Brightness.light}) {
-    final baseScheme = ColorScheme.fromSeed(
-      seedColor: themeColor,
+  /// Converts this CN theme into a Material theme.
+  ThemeData toThemeData({Brightness brightness = .light}) {
+    Color matching(Color c) => ThemeData.estimateBrightnessForColor(c) == .light
+        ? Colors.black
+        : Colors.white;
+
+    final secondaryColor = Color.alphaBlend(Colors.white70, themeColor);
+
+    final colorScheme = ColorScheme(
       brightness: brightness,
+      primary: themeColor,
+      onPrimary: matching(themeColor),
+      secondary: secondaryColor,
+      onSecondary: matching(secondaryColor),
+      error: Colors.red,
+      onError: matching(Colors.red),
+      surface: baseColor,
+      onSurface: matching(baseColor),
+      // primaryContainer: Colors.green,
+      // secondaryContainer: Colors.blue,
+      outline: Colors.black38,
+      outlineVariant: Colors.black12,
+      surfaceTint: Colors.pink,
+      surfaceBright: Colors.purple,
     );
-    final colorScheme = baseScheme.copyWith(surface: baseColor);
 
     final baseTextTheme = ThemeData(brightness: brightness).textTheme;
     TextTheme textTheme;
@@ -76,9 +89,8 @@ class CnTheme extends ThemeExtension<CnTheme> {
 
     return ThemeData(
       useMaterial3: true,
-      visualDensity: .compact,
+      visualDensity: .standard,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: colorScheme.surface,
       textTheme: textTheme,
       dividerTheme: DividerThemeData(color: colorScheme.outlineVariant),
       cardTheme: CardThemeData(

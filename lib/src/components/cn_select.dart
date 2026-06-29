@@ -1,3 +1,4 @@
+import 'package:cn_ui/cn_ui.dart';
 import 'package:flutter/material.dart';
 
 /// A dropdown select component that wraps Flutter's DropdownButtonFormField.
@@ -25,6 +26,7 @@ class CnSelect<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cnTheme = CnTheme.of(context);
     return DropdownButtonFormField<T>(
       key: ValueKey(value),
       initialValue: value,
@@ -32,6 +34,9 @@ class CnSelect<T> extends StatelessWidget {
       onChanged: onChanged,
       isExpanded: isExpanded,
       decoration: InputDecoration(hintText: placeholder),
+      borderRadius: .circular(cnTheme.radius),
+      dropdownColor: cnTheme.menuColor,
+      isDense: true,
     );
   }
 }

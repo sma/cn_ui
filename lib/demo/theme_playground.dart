@@ -410,7 +410,7 @@ class _TokenMenuPreviewState extends State<_TokenMenuPreview> {
     return _TokenPreviewCard(
       title: 'Menu tokens',
       child: SizedBox(
-        height: 220,
+        height: 250,
         child: CnSidebarProvider(
           controller: controller,
           child: CnSidebar(
@@ -587,7 +587,16 @@ class _TokenTableRow extends StatelessWidget {
   }
 }
 
-const _fonts = ['Space Grotesk', 'Sora', 'Fraunces', 'Plus Jakarta Sans'];
+const _fonts = [
+  'Geist',
+  'Figtree',
+  'Space Grotesk',
+  'Sora',
+  'Fraunces',
+  'IBM Plex Sans',
+  'IBM Plex Serif',
+  'IBM Plex Mono',
+];
 
 const _baseColors = [
   _ColorOption('Paper', Color(0xFFF7F4EF)),

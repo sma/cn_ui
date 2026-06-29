@@ -14,25 +14,26 @@ class HomePage extends StatelessWidget {
     final cnTheme = CnTheme.of(context);
 
     return SingleChildScrollView(
-      padding: const .symmetric(horizontal: 28, vertical: 24),
+      padding: const .all(24),
       child: Column(
         crossAxisAlignment: .start,
-        spacing: 28,
+        spacing: 32,
         children: [
           Container(
-            padding: const .all(28),
+            padding: const .all(32),
             decoration: BoxDecoration(
               borderRadius: .circular(cnTheme.radius + 8),
               gradient: LinearGradient(
                 colors: [
-                  scheme.primaryContainer,
+                  scheme.surface,
                   scheme.secondaryContainer,
+                  scheme.primaryContainer,
                   scheme.surface,
                 ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: .topStart,
+                end: .bottomEnd,
               ),
-              border: Border.all(color: scheme.outlineVariant),
+              border: .all(color: scheme.outlineVariant),
             ),
             child: _HeroCopy(
               onBrowseComponents: onBrowseComponents,
@@ -127,8 +128,7 @@ class _HeroCopy extends StatelessWidget {
           style: CnTheme.textThemeOf(context).displaySmall,
         ),
         Text(
-          'A chadcn/ui-inspired component library with themeable tokens, '
-          'Flutter-native widgets, and live code samples.',
+          'A chadcn/ui-inspired component library with themeable tokens, Flutter-native widgets, and live code samples.',
           style: CnTheme.textThemeOf(context).titleMedium,
         ),
         Wrap(
@@ -141,7 +141,7 @@ class _HeroCopy extends StatelessWidget {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 8),
+          padding: const .only(top: 8),
           child: Wrap(
             spacing: 12,
             runSpacing: 12,
