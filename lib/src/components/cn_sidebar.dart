@@ -6,7 +6,7 @@ import '../theme/cn_theme.dart';
 
 /// A controller for managing sidebar collapse state.
 class CnSidebarController extends ChangeNotifier {
-  CnSidebarController({bool collapsed = false}) : _collapsed = collapsed;
+  CnSidebarController({this._collapsed = false});
   bool _collapsed;
 
   bool get collapsed => _collapsed;
