@@ -55,7 +55,7 @@ class CnCollapsible extends StatefulWidget {
   @override
   State<CnCollapsible> createState() => _CnCollapsibleState();
 
-  @Preview()
+  @Preview(size: Size(260, 260))
   static Widget preview() {
     return Column(
       spacing: 16,

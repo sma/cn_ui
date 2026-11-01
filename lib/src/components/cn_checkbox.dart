@@ -33,11 +33,13 @@ class CnCheckbox extends StatelessWidget {
   @Preview()
   static Widget preview() {
     return Column(
+      spacing: 16,
+      crossAxisAlignment: .start,
       children: [
-        CnCheckbox(value: true, onChanged: (_) {}, label: Text('Label')),
-        CnCheckbox(value: false, onChanged: (_) {}, label: Text('Label')),
-        CnCheckbox(value: true, label: Text('Label')),
-        CnCheckbox(value: false, label: Text('Label')),
+        CnCheckbox(value: true, onChanged: (_) {}, label: Text('Label (on)')),
+        CnCheckbox(value: false, onChanged: (_) {}, label: Text('Label (off)')),
+        CnCheckbox(value: true, label: Text('Label (disabled on)')),
+        CnCheckbox(value: false, label: Text('Label (disabled off)')),
       ],
     );
   }

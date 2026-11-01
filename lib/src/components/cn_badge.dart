@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:cn_ui/previews.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
@@ -27,7 +27,7 @@ class const CnBadge({
     final visuals = _resolveVisuals(variant, scheme);
 
     return Container(
-      padding: const .symmetric(horizontal: 10, vertical: 4),
+      padding: const .symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: visuals.background,
         borderRadius: .circular(math.max(0, cnTheme.radius - 4)),
@@ -73,10 +73,12 @@ class const CnBadge({
   @Preview()
   static Widget preview() {
     return Column(
-      spacing: 8,
+      spacing: 16,
       children: [
         for (final v in CnBadgeVariant.values)
           CnBadge(variant: v, child: Text('Badge')),
+        for (final v in CnBadgeVariant.values)
+          CnBadge(variant: v, child: Icon(Icons.hail)),
       ],
     );
   }

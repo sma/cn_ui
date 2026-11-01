@@ -1,4 +1,4 @@
-import 'package:cn_ui/previews.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
@@ -127,7 +127,7 @@ class CnAlert extends StatelessWidget {
     };
   }
 
-  @Preview()
+  @Preview(size: Size(260, 450))
   static Widget preview() {
     return Column(
       spacing: 8,

@@ -1,5 +1,5 @@
 import 'package:cn_ui/cn_ui.dart';
-// import 'package:cn_ui/previews.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// A component for displaying multiple overlapping avatars.
@@ -20,11 +20,18 @@ class CnAvatarGroup extends StatelessWidget {
     required this.children,
   }) : assert(overlap > 0 && overlap <= 1, 'overlap must be between 0 and 1.');
 
-  // @Preview()
+  @Preview()
   static Widget preview() {
-    return CnAvatarGroup(
-      direction: .horizontal,
-      children: [CnAvatar(), CnAvatar(), CnAvatar()],
+    return Column(
+      spacing: 16,
+      children: [
+        for (final v in Axis.values)
+          for (var i = 1; i <= 3; i++)
+            CnAvatarGroup(
+              direction: v,
+              children: [CnAvatar(), CnAvatar(), CnAvatar()].sublist(0, i),
+            ),
+      ],
     );
   }
 

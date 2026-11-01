@@ -49,16 +49,18 @@ class CnCard extends StatelessWidget {
     );
   }
 
-  @Preview()
+  @Preview(size: Size(260, 180))
   static Widget preview1() {
     return CnCard(
       header: Text('Header'),
-      content: Text('The content of the card, multiple lines.'),
+      content: Text(
+        'The content of the card, multiple lines. The content of the card, multiple lines.',
+      ),
       footer: Text('Footer'),
     );
   }
 
-  @Preview()
+  @Preview(size: Size(260, 120))
   static Widget preview2() {
     return CnCard(
       child: Column(

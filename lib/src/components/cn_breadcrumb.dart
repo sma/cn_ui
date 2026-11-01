@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:cn_ui/previews.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
@@ -64,17 +64,20 @@ class CnBreadcrumb extends StatelessWidget {
 
   @Preview()
   static Widget preview1() {
-    return PreviewVariants([
-      for (var i = 1; i <= 4; i++)
-        CnBreadcrumb(
-          items: [
-            CnBreadcrumbItem(label: Text('Home'), leading: Icon(Icons.home)),
-            CnBreadcrumbItem(label: Text('Pages')),
-            CnBreadcrumbItem(label: Text('About')),
-            CnBreadcrumbItem(label: Text('Imprint')),
-          ].sublist(0, i),
-        ),
-    ]);
+    return Column(
+      spacing: 16,
+      children: [
+        for (var i = 1; i <= 4; i++)
+          CnBreadcrumb(
+            items: [
+              CnBreadcrumbItem(label: Text('Home'), leading: Icon(Icons.home)),
+              CnBreadcrumbItem(label: Text('Pages')),
+              CnBreadcrumbItem(label: Text('About')),
+              CnBreadcrumbItem(label: Text('Imprint')),
+            ].sublist(0, i),
+          ),
+      ],
+    );
   }
 
   @Preview()
