@@ -35,7 +35,7 @@ class const CnEmpty({
               children: [
                 if (title != null)
                   DefaultTextStyle.merge(
-                    style: theme.text.lg.medium,
+                    style: theme.heading.lg.medium,
                     textAlign: TextAlign.center,
                     child: title!,
                   ),

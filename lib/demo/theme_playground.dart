@@ -2,14 +2,76 @@ import 'package:material_ui/material_ui.dart';
 
 import '../cn_ui.dart';
 
+/// The choices of the theme playground.
+class const ThemeSelection({
+  final Brightness brightness = .light,
+  final CnBaseColor base = .neutral,
+  final CnAccentColor accent = .base,
+  final CnAccentColor? chart,
+  final String font = 'Geist',
+  final String? headingFont,
+  final String monoFont = 'Geist Mono',
+  final double radius = 10,
+}) {
+  CnTheme toTheme() {
+    return CnTheme(
+      colors: CnColors.palette(
+        base: base,
+        theme: accent,
+        chart: chart,
+        brightness: brightness,
+      ),
+      font: font,
+      headingFont: headingFont,
+      monoFont: monoFont,
+      radius: radius,
+    );
+  }
+
+  ThemeSelection _with({
+    Brightness? brightness,
+    CnBaseColor? base,
+    CnAccentColor? accent,
+    CnAccentColor? chart,
+    String? font,
+    String? headingFont,
+    bool inheritHeadingFont = false,
+    String? monoFont,
+    double? radius,
+  }) {
+    return ThemeSelection(
+      brightness: brightness ?? this.brightness,
+      base: base ?? this.base,
+      accent: accent ?? this.accent,
+      chart: chart ?? this.chart,
+      font: font ?? this.font,
+      headingFont: inheritHeadingFont ? null : headingFont ?? this.headingFont,
+      monoFont: monoFont ?? this.monoFont,
+      radius: radius ?? this.radius,
+    );
+  }
+}
+
 class ThemePlayground extends StatelessWidget {
   const ThemePlayground({
     super.key,
-    required this.theme,
+    required this.selection,
     required this.onChanged,
   });
-  final CnTheme theme;
-  final ValueChanged<CnTheme> onChanged;
+  final ThemeSelection selection;
+  final ValueChanged<ThemeSelection> onChanged;
+
+  String _accentLabel(CnAccentColor accent) {
+    return accent == .base ? _capitalize(selection.base) : _capitalize(accent);
+  }
+
+  Color _accentSwatch(CnAccentColor accent) {
+    return CnColors.palette(
+      base: selection.base,
+      theme: accent,
+      brightness: selection.brightness,
+    ).primary;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +83,7 @@ class ThemePlayground extends StatelessWidget {
         children: [
           Text(
             'Theme Playground',
-            style: CnTheme.of(context).text.xl2.semibold,
+            style: CnTheme.of(context).heading.xl2.semibold,
           ),
           Text(
             'Tune the tokens used by every component. This mirrors the '
@@ -62,44 +124,100 @@ class ThemePlayground extends StatelessWidget {
                           children: [
                             _TokenCard(
                               title: 'Mode',
-                              child: SegmentedButton<Brightness>(
-                                segments: const [
-                                  ButtonSegment(
+                              child: CnToggleGroup<Brightness>(
+                                spacing: 0,
+                                required: true,
+                                variant: .outline,
+                                size: .sm,
+                                value: {selection.brightness},
+                                onChanged: (value) {
+                                  if (value.isNotEmpty) {
+                                    onChanged(
+                                      selection._with(brightness: value.first),
+                                    );
+                                  }
+                                },
+                                items: const [
+                                  CnToggleGroupItem(
                                     value: .light,
-                                    label: Text('Light'),
+                                    child: Text('Light'),
                                   ),
-                                  ButtonSegment(
+                                  CnToggleGroupItem(
                                     value: .dark,
-                                    label: Text('Dark'),
+                                    child: Text('Dark'),
                                   ),
                                 ],
-                                selected: {theme.colors.brightness},
-                                onSelectionChanged: (value) {
-                                  onChanged(
-                                    theme.copyWith(
-                                      colors: value.first == .dark
-                                          ? CnColors.dark
-                                          : CnColors.light,
-                                    ),
-                                  );
-                                },
                               ),
                             ),
                             _TokenCard(
-                              title: 'Primary Color',
-                              child: _PrimarySelect(
-                                colors: theme.colors,
-                                onChanged: (colors) =>
-                                    onChanged(theme.copyWith(colors: colors)),
+                              title: 'Base Color',
+                              child: _ChoiceSelect<CnBaseColor>(
+                                value: selection.base,
+                                options: CnBaseColor.values,
+                                label: _capitalize,
+                                swatch: (base) => CnColors.palette(
+                                  base: base,
+                                  brightness: selection.brightness,
+                                ).mutedForeground,
+                                onChanged: (value) =>
+                                    onChanged(selection._with(base: value)),
                               ),
                             ),
                             _TokenCard(
-                              title: 'Font Family',
-                              child: _FontSelect(
-                                value: theme.fontFamily,
+                              title: 'Theme',
+                              child: _ChoiceSelect<CnAccentColor>(
+                                value: selection.accent,
+                                options: CnAccentColor.values,
+                                label: (accent) => _accentLabel(accent),
+                                swatch: _accentSwatch,
+                                onChanged: (value) =>
+                                    onChanged(selection._with(accent: value)),
+                              ),
+                            ),
+                            _TokenCard(
+                              title: 'Chart Color',
+                              child: _ChoiceSelect<CnAccentColor>(
+                                value: selection.chart ?? selection.accent,
+                                options: CnAccentColor.values,
+                                label: (accent) => _accentLabel(accent),
+                                swatch: _accentSwatch,
+                                onChanged: (value) =>
+                                    onChanged(selection._with(chart: value)),
+                              ),
+                            ),
+                            _TokenCard(
+                              title: 'Heading',
+                              child: _ChoiceSelect<String>(
+                                value: selection.headingFont ?? _inheritFont,
+                                options: const [_inheritFont, ..._fonts],
+                                label: (font) => font,
                                 onChanged: (value) => onChanged(
-                                  theme.copyWith(fontFamily: value),
+                                  value == _inheritFont
+                                      ? selection._with(
+                                          inheritHeadingFont: true,
+                                        )
+                                      : selection._with(headingFont: value),
                                 ),
+                              ),
+                            ),
+                            _TokenCard(
+                              title: 'Font',
+                              child: _ChoiceSelect<String>(
+                                value: selection.font,
+                                options: _fonts,
+                                label: (font) => font,
+                                onChanged: (value) =>
+                                    onChanged(selection._with(font: value)),
+                              ),
+                            ),
+                            _TokenCard(
+                              title: 'Mono',
+                              child: _ChoiceSelect<String>(
+                                value: selection.monoFont,
+                                options: _monoFonts,
+                                label: (font) => font,
+                                onChanged: (value) =>
+                                    onChanged(selection._with(monoFont: value)),
                               ),
                             ),
                             _TokenCard(
@@ -108,14 +226,16 @@ class ThemePlayground extends StatelessWidget {
                                 crossAxisAlignment: .start,
                                 spacing: 8,
                                 children: [
-                                  Text('${theme.radius.toStringAsFixed(0)} px'),
+                                  Text(
+                                    '${selection.radius.toStringAsFixed(0)} px',
+                                  ),
                                   CnSlider(
-                                    value: theme.radius,
+                                    value: selection.radius,
                                     min: 0,
                                     max: 20,
                                     divisions: 20,
                                     onChanged: (value) => onChanged(
-                                      theme.copyWith(radius: value),
+                                      selection._with(radius: value),
                                     ),
                                   ),
                                 ],
@@ -147,7 +267,7 @@ class _Section extends StatelessWidget {
       crossAxisAlignment: .start,
       spacing: 12,
       children: [
-        Text(title, style: CnTheme.of(context).text.lg.semibold),
+        Text(title, style: CnTheme.of(context).heading.lg.semibold),
         child,
       ],
     );
@@ -164,84 +284,56 @@ class _TokenCard extends StatelessWidget {
     return SizedBox(
       width: 280,
       child: CnCard(
-        title: Text(title, style: CnTheme.of(context).text.base.semibold),
+        title: Text(title, style: CnTheme.of(context).heading.base.semibold),
         content: child,
       ),
     );
   }
 }
 
-class _ColorOption {
-  const _ColorOption(this.label, this.color);
-  final String label;
-  final Color color;
+String _capitalize(Enum value) {
+  return value.name[0].toUpperCase() + value.name.substring(1);
 }
 
-class _PrimarySelect extends StatelessWidget {
-  const _PrimarySelect({required this.colors, required this.onChanged});
-  final CnColors colors;
-  final ValueChanged<CnColors> onChanged;
-
+class const _ChoiceSelect<T>({
+  required final T value,
+  required final List<T> options,
+  required final String Function(T option) label,
+  final Color Function(T option)? swatch,
+  required final ValueChanged<T> onChanged,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final base = colors.brightness == .dark ? CnColors.dark : CnColors.light;
-    final options = [_ColorOption('Neutral', base.primary), ..._primaryColors];
+    final colors = CnTheme.of(context).colors;
 
-    return CnSelect<int>(
-      value: colors.primary.toARGB32(),
+    return CnSelect<T>(
+      value: value,
       items: [
         for (final option in options)
           CnSelectItem(
-            value: option.color.toARGB32(),
-            child: Row(
-              spacing: 8,
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: option.color,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: colors.border),
+            value: option,
+            child: swatch == null
+                ? Text(label(option))
+                : Row(
+                    spacing: 8,
+                    children: [
+                      Container(
+                        width: 16,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: swatch!(option),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: colors.border),
+                        ),
+                      ),
+                      Text(label(option)),
+                    ],
                   ),
-                ),
-                Text(option.label),
-              ],
-            ),
           ),
       ],
-      onChanged: (value) {
-        if (value == null) {
-          return;
-        }
-        onChanged(
-          value == base.primary.toARGB32()
-              ? base
-              : base.copyWith(
-                  primary: Color(value),
-                  primaryForeground: const Color(0xFFFFFFFF),
-                ),
-        );
-      },
-    );
-  }
-}
-
-class _FontSelect extends StatelessWidget {
-  const _FontSelect({required this.value, required this.onChanged});
-  final String value;
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return CnSelect<String>(
-      value: value,
-      items: [
-        for (final font in _fonts) CnSelectItem(value: font, child: Text(font)),
-      ],
-      onChanged: (value) {
-        if (value != null) {
-          onChanged(value);
+      onChanged: (next) {
+        if (next != null) {
+          onChanged(next);
         }
       },
     );
@@ -258,7 +350,7 @@ class _TokenPreviewCard extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: CnCard(
-        title: Text(title, style: CnTheme.of(context).text.base.semibold),
+        title: Text(title, style: CnTheme.of(context).heading.base.semibold),
         content: child,
       ),
     );
@@ -278,7 +370,7 @@ class _TokenSurfacePreview extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 12,
         children: [
-          Text('Design System', style: CnTheme.of(context).text.lg.semibold),
+          Text('Design System', style: CnTheme.of(context).heading.lg.semibold),
           Text(
             'Blend typography, color, and tone from a single theme.',
             style: CnTheme.of(context).text.xs
@@ -554,21 +646,42 @@ class _TokenTableRow extends StatelessWidget {
   }
 }
 
+const _inheritFont = 'Inherit';
+
+// The fonts of https://ui.shadcn.com/create.
 const _fonts = [
   'Geist',
+  'Inter',
+  'Noto Sans',
+  'Nunito Sans',
   'Figtree',
+  'Roboto',
+  'Raleway',
+  'DM Sans',
+  'Public Sans',
+  'Outfit',
+  'Oxanium',
+  'Manrope',
   'Space Grotesk',
-  'Sora',
-  'Fraunces',
+  'Montserrat',
   'IBM Plex Sans',
-  'IBM Plex Serif',
-  'IBM Plex Mono',
+  'Source Sans 3',
+  'Instrument Sans',
+  'Geist Mono',
+  'JetBrains Mono',
+  'Noto Serif',
+  'Roboto Slab',
+  'Merriweather',
+  'Lora',
+  'Playfair Display',
+  'EB Garamond',
+  'Instrument Serif',
 ];
 
-const _primaryColors = [
-  _ColorOption('Indigo', Color(0xFF1D4ED8)),
-  _ColorOption('Emerald', Color(0xFF047857)),
-  _ColorOption('Coral', Color(0xFFF97316)),
-  _ColorOption('Amber', Color(0xFFB45309)),
-  _ColorOption('Rose', Color(0xFFBE123C)),
+// Two with serifs, two without.
+const _monoFonts = [
+  'Courier Prime',
+  'IBM Plex Mono',
+  'Geist Mono',
+  'JetBrains Mono',
 ];

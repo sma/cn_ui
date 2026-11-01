@@ -29,20 +29,23 @@ class const CnSidebar({
     return _CnSidebarScope(
       collapsed: collapsed,
       onCollapsedChanged: onCollapsedChanged,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOut,
-        width: collapsed ? collapsedWidth : expandedWidth,
-        padding: const .all(8),
-        clipBehavior: Clip.antiAlias,
+      child: DecoratedBox(
         decoration: BoxDecoration(
           color: colors.sidebar,
           borderRadius: .circular(theme.radii.md),
           border: Border.all(color: colors.sidebarBorder),
         ),
-        child: DefaultTextStyle.merge(
-          style: theme.text.sm.copyWith(color: colors.sidebarForeground),
-          child: child,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+          width: collapsed ? collapsedWidth : expandedWidth,
+          padding: const .all(8),
+          clipBehavior: Clip.antiAlias,
+          decoration: const BoxDecoration(),
+          child: DefaultTextStyle.merge(
+            style: theme.text.sm.copyWith(color: colors.sidebarForeground),
+            child: child,
+          ),
         ),
       ),
     );
@@ -237,10 +240,9 @@ class const CnSidebarItem({
       child: IconTheme.merge(
         data: IconThemeData(color: foreground, size: 16),
         child: DefaultTextStyle.merge(
-          style: theme.text.sm.copyWith(
-            color: foreground,
-            fontWeight: selected ? .w500 : .w400,
-          ),
+          style: theme.text.sm
+              .weight(selected ? .w500 : .w400)
+              .copyWith(color: foreground),
           child: collapsed
               ? Center(child: leading ?? label)
               : Row(

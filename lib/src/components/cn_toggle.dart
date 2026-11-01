@@ -47,12 +47,11 @@ class const CnToggle({
     };
 
     return Material(
-      color: Colors.transparent,
+      type: MaterialType.transparency,
       child: InkWell(
         borderRadius: radius,
         onTap: enabled ? () => onChanged!(!value) : null,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
+        child: Container(
           padding: const .symmetric(horizontal: 8),
           constraints: BoxConstraints(minHeight: height, minWidth: height),
           decoration: BoxDecoration(

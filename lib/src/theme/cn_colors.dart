@@ -1,5 +1,32 @@
 import 'package:flutter/widgets.dart';
 
+part 'cn_palettes.dart';
+
+/// The base colors of shadcn/ui. They tint the neutral surfaces and text.
+enum CnBaseColor { neutral, stone, zinc, mauve, olive, mist, taupe }
+
+/// The theme colors of shadcn/ui. [base] uses the colors of the base color.
+enum CnAccentColor {
+  base,
+  amber,
+  blue,
+  cyan,
+  emerald,
+  fuchsia,
+  green,
+  indigo,
+  lime,
+  orange,
+  pink,
+  purple,
+  red,
+  rose,
+  sky,
+  teal,
+  violet,
+  yellow,
+}
+
 /// A color token that also knows how it looks in each widget state.
 ///
 /// It can be used as a plain [Color], which is its rest value, or as a
@@ -87,85 +114,41 @@ class const CnColors({
   required final CnColor sidebarBorder,
   required final CnColor sidebarRing,
 }) {
+  /// Combines the choices of https://ui.shadcn.com/create.
+  ///
+  /// [theme] sets the primary colors. [chart] sets the chart colors and
+  /// defaults to [theme].
+  factory CnColors.palette({
+    CnBaseColor base = .neutral,
+    CnAccentColor theme = .base,
+    CnAccentColor? chart,
+    Brightness brightness = .light,
+  }) {
+    final isDark = brightness == .dark;
+    final palette = _baseColors[base]!;
+
+    _Accent? accentOf(CnAccentColor color) {
+      final accents = _accents[color];
+      return isDark ? accents?.dark : accents?.light;
+    }
+
+    final neutral = isDark ? palette.dark : palette.light;
+    final colors = accentOf(theme)?.applyTo(neutral) ?? neutral;
+    final charts = accentOf(chart ?? theme);
+    return colors.copyWith(
+      chart1: charts?.chart1 ?? neutral.chart1,
+      chart2: charts?.chart2 ?? neutral.chart2,
+      chart3: charts?.chart3 ?? neutral.chart3,
+      chart4: charts?.chart4 ?? neutral.chart4,
+      chart5: charts?.chart5 ?? neutral.chart5,
+    );
+  }
+
   /// The shadcn/ui neutral theme in light mode.
-  static const light = CnColors(
-    brightness: Brightness.light,
-    background: CnColor(0xFFFFFFFF),
-    foreground: CnColor.flat(0xFF0A0A0A),
-    card: CnColor(0xFFFFFFFF),
-    cardForeground: CnColor.flat(0xFF0A0A0A),
-    popover: CnColor(0xFFFFFFFF),
-    popoverForeground: CnColor.flat(0xFF0A0A0A),
-    primary: CnColor(0xFF171717),
-    primaryForeground: CnColor.flat(0xFFFAFAFA),
-    secondary: CnColor(0xFFF5F5F5),
-    secondaryForeground: CnColor.flat(0xFF171717),
-    muted: CnColor(0xFFF5F5F5),
-    mutedForeground: CnColor.flat(0xFF737373),
-    accent: CnColor(0xFFF5F5F5),
-    accentForeground: CnColor.flat(0xFF171717),
-    destructive: CnColor(0xFFE7000B),
-    destructiveForeground: CnColor.flat(0xFFFFFFFF),
-    success: CnColor(0xFF00A63E),
-    warning: CnColor(0xFFD08700),
-    info: CnColor(0xFF155DFC),
-    border: CnColor.flat(0xFFE5E5E5),
-    input: CnColor.flat(0xFFE5E5E5),
-    ring: CnColor.flat(0xFFA1A1A1),
-    chart1: CnColor(0xFFF54900),
-    chart2: CnColor(0xFF009689),
-    chart3: CnColor(0xFF104E64),
-    chart4: CnColor(0xFFFFB900),
-    chart5: CnColor(0xFFFE9A00),
-    sidebar: CnColor(0xFFFAFAFA),
-    sidebarForeground: CnColor.flat(0xFF0A0A0A),
-    sidebarPrimary: CnColor(0xFF171717),
-    sidebarPrimaryForeground: CnColor.flat(0xFFFAFAFA),
-    sidebarAccent: CnColor(0xFFF5F5F5),
-    sidebarAccentForeground: CnColor.flat(0xFF171717),
-    sidebarBorder: CnColor.flat(0xFFE5E5E5),
-    sidebarRing: CnColor.flat(0xFFA1A1A1),
-  );
+  static const light = _neutralLight;
 
   /// The shadcn/ui neutral theme in dark mode.
-  static const dark = CnColors(
-    brightness: Brightness.dark,
-    background: CnColor(0xFF0A0A0A),
-    foreground: CnColor.flat(0xFFFAFAFA),
-    card: CnColor(0xFF171717),
-    cardForeground: CnColor.flat(0xFFFAFAFA),
-    popover: CnColor(0xFF171717),
-    popoverForeground: CnColor.flat(0xFFFAFAFA),
-    primary: CnColor(0xFFE5E5E5),
-    primaryForeground: CnColor.flat(0xFF171717),
-    secondary: CnColor(0xFF262626),
-    secondaryForeground: CnColor.flat(0xFFFAFAFA),
-    muted: CnColor(0xFF262626),
-    mutedForeground: CnColor.flat(0xFFA1A1A1),
-    accent: CnColor(0xFF262626),
-    accentForeground: CnColor.flat(0xFFFAFAFA),
-    destructive: CnColor(0xFFFF6467),
-    destructiveForeground: CnColor.flat(0xFF0A0A0A),
-    success: CnColor(0xFF05DF72),
-    warning: CnColor(0xFFFDC700),
-    info: CnColor(0xFF51A2FF),
-    border: CnColor.flat(0x1AFFFFFF),
-    input: CnColor.flat(0x26FFFFFF),
-    ring: CnColor.flat(0xFF737373),
-    chart1: CnColor(0xFF1447E6),
-    chart2: CnColor(0xFF00BC7D),
-    chart3: CnColor(0xFFFE9A00),
-    chart4: CnColor(0xFFAD46FF),
-    chart5: CnColor(0xFFFF2056),
-    sidebar: CnColor(0xFF171717),
-    sidebarForeground: CnColor.flat(0xFFFAFAFA),
-    sidebarPrimary: CnColor(0xFF1447E6),
-    sidebarPrimaryForeground: CnColor.flat(0xFFFAFAFA),
-    sidebarAccent: CnColor(0xFF262626),
-    sidebarAccentForeground: CnColor.flat(0xFFFAFAFA),
-    sidebarBorder: CnColor.flat(0x1AFFFFFF),
-    sidebarRing: CnColor.flat(0xFF737373),
-  );
+  static const dark = _neutralDark;
 
   /// The chart colors in order.
   List<CnColor> get charts => [chart1, chart2, chart3, chart4, chart5];
@@ -176,8 +159,15 @@ class const CnColors({
     Color? foreground,
     Color? primary,
     Color? primaryForeground,
+    Color? secondary,
+    Color? secondaryForeground,
     Color? accent,
     Color? accentForeground,
+    Color? chart1,
+    Color? chart2,
+    Color? chart3,
+    Color? chart4,
+    Color? chart5,
     Color? sidebar,
     Color? sidebarPrimary,
     Color? sidebarPrimaryForeground,
@@ -198,8 +188,8 @@ class const CnColors({
       popoverForeground: popoverForeground,
       primary: pick(primary, this.primary),
       primaryForeground: pick(primaryForeground, this.primaryForeground),
-      secondary: secondary,
-      secondaryForeground: secondaryForeground,
+      secondary: pick(secondary, this.secondary),
+      secondaryForeground: pick(secondaryForeground, this.secondaryForeground),
       muted: muted,
       mutedForeground: mutedForeground,
       accent: pick(accent, this.accent),
@@ -212,11 +202,11 @@ class const CnColors({
       border: border,
       input: input,
       ring: ring,
-      chart1: chart1,
-      chart2: chart2,
-      chart3: chart3,
-      chart4: chart4,
-      chart5: chart5,
+      chart1: pick(chart1, this.chart1),
+      chart2: pick(chart2, this.chart2),
+      chart3: pick(chart3, this.chart3),
+      chart4: pick(chart4, this.chart4),
+      chart5: pick(chart5, this.chart5),
       sidebar: pick(sidebar, this.sidebar),
       sidebarForeground: sidebarForeground,
       sidebarPrimary: pick(sidebarPrimary, this.sidebarPrimary),
@@ -235,30 +225,41 @@ class const CnColors({
   }
 
   /// Interpolates between two sets of tokens.
+  ///
+  /// Between light and dark, a surface and its text would meet at the same
+  /// gray halfway. So the text flips in the middle instead of fading and stays
+  /// readable while the surfaces fade.
   CnColors lerp(CnColors other, double t) {
+    final textT = t < 0.5 ? 0.0 : 1.0;
     return CnColors(
       brightness: t < 0.5 ? brightness : other.brightness,
       background: background.lerpTo(other.background, t),
-      foreground: foreground.lerpTo(other.foreground, t),
+      foreground: foreground.lerpTo(other.foreground, textT),
       card: card.lerpTo(other.card, t),
-      cardForeground: cardForeground.lerpTo(other.cardForeground, t),
+      cardForeground: cardForeground.lerpTo(other.cardForeground, textT),
       popover: popover.lerpTo(other.popover, t),
-      popoverForeground: popoverForeground.lerpTo(other.popoverForeground, t),
+      popoverForeground: popoverForeground.lerpTo(
+        other.popoverForeground,
+        textT,
+      ),
       primary: primary.lerpTo(other.primary, t),
-      primaryForeground: primaryForeground.lerpTo(other.primaryForeground, t),
+      primaryForeground: primaryForeground.lerpTo(
+        other.primaryForeground,
+        textT,
+      ),
       secondary: secondary.lerpTo(other.secondary, t),
       secondaryForeground: secondaryForeground.lerpTo(
         other.secondaryForeground,
-        t,
+        textT,
       ),
       muted: muted.lerpTo(other.muted, t),
-      mutedForeground: mutedForeground.lerpTo(other.mutedForeground, t),
+      mutedForeground: mutedForeground.lerpTo(other.mutedForeground, textT),
       accent: accent.lerpTo(other.accent, t),
-      accentForeground: accentForeground.lerpTo(other.accentForeground, t),
+      accentForeground: accentForeground.lerpTo(other.accentForeground, textT),
       destructive: destructive.lerpTo(other.destructive, t),
       destructiveForeground: destructiveForeground.lerpTo(
         other.destructiveForeground,
-        t,
+        textT,
       ),
       success: success.lerpTo(other.success, t),
       warning: warning.lerpTo(other.warning, t),
@@ -272,19 +273,50 @@ class const CnColors({
       chart4: chart4.lerpTo(other.chart4, t),
       chart5: chart5.lerpTo(other.chart5, t),
       sidebar: sidebar.lerpTo(other.sidebar, t),
-      sidebarForeground: sidebarForeground.lerpTo(other.sidebarForeground, t),
+      sidebarForeground: sidebarForeground.lerpTo(
+        other.sidebarForeground,
+        textT,
+      ),
       sidebarPrimary: sidebarPrimary.lerpTo(other.sidebarPrimary, t),
       sidebarPrimaryForeground: sidebarPrimaryForeground.lerpTo(
         other.sidebarPrimaryForeground,
-        t,
+        textT,
       ),
       sidebarAccent: sidebarAccent.lerpTo(other.sidebarAccent, t),
       sidebarAccentForeground: sidebarAccentForeground.lerpTo(
         other.sidebarAccentForeground,
-        t,
+        textT,
       ),
       sidebarBorder: sidebarBorder.lerpTo(other.sidebarBorder, t),
       sidebarRing: sidebarRing.lerpTo(other.sidebarRing, t),
+    );
+  }
+}
+
+/// The tokens a theme color overrides.
+class const _Accent({
+  required final Color primary,
+  required final Color primaryForeground,
+  required final Color secondary,
+  required final Color secondaryForeground,
+  required final Color chart1,
+  required final Color chart2,
+  required final Color chart3,
+  required final Color chart4,
+  required final Color chart5,
+  final Color? sidebar,
+  required final Color sidebarPrimary,
+  required final Color sidebarPrimaryForeground,
+}) {
+  CnColors applyTo(CnColors colors) {
+    return colors.copyWith(
+      primary: primary,
+      primaryForeground: primaryForeground,
+      secondary: secondary,
+      secondaryForeground: secondaryForeground,
+      sidebar: sidebar,
+      sidebarPrimary: sidebarPrimary,
+      sidebarPrimaryForeground: sidebarPrimaryForeground,
     );
   }
 }

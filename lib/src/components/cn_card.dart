@@ -44,7 +44,7 @@ class const CnCard({
                       children: [
                         if (title != null)
                           DefaultTextStyle.merge(
-                            style: theme.text.base.semibold,
+                            style: theme.heading.base.semibold,
                             child: title!,
                           ),
                         if (description != null)

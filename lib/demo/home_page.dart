@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../cn_ui.dart';
-import 'component_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key, this.onBrowseComponents, this.onViewThemeTokens});
@@ -43,11 +42,15 @@ class HomePage extends StatelessWidget {
           _Section(
             title: 'Quick Start',
             child: const CnCodeBlock(
-              code: '''final colors = CnColors.light.copyWith(primary: Color(0xFF1D4ED8));
+              code: '''final theme = CnTheme(
+  colors: CnColors.palette(base: .stone, theme: .blue),
+  font: 'Inter',
+  headingFont: 'Lora',
+  monoFont: 'JetBrains Mono',
+);
 
 MaterialApp(
-  theme: CnTheme(colors: colors, fontFamily: 'Geist', radius: 10).toThemeData(),
-  darkTheme: CnTheme(colors: CnColors.dark).toThemeData(),
+  theme: theme.toThemeData(),
   home: const CnDemoApp(),
 );''',
             ),
@@ -115,10 +118,13 @@ class _HeroCopy extends StatelessWidget {
       crossAxisAlignment: .start,
       spacing: 12,
       children: [
-        Text('CN UI for Flutter', style: CnTheme.of(context).text.xl3.semibold),
+        Text(
+          'CN UI for Flutter',
+          style: CnTheme.of(context).heading.xl3.semibold,
+        ),
         Text(
           'A chadcn/ui-inspired component library with themeable tokens, Flutter-native widgets, and live code samples.',
-          style: CnTheme.of(context).text.base.semibold,
+          style: CnTheme.of(context).heading.base.semibold,
         ),
         Wrap(
           spacing: 8,
@@ -163,7 +169,7 @@ class _Section extends StatelessWidget {
       crossAxisAlignment: .start,
       spacing: 12,
       children: [
-        Text(title, style: CnTheme.of(context).text.lg.semibold),
+        Text(title, style: CnTheme.of(context).heading.lg.semibold),
         child,
       ],
     );
@@ -201,7 +207,10 @@ class _FeatureCard extends StatelessWidget {
               child: Icon(icon, size: 18, color: colors.mutedForeground),
             ),
             Expanded(
-              child: Text(title, style: CnTheme.of(context).text.base.semibold),
+              child: Text(
+                title,
+                style: CnTheme.of(context).heading.base.semibold,
+              ),
             ),
           ],
         ),

@@ -125,12 +125,13 @@ class CnText extends StatelessWidget {
 
   TextStyle _style(CnTheme theme) {
     final text = theme.text;
+    final heading = theme.heading;
     final colors = theme.colors;
     return switch (variant) {
-      .h1 => text.xl4.copyWith(fontWeight: .w800, letterSpacing: -0.9),
-      .h2 => text.xl3.semibold.copyWith(letterSpacing: -0.75),
-      .h3 => text.xl2.semibold.copyWith(letterSpacing: -0.6),
-      .h4 => text.xl.semibold.copyWith(letterSpacing: -0.5),
+      .h1 => heading.xl4.weight(.w800).copyWith(letterSpacing: -0.9),
+      .h2 => heading.xl3.semibold.copyWith(letterSpacing: -0.75),
+      .h3 => heading.xl2.semibold.copyWith(letterSpacing: -0.6),
+      .h4 => heading.xl.semibold.copyWith(letterSpacing: -0.5),
       .lead => text.xl.copyWith(color: colors.mutedForeground),
       .large => text.lg.semibold,
       .small => text.sm.medium,
@@ -153,7 +154,7 @@ class const CnInlineCode({super.key, required final String code})
         color: theme.colors.muted,
         borderRadius: .circular(theme.radii.sm),
       ),
-      child: Text(code, style: theme.text.mono.medium),
+      child: Text(code, style: theme.mono.sm.medium),
     );
   }
 }

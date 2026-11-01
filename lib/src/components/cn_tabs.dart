@@ -103,8 +103,7 @@ class const _CnTabTrigger({
         child: InkWell(
           onTap: onTap,
           hoverColor: Colors.transparent,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
+          child: Container(
             alignment: .center,
             padding: const .symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(

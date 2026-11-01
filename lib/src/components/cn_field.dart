@@ -32,7 +32,7 @@ class const CnFieldSet({
             children: [
               if (legend != null)
                 DefaultTextStyle.merge(
-                  style: theme.text.base.medium,
+                  style: theme.heading.base.medium,
                   child: legend!,
                 ),
               if (description != null)

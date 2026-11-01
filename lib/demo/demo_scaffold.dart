@@ -29,10 +29,17 @@ class CnDemoScaffold extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= 980;
-        final body = destinations[selectedIndex].page;
+        final colors = CnTheme.of(context).colors;
+        // The scaffold would animate its color and text on its own and lag
+        // behind the theme, so both are set here.
+        final body = DefaultTextStyle.merge(
+          style: TextStyle(color: colors.foreground),
+          child: destinations[selectedIndex].page,
+        );
 
         if (!isWide) {
           return Scaffold(
+            backgroundColor: colors.background,
             appBar: AppBar(title: Text(destinations[selectedIndex].label)),
             drawer: Drawer(
               child: SafeArea(
@@ -50,18 +57,22 @@ class CnDemoScaffold extends StatelessWidget {
           );
         }
 
-        return Scaffold(
-          body: SafeArea(
-            child: Row(
-              crossAxisAlignment: .start,
-              children: [
-                _SidebarList(
-                  destinations: destinations,
-                  selectedIndex: selectedIndex,
-                  onSelected: onSelected,
-                ),
-                Expanded(child: body),
-              ],
+        return ColoredBox(
+          color: colors.background,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SafeArea(
+              child: Row(
+                crossAxisAlignment: .start,
+                children: [
+                  _SidebarList(
+                    destinations: destinations,
+                    selectedIndex: selectedIndex,
+                    onSelected: onSelected,
+                  ),
+                  Expanded(child: body),
+                ],
+              ),
             ),
           ),
         );
@@ -100,7 +111,7 @@ class _SidebarList extends StatelessWidget {
               crossAxisAlignment: .start,
               spacing: 4,
               children: [
-                Text('CN UI', style: CnTheme.of(context).text.lg.semibold),
+                Text('CN UI', style: CnTheme.of(context).heading.lg.semibold),
                 Text(
                   'Flutter port of chadcn/ui',
                   style: CnTheme.of(context).text.xs,
@@ -121,8 +132,7 @@ class _SidebarList extends StatelessWidget {
                   child: InkWell(
                     borderRadius: .circular(cnTheme.radii.md),
                     onTap: () => onSelected(index),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
+                    child: Container(
                       padding: const .symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
                         color: isSelected

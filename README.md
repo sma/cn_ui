@@ -42,11 +42,23 @@ flutter run -d chrome
 
 Use `CnTheme` to configure the component system:
 
-- `colors`: the color tokens, named like the shadcn/ui CSS variables (`CnColors.light`, `CnColors.dark`)
-- `fontFamily`
+- `colors`: the color tokens, named like the shadcn/ui CSS variables. `CnColors.palette` combines the base colors, theme colors and chart colors of [shadcn/create](https://ui.shadcn.com/create) in light and dark.
+- `font`, `headingFont`, `monoFont`: Google Fonts for text, headings and code
 - `radius`: the base of the radius scale
 
-Components read tokens through `CnTheme.of(context)`, e.g. `.colors.accent`, `.text.sm` or `.radii.md`. `toThemeData` configures Material from the same tokens.
+Components read tokens through `CnTheme.of(context)`, e.g. `.colors.accent`, `.text.sm`, `.heading.xl`, `.mono.sm` or `.radii.md`. `toThemeData` configures Material from the same tokens.
+
+Use `CnAnimatedTheme` above the app to animate theme changes:
+
+```dart
+CnAnimatedTheme(
+  theme: theme,
+  builder: (context, theme) => MaterialApp(
+    theme: theme.toThemeData(),
+    themeAnimationDuration: Duration.zero,
+  ),
+)
+```
 
 See [conventions.md](conventions.md) for the rules the component APIs follow.
 

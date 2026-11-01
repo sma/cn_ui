@@ -360,9 +360,8 @@ class _CnCalendarState extends State<CnCalendar> {
                       child: Center(
                         child: Text(
                           label,
-                          style: text.xs.medium.copyWith(
+                          style: text.xs.semibold.copyWith(
                             color: colors.mutedForeground,
-                            fontWeight: .w600,
                           ),
                         ),
                       ),
@@ -457,10 +456,9 @@ class _CnCalendarState extends State<CnCalendar> {
     final radius = inRange && !isRangeEdge
         ? BorderRadius.zero
         : BorderRadius.circular(baseRadius);
-    final textStyle = CnTheme.of(context).text.xs.copyWith(
-      color: foreground,
-      fontWeight: isSelected || isRangeEdge ? .w600 : .w500,
-    );
+    final textStyle = CnTheme.of(context).text.xs
+        .weight(isSelected || isRangeEdge ? .w600 : .w500)
+        .copyWith(color: foreground);
     final state = CnCalendarDayState(
       date: date,
       isOutside: isOutside,
@@ -478,8 +476,7 @@ class _CnCalendarState extends State<CnCalendar> {
 
     return GestureDetector(
       onTap: isDisabled ? null : () => _handleDateTap(date),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+      child: Container(
         decoration: BoxDecoration(
           color: background,
           borderRadius: radius,

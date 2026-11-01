@@ -18,22 +18,26 @@ class CnDemoApp extends StatefulWidget {
 
 class _CnDemoAppState extends State<CnDemoApp> {
   int selectedIndex = 0;
-  CnTheme theme = const CnTheme();
+  ThemeSelection selection = const ThemeSelection();
 
   @override
   Widget build(BuildContext context) {
     final destinations = _buildDestinations();
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: theme.toThemeData(),
-      builder: (context, child) {
-        return Directionality(textDirection: .ltr, child: child!);
-      },
-      home: CnDemoScaffold(
-        destinations: destinations,
-        selectedIndex: selectedIndex,
-        onSelected: (index) => setState(() => selectedIndex = index),
+    return CnAnimatedTheme(
+      theme: selection.toTheme(),
+      builder: (context, theme) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: theme.toThemeData(),
+        themeAnimationDuration: Duration.zero,
+        builder: (context, child) {
+          return Directionality(textDirection: .ltr, child: child!);
+        },
+        home: CnDemoScaffold(
+          destinations: destinations,
+          selectedIndex: selectedIndex,
+          onSelected: (index) => setState(() => selectedIndex = index),
+        ),
       ),
     );
   }
@@ -53,8 +57,8 @@ class _CnDemoAppState extends State<CnDemoApp> {
         label: 'Theme',
         icon: Icons.palette_outlined,
         page: ThemePlayground(
-          theme: theme,
-          onChanged: (next) => setState(() => theme = next),
+          selection: selection,
+          onChanged: (next) => setState(() => selection = next),
         ),
       ),
       DemoDestination(

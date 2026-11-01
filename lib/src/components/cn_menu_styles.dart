@@ -60,7 +60,7 @@ ButtonStyle cnMenuItemStyle(
     iconColor: foreground != null ? .all(foreground) : colors.mutedForeground,
     iconSize: .all(16),
     overlayColor: .all(Colors.transparent),
-    textStyle: .all(theme.text.sm.copyWith(fontWeight: fontWeight)),
+    textStyle: .all(theme.text.sm.weight(fontWeight)),
   );
 }
 

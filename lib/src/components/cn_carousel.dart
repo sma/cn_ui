@@ -161,11 +161,13 @@ class _CnCarouselState extends State<CnCarousel> {
                         duration: const Duration(milliseconds: 200),
                         height: 8,
                         width: _currentIndex == i ? 20 : 8,
-                        decoration: BoxDecoration(
-                          color: _currentIndex == i
-                              ? colors.primary
-                              : colors.border,
-                          borderRadius: .circular(cnTheme.radii.full),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: _currentIndex == i
+                                ? colors.primary
+                                : colors.border,
+                            borderRadius: .circular(cnTheme.radii.full),
+                          ),
                         ),
                       ),
                     ),

@@ -43,7 +43,9 @@ We take names and features from shadcn/ui. The shape of the API follows Flutter.
 
 ## Theming
 
-- Components read tokens only: `CnTheme.of(context).colors.accent`, `.text.sm`, `.radii.md`.
+- Components read tokens only: `CnTheme.of(context).colors.accent`, `.text.sm`, `.heading.xl`, `.mono.sm`, `.radii.md`.
+- Titles use `heading`, code uses `mono`, everything else uses `text`.
+- Colors must not animate on their own, or they lag behind a theme change. Use `Container` instead of `AnimatedContainer` and a zero `animationDuration` on `Material` and `ButtonStyle`.
 - Components never read `ColorScheme` or `TextTheme`. `CnTheme.toThemeData` configures Material from the tokens, or a component passes an explicit style such as `ButtonStyle`.
 - A `CnColor` is a `Color` and a `WidgetStateProperty<Color>` with predefined rest, hover, pressed and disabled values. There are no extra tokens such as `primaryHover`.
 - Components have no color, radius or padding parameters. Layout values such as `spacing` and `width` stay.

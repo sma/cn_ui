@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 Widget _app(Widget child) {
   return MaterialApp(
-    theme: const CnTheme(fontFamily: '').toThemeData(),
+    theme: const CnTheme(font: '').toThemeData(),
     home: Scaffold(body: Center(child: child)),
   );
 }

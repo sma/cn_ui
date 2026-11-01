@@ -62,7 +62,7 @@ class _ComponentIndexPageState extends State<ComponentIndexPage> {
         crossAxisAlignment: .start,
         spacing: 8,
         children: [
-          Text('Components', style: CnTheme.of(context).text.xl2.semibold),
+          Text('Components', style: CnTheme.of(context).heading.xl2.semibold),
           Text(
             'A curated list of chadcn/ui ports implemented in Flutter.',
             style: CnTheme.of(context).text.base,
@@ -146,7 +146,7 @@ class _ComponentCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   entry.name,
-                  style: CnTheme.of(context).text.base.semibold,
+                  style: CnTheme.of(context).heading.base.semibold,
                 ),
               ),
               const CnBadge(child: Text('Ported')),

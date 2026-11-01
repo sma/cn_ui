@@ -254,7 +254,7 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         preview: (context) => CnCard(
           title: Text(
             'Project Alpha',
-            style: CnTheme.of(context).text.base.semibold,
+            style: CnTheme.of(context).heading.base.semibold,
           ),
           content: Text(
             'Track milestones, review feedback, and share updates in one place.',
@@ -3593,7 +3593,7 @@ class _AspectRatioPreview extends StatelessWidget {
           child: Center(
             child: Text(
               '16:9',
-              style: CnTheme.of(context).text.base.semibold
+              style: CnTheme.of(context).heading.base.semibold
                   .copyWith(color: colors.foreground),
             ),
           ),

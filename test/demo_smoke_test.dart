@@ -13,7 +13,7 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(
       MaterialApp(
-        theme: const CnTheme(fontFamily: '').toThemeData(),
+        theme: const CnTheme(font: '').toThemeData(),
         home: const Scaffold(body: DashboardPage()),
       ),
     );
@@ -29,7 +29,7 @@ void main() {
         addTearDown(() => tester.binding.setSurfaceSize(null));
         await tester.pumpWidget(
           MaterialApp(
-            theme: CnTheme(colors: colors, fontFamily: '').toThemeData(),
+            theme: CnTheme(colors: colors, font: '').toThemeData(),
             home: Scaffold(body: ComponentPage(entry: entry)),
           ),
         );

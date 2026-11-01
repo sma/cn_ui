@@ -185,6 +185,7 @@ class CnSlidePanel extends StatelessWidget {
     final isVertical = side == .top || side == .bottom;
 
     return Material(
+      animationDuration: Duration.zero,
       color: colors.background,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: colors.border),
@@ -251,7 +252,7 @@ class CnOverlayHeader extends StatelessWidget {
       children: [
         if (title != null)
           DefaultTextStyle.merge(
-            style: theme.text.lg.semibold.copyWith(
+            style: theme.heading.lg.semibold.copyWith(
               color: theme.colors.foreground,
             ),
             child: title!,
@@ -408,6 +409,7 @@ class CnPopupSurface extends StatelessWidget {
     return SizedBox(
       width: width ?? 288,
       child: Material(
+        animationDuration: Duration.zero,
         color: theme.colors.popover,
         textStyle: theme.text.sm.copyWith(
           color: theme.colors.popoverForeground,

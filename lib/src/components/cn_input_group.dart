@@ -52,9 +52,7 @@ class _CnInputGroupState extends State<CnInputGroup> {
     return FocusScope(
       node: _scopeNode,
       onFocusChange: (hasFocus) => setState(() => _hasFocus = hasFocus),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOut,
+      child: Container(
         decoration: BoxDecoration(
           borderRadius: .circular(cnTheme.radii.md),
           border: Border.all(color: borderColor),

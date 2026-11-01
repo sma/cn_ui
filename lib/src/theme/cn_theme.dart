@@ -19,27 +19,20 @@ class const CnRadii(final double base) {
   double get full => 999;
 }
 
-/// The type scale, named like the Tailwind sizes shadcn/ui uses.
+/// The type scale of one font, named like the Tailwind sizes shadcn/ui uses.
 ///
 /// The styles carry no color, so they inherit the color of their surroundings.
 @immutable
 class CnTextStyles {
-  CnTextStyles._(String fontFamily)
-    : xs = _style(fontFamily, 12, 16),
-      sm = _style(fontFamily, 14, 20),
-      base = _style(fontFamily, 16, 24),
-      lg = _style(fontFamily, 18, 28),
-      xl = _style(fontFamily, 20, 28),
-      xl2 = _style(fontFamily, 24, 32),
-      xl3 = _style(fontFamily, 30, 36),
-      xl4 = _style(fontFamily, 36, 40),
-      mono = fontFamily.trim().isEmpty
-          ? const TextStyle(
-              fontFamily: 'monospace',
-              fontSize: 14,
-              height: 20 / 14,
-            )
-          : _style('IBM Plex Mono', 14, 20);
+  CnTextStyles._(String font)
+    : xs = _style(font, 12, 16),
+      sm = _style(font, 14, 20),
+      base = _style(font, 16, 24),
+      lg = _style(font, 18, 28),
+      xl = _style(font, 20, 28),
+      xl2 = _style(font, 24, 32),
+      xl3 = _style(font, 30, 36),
+      xl4 = _style(font, 36, 40);
 
   final TextStyle xs;
   final TextStyle sm;
@@ -49,32 +42,46 @@ class CnTextStyles {
   final TextStyle xl2;
   final TextStyle xl3;
   final TextStyle xl4;
-  final TextStyle mono;
 
   static final _cache = <String, CnTextStyles>{};
 
-  static CnTextStyles _of(String fontFamily) {
-    return _cache.putIfAbsent(fontFamily, () => CnTextStyles._(fontFamily));
+  static CnTextStyles _of(String font) {
+    return _cache.putIfAbsent(font, () => CnTextStyles._(font));
   }
 
-  static TextStyle _style(String fontFamily, double size, double lineHeight) {
+  static TextStyle _style(String font, double size, double lineHeight) {
     final style = TextStyle(fontSize: size, height: lineHeight / size);
-    if (fontFamily.trim().isEmpty) {
+    if (font.trim().isEmpty) {
       return style;
     }
     try {
-      return GoogleFonts.getFont(fontFamily, textStyle: style);
+      return GoogleFonts.getFont(font, textStyle: style);
     } catch (_) {
-      return style.copyWith(fontFamily: fontFamily);
+      return style.copyWith(fontFamily: font);
     }
   }
 }
 
 /// Font weight shortcuts for the styles in [CnTextStyles].
 extension CnTextStyleWeights on TextStyle {
-  TextStyle get medium => copyWith(fontWeight: FontWeight.w500);
-  TextStyle get semibold => copyWith(fontWeight: FontWeight.w600);
+  TextStyle get medium => weight(FontWeight.w500);
+  TextStyle get semibold => weight(FontWeight.w600);
+
+  /// Returns this style in another weight.
+  ///
+  /// A Google Font needs a family per weight, so [copyWith] alone would only
+  /// embolden the regular font artificially.
+  TextStyle weight(FontWeight weight) {
+    final style = copyWith(fontWeight: weight);
+    final font = _googleFontNames[fontFamilyFallback?.firstOrNull];
+    return font == null ? style : GoogleFonts.getFont(font, textStyle: style);
+  }
 }
+
+/// Google Fonts names by the family a style carries, e.g. `IBMPlexSans`.
+final _googleFontNames = {
+  for (final name in GoogleFonts.asMap().keys) name.replaceAll(' ', ''): name,
+};
 
 /// The design tokens of the component library.
 ///
@@ -83,24 +90,40 @@ extension CnTextStyleWeights on TextStyle {
 @immutable
 class const CnTheme({
   final CnColors colors = CnColors.light,
-  final String fontFamily = 'Geist',
+
+  /// The font for text. An empty name uses the system fonts everywhere.
+  final String font = 'Geist',
+
+  /// The font for headings. Without one, they use [font].
+  final String? headingFont,
+
+  /// The font for code.
+  final String monoFont = 'Geist Mono',
   final double radius = 10,
 }) extends ThemeExtension<CnTheme> {
   /// Returns the current [CnTheme].
   static CnTheme of(BuildContext context) {
-    return Theme.of(context).extension<CnTheme>() ??
-        const CnTheme(fontFamily: '');
+    return Theme.of(context).extension<CnTheme>() ?? const CnTheme(font: '');
   }
 
   /// The radius scale derived from [radius].
   CnRadii get radii => CnRadii(radius);
 
-  /// The type scale in [fontFamily].
-  CnTextStyles get text => CnTextStyles._of(fontFamily);
+  /// The type scale in [font].
+  CnTextStyles get text => CnTextStyles._of(font);
+
+  /// The type scale in [headingFont].
+  CnTextStyles get heading => CnTextStyles._of(headingFont ?? font);
+
+  /// The type scale in [monoFont].
+  CnTextStyles get mono {
+    return CnTextStyles._of(font.trim().isEmpty ? 'monospace' : monoFont);
+  }
 
   /// Converts this theme into a Material theme.
   ThemeData toThemeData() {
     final text = this.text;
+    final heading = this.heading;
     final radii = this.radii;
     final colorScheme = ColorScheme(
       brightness: colors.brightness,
@@ -130,15 +153,15 @@ class const CnTheme({
       inversePrimary: colors.primaryForeground,
     );
     final textTheme = TextTheme(
-      displayLarge: text.xl4.semibold,
-      displayMedium: text.xl4.semibold,
-      displaySmall: text.xl3.semibold,
-      headlineLarge: text.xl3.semibold,
-      headlineMedium: text.xl2.semibold,
-      headlineSmall: text.xl.semibold,
-      titleLarge: text.lg.semibold,
-      titleMedium: text.base.semibold,
-      titleSmall: text.sm.semibold,
+      displayLarge: heading.xl4.semibold,
+      displayMedium: heading.xl4.semibold,
+      displaySmall: heading.xl3.semibold,
+      headlineLarge: heading.xl3.semibold,
+      headlineMedium: heading.xl2.semibold,
+      headlineSmall: heading.xl.semibold,
+      titleLarge: heading.lg.semibold,
+      titleMedium: heading.base.semibold,
+      titleSmall: heading.sm.semibold,
       bodyLarge: text.base,
       bodyMedium: text.sm,
       bodySmall: text.xs,
@@ -191,7 +214,7 @@ class const CnTheme({
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: surface,
-        titleTextStyle: text.lg.semibold.copyWith(color: colors.foreground),
+        titleTextStyle: heading.lg.semibold.copyWith(color: colors.foreground),
         contentTextStyle: text.sm.copyWith(color: colors.mutedForeground),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -235,7 +258,7 @@ class const CnTheme({
         elevation: 0,
         scrolledUnderElevation: 0,
         iconTheme: IconThemeData(color: colors.foreground),
-        titleTextStyle: text.lg.semibold.copyWith(color: colors.foreground),
+        titleTextStyle: heading.lg.semibold.copyWith(color: colors.foreground),
       ),
       drawerTheme: DrawerThemeData(
         backgroundColor: colors.sidebar,
@@ -312,10 +335,18 @@ class const CnTheme({
   }
 
   @override
-  CnTheme copyWith({CnColors? colors, String? fontFamily, double? radius}) {
+  CnTheme copyWith({
+    CnColors? colors,
+    String? font,
+    String? headingFont,
+    String? monoFont,
+    double? radius,
+  }) {
     return CnTheme(
       colors: colors ?? this.colors,
-      fontFamily: fontFamily ?? this.fontFamily,
+      font: font ?? this.font,
+      headingFont: headingFont ?? this.headingFont,
+      monoFont: monoFont ?? this.monoFont,
       radius: radius ?? this.radius,
     );
   }
@@ -327,7 +358,9 @@ class const CnTheme({
     }
     return CnTheme(
       colors: colors.lerp(other.colors, t),
-      fontFamily: t < 0.5 ? fontFamily : other.fontFamily,
+      font: t < 0.5 ? font : other.font,
+      headingFont: t < 0.5 ? headingFont : other.headingFont,
+      monoFont: t < 0.5 ? monoFont : other.monoFont,
       radius: lerpDouble(radius, other.radius, t) ?? radius,
     );
   }

@@ -82,6 +82,7 @@ class CnButton extends StatelessWidget {
         padding: .all(padding),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: .standard,
+        animationDuration: Duration.zero,
         backgroundColor: _background(colors),
         foregroundColor: _foreground(colors),
         iconColor: _foreground(colors),

@@ -1,7 +1,3 @@
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:material_ui/material_ui.dart';
-
 import '../cn_ui.dart';
 import 'component_catalog.dart';
 
@@ -17,7 +13,7 @@ class ComponentPage extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 8,
         children: [
-          Text(entry.name, style: CnTheme.of(context).text.xl2.semibold),
+          Text(entry.name, style: CnTheme.of(context).heading.xl2.semibold),
           Text(entry.description, style: CnTheme.of(context).text.base),
           for (var index = 0; index < entry.examples.length; index++)
             Padding(
@@ -47,7 +43,10 @@ class _ExampleBlock extends StatelessWidget {
           crossAxisAlignment: .start,
           spacing: 4,
           children: [
-            Text(example.title, style: CnTheme.of(context).text.base.semibold),
+            Text(
+              example.title,
+              style: CnTheme.of(context).heading.base.semibold,
+            ),
             if (example.description != null)
               Text(
                 example.description!,
@@ -89,91 +88,8 @@ class _Section extends StatelessWidget {
       crossAxisAlignment: .start,
       spacing: 12,
       children: [
-        Text(title, style: CnTheme.of(context).text.base.semibold),
+        Text(title, style: CnTheme.of(context).heading.base.semibold),
         child,
-      ],
-    );
-  }
-}
-
-class CnCodeBlock extends StatefulWidget {
-  const CnCodeBlock({super.key, required this.code});
-  final String code;
-
-  @override
-  State<CnCodeBlock> createState() => _CnCodeBlockState();
-}
-
-class _CnCodeBlockState extends State<CnCodeBlock> {
-  bool _copied = false;
-
-  Future<void> _handleCopy() async {
-    await Clipboard.setData(ClipboardData(text: widget.code));
-    if (!mounted) {
-      return;
-    }
-    setState(() => _copied = true);
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() => _copied = false);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final lines = widget.code.split('\n');
-    final pad = lines.length.toString().length;
-    var lineNo = 1;
-    final colors = CnTheme.of(context).colors;
-    final radius = CnTheme.of(context).radius;
-
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const .all(16),
-          decoration: BoxDecoration(
-            color: colors.muted,
-            borderRadius: .circular(radius),
-            border: Border.all(color: colors.border),
-          ),
-          child: SelectableText.rich(
-            TextSpan(
-              children: [
-                ...lines.expand(
-                  (line) => [
-                    TextSpan(
-                      text: '$lineNo'.padLeft(pad),
-                      style: TextStyle(color: colors.input),
-                    ),
-                    TextSpan(text: '  $line'),
-                    if (lineNo++ != lines.length) TextSpan(text: '\n'),
-                  ],
-                ),
-              ],
-            ),
-            style: GoogleFonts.ibmPlexMono(fontSize: 14, height: 20 / 14),
-          ),
-        ),
-        PositionedDirectional(
-          top: 8,
-          end: 8,
-          child: Material(
-            color: Colors.transparent,
-            child: IconButton(
-              onPressed: _handleCopy,
-              tooltip: _copied ? 'Copied' : 'Copy',
-              iconSize: 16,
-              padding: const EdgeInsets.all(6),
-              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-              icon: Icon(
-                _copied ? Icons.check_rounded : Icons.copy_rounded,
-                color: _copied ? colors.primary : colors.mutedForeground,
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }

@@ -15,7 +15,7 @@ class GoldenThemeVariants {
   static const classic = ThemeVariantConfig(
     name: 'Classic',
     // Use default font for testing to avoid Google Fonts HTTP requests
-    cnTheme: CnTheme(fontFamily: '', radius: 12),
+    cnTheme: CnTheme(font: '', radius: 12),
   );
 
   // Theme 2: White on black with pink primary + max border radius
@@ -26,7 +26,7 @@ class GoldenThemeVariants {
         background: const Color(0xFF000000),
         primary: const Color(0xFFEC4899),
       ),
-      fontFamily: '',
+      font: '',
       radius: 99,
     ),
   );
@@ -36,7 +36,7 @@ class GoldenThemeVariants {
     name: 'Light Purple',
     cnTheme: CnTheme(
       colors: CnColors.light.copyWith(primary: const Color(0xFF9333EA)),
-      fontFamily: '',
+      font: '',
       radius: 0,
     ),
   );

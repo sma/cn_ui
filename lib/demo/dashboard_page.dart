@@ -255,7 +255,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           const CnSeparator(direction: .vertical, length: 16),
                           Text(
                             'Documents',
-                            style: CnTheme.of(context).text.base.semibold,
+                            style: CnTheme.of(context).heading.base.semibold,
                           ),
                         ],
                       ),
@@ -411,7 +411,7 @@ class _MetricCard extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 10,
         children: [
-          Text(value, style: CnTheme.of(context).text.xl.semibold),
+          Text(value, style: CnTheme.of(context).heading.xl.semibold),
           Row(
             mainAxisAlignment: .spaceBetween,
             children: [
@@ -459,7 +459,7 @@ class _VisitorsChart extends StatelessWidget {
             children: [
               Text(
                 'Total Visitors',
-                style: CnTheme.of(context).text.base.semibold,
+                style: CnTheme.of(context).heading.base.semibold,
               ),
               Text(
                 'Total for the last 3 months',
