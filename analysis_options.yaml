@@ -2,7 +2,10 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
+    directives_ordering: true
+    prefer_relative_imports: true
     sort_constructors_first: true
+    sort_unnamed_constructors_first: true
     unnecessary_breaks: true
 
 analyzer:

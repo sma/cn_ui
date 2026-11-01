@@ -1,7 +1,7 @@
-import 'package:material_ui/material_ui.dart';
-import 'package:cn_ui/src/components/cn_button.dart';
-import 'package:cn_ui/src/components/cn_badge.dart';
 import 'package:cn_ui/src/components/cn_alert.dart';
+import 'package:cn_ui/src/components/cn_badge.dart';
+import 'package:cn_ui/src/components/cn_button.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Helper to generate all variants of a component for golden testing
 class ComponentStateGenerator {

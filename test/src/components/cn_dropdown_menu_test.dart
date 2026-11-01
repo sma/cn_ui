@@ -1,7 +1,7 @@
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:cn_ui/src/components/cn_dropdown_menu.dart';
 import 'package:cn_ui/src/components/cn_button.dart';
+import 'package:cn_ui/src/components/cn_dropdown_menu.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../helpers/golden_test_helper.dart';
 

@@ -1,6 +1,6 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:cn_ui/src/components/cn_avatar.dart';
 import 'package:cn_ui/src/components/cn_avatar_group.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/golden_test_helper.dart';
 
