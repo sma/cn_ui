@@ -1,185 +1,69 @@
-import 'dart:math' as math;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
+import 'cn_input.dart';
 
-/// A controller for managing sidebar collapse state.
-class CnSidebarController extends ChangeNotifier {
-  CnSidebarController({this._collapsed = false});
-  bool _collapsed;
-
-  bool get collapsed => _collapsed;
-
-  set collapsed(bool value) {
-    if (_collapsed == value) {
-      return;
-    }
-    _collapsed = value;
-    notifyListeners();
-  }
-
-  void toggleCollapsed() {
-    collapsed = !_collapsed;
-  }
-}
-
-/// An inherited widget for providing [CnSidebarController] to descendants.
-class CnSidebarProvider extends InheritedNotifier<CnSidebarController> {
-  const CnSidebarProvider({
-    super.key,
-    required CnSidebarController controller,
-    required super.child,
-  }) : super(notifier: controller);
-
-  static CnSidebarController? maybeOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<CnSidebarProvider>()
-        ?.notifier;
-  }
-}
-
-/// A collapsible sidebar navigation component.
+/// A vertical navigation panel that can collapse to its icons.
 ///
-/// Provides a vertical navigation panel with collapse/expand functionality and support for items, groups, and search.
+/// The surrounding code owns the [collapsed] state. A [CnSidebarTrigger] inside
+/// the sidebar asks to change it through [onCollapsedChanged].
 ///
 /// See also:
 ///
 ///  * [CnSidebarItem], for individual sidebar items.
 ///  * [CnSidebarGroup], for grouping sidebar items.
 ///  * [CnNavigationMenu], for horizontal navigation.
-class CnSidebar extends StatefulWidget {
-  const CnSidebar({
-    super.key,
-    this.controller,
-    required this.child,
-    this.expandedWidth = 260,
-    this.collapsedWidth = 72,
-    this.duration = const Duration(milliseconds: 220),
-    this.curve = Curves.easeOut,
-    this.padding,
-    this.backgroundColor,
-    this.borderColor,
-    this.borderRadius,
-  });
-  final CnSidebarController? controller;
-  final Widget child;
-  final double expandedWidth;
-  final double collapsedWidth;
-  final Duration duration;
-  final Curve curve;
-  final EdgeInsetsGeometry? padding;
-  final Color? backgroundColor;
-  final Color? borderColor;
-  final BorderRadiusGeometry? borderRadius;
-
-  @override
-  State<CnSidebar> createState() => _CnSidebarState();
-}
-
-class _CnSidebarState extends State<CnSidebar> {
-  CnSidebarController? _controller;
-  bool _ownsController = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _resolveController();
-  }
-
-  @override
-  void didUpdateWidget(covariant CnSidebar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.controller != widget.controller) {
-      _resolveController(force: true);
-    }
-  }
-
-  @override
-  void dispose() {
-    if (_ownsController) {
-      _controller?.dispose();
-    }
-    super.dispose();
-  }
-
-  void _resolveController({bool force = false}) {
-    final provided = CnSidebarProvider.maybeOf(context);
-    final resolved = widget.controller ?? provided;
-    if (resolved == null) {
-      if (!_ownsController || _controller == null) {
-        _controller = CnSidebarController();
-        _ownsController = true;
-      }
-      return;
-    }
-    if (!force && resolved == _controller) {
-      return;
-    }
-    if (_ownsController) {
-      _controller?.dispose();
-      _ownsController = false;
-    }
-    _controller = resolved;
-  }
-
+class const CnSidebar({
+  super.key,
+  final bool collapsed = false,
+  final ValueChanged<bool>? onCollapsedChanged,
+  required final Widget child,
+  final double expandedWidth = 256,
+  final double collapsedWidth = 56,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final controller = _controller;
-    if (controller == null) {
-      return const SizedBox.shrink();
-    }
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-    final resolvedBackground = widget.backgroundColor ?? cnTheme.menuColor;
-    final resolvedBorder = widget.borderColor ?? scheme.outlineVariant;
-    final resolvedRadius =
-        widget.borderRadius ??
-        BorderRadius.circular(math.max(0, cnTheme.radius - 4));
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
 
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, child) {
-        final width = controller.collapsed
-            ? widget.collapsedWidth
-            : widget.expandedWidth;
-
-        return _CnSidebarScope(
-          controller: controller,
-          collapsed: controller.collapsed,
-          child: AnimatedContainer(
-            duration: widget.duration,
-            curve: widget.curve,
-            width: width,
-            decoration: BoxDecoration(
-              color: resolvedBackground,
-              borderRadius: resolvedRadius,
-              border: Border.all(color: resolvedBorder),
-            ),
-            clipBehavior: Clip.antiAlias,
-            padding: widget.padding ?? const EdgeInsets.all(12),
-            child: child,
-          ),
-        );
-      },
-      child: widget.child,
+    return _CnSidebarScope(
+      collapsed: collapsed,
+      onCollapsedChanged: onCollapsedChanged,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+        width: collapsed ? collapsedWidth : expandedWidth,
+        padding: const .all(8),
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: colors.sidebar,
+          borderRadius: .circular(theme.radii.md),
+          border: Border.all(color: colors.sidebarBorder),
+        ),
+        child: DefaultTextStyle.merge(
+          style: theme.text.sm.copyWith(color: colors.sidebarForeground),
+          child: child,
+        ),
+      ),
     );
   }
 }
 
-/// A button for toggling sidebar collapse state.
-class CnSidebarTrigger extends StatelessWidget {
-  const CnSidebarTrigger({super.key, this.icon, this.tooltip});
-  final Widget? icon;
-  final String? tooltip;
-
+/// A button that collapses and expands the enclosing [CnSidebar].
+class const CnSidebarTrigger({
+  super.key,
+  final Widget? icon,
+  final String? tooltip,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final controller = _CnSidebarScope.of(context)?.controller;
-    final collapsed = controller?.collapsed ?? false;
+    final scope = _CnSidebarScope.of(context);
+    final collapsed = scope?.collapsed ?? false;
+    final onChanged = scope?.onCollapsedChanged;
 
     return IconButton(
-      onPressed: controller?.toggleCollapsed,
+      onPressed: onChanged == null ? null : () => onChanged(!collapsed),
+      iconSize: 16,
       tooltip: tooltip ?? (collapsed ? 'Expand sidebar' : 'Collapse sidebar'),
       icon: icon ?? Icon(collapsed ? Icons.menu_open : Icons.menu),
     );
@@ -187,29 +71,23 @@ class CnSidebarTrigger extends StatelessWidget {
 }
 
 /// A header section for [CnSidebar].
-class CnSidebarHeader extends StatelessWidget {
-  const CnSidebarHeader({super.key, required this.child});
-  final Widget child;
-
+class const CnSidebarHeader({super.key, required final Widget child})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: child,
-    );
+    return Padding(padding: const .symmetric(vertical: 4), child: child);
   }
 }
 
 /// A scrollable content section for [CnSidebar].
-class CnSidebarContent extends StatelessWidget {
-  const CnSidebarContent({super.key, required this.children, this.spacing = 6});
-  final List<Widget> children;
-  final double spacing;
-
+class const CnSidebarContent({
+  super.key,
+  required final List<Widget> children,
+  final double spacing = 4,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Flexible(
-      fit: FlexFit.loose,
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: .stretch,
@@ -222,34 +100,24 @@ class CnSidebarContent extends StatelessWidget {
 }
 
 /// A footer section for [CnSidebar].
-class CnSidebarFooter extends StatelessWidget {
-  const CnSidebarFooter({super.key, required this.child});
-  final Widget child;
-
+class const CnSidebarFooter({super.key, required final Widget child})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: child,
-    );
+    return Padding(padding: const .symmetric(vertical: 4), child: child);
   }
 }
 
 /// A group of sidebar items with an optional title.
-class CnSidebarGroup extends StatelessWidget {
-  const CnSidebarGroup({
-    super.key,
-    this.title,
-    required this.children,
-    this.spacing = 4,
-  });
-  final String? title;
-  final List<Widget> children;
-  final double spacing;
-
+class const CnSidebarGroup({
+  super.key,
+  final Widget? title,
+  required final List<Widget> children,
+  final double spacing = 4,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final theme = CnTheme.of(context);
     final collapsed = _CnSidebarScope.of(context)?.collapsed ?? false;
 
     return Column(
@@ -258,11 +126,12 @@ class CnSidebarGroup extends StatelessWidget {
       children: [
         if (title != null && !collapsed)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            child: Text(
-              title!,
-              style: CnTheme.textThemeOf(context).labelSmall
-                  ?.copyWith(color: scheme.onSurfaceVariant, fontWeight: .w600),
+            padding: const .symmetric(horizontal: 8, vertical: 6),
+            child: DefaultTextStyle.merge(
+              style: theme.text.xs.medium.copyWith(
+                color: theme.colors.sidebarForeground.withValues(alpha: 0.7),
+              ),
+              child: title!,
             ),
           ),
         ...children,
@@ -272,221 +141,140 @@ class CnSidebarGroup extends StatelessWidget {
 }
 
 /// A visual separator for [CnSidebar].
-class CnSidebarSeparator extends StatelessWidget {
-  const CnSidebarSeparator({super.key, this.padding});
-  final EdgeInsetsGeometry? padding;
-
+class const CnSidebarSeparator({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding ?? const EdgeInsets.symmetric(vertical: 8),
+      padding: const .symmetric(vertical: 8),
       child: Divider(
         height: 1,
         thickness: 1,
-        color: CnTheme.colorSchemeOf(context).outlineVariant,
+        color: CnTheme.of(context).colors.sidebarBorder,
       ),
     );
   }
 }
 
-/// A search input for [CnSidebar].
-class CnSidebarSearch extends StatelessWidget {
-  const CnSidebarSearch({
-    super.key,
-    this.controller,
-    this.placeholder,
-    this.onChanged,
-    this.leading,
-    this.trailing,
-    this.enabled = true,
-    this.hideWhenCollapsed = true,
-  });
-  final TextEditingController? controller;
-  final String? placeholder;
-  final ValueChanged<String>? onChanged;
-  final Widget? leading;
-  final Widget? trailing;
-  final bool enabled;
-  final bool hideWhenCollapsed;
-
+/// A search input for [CnSidebar]. It hides while the sidebar is collapsed.
+class const CnSidebarSearch({
+  super.key,
+  final TextEditingController? controller,
+  final String? placeholder,
+  final ValueChanged<String>? onChanged,
+  final Widget? leading,
+  final Widget? trailing,
+  final bool enabled = true,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final collapsed = _CnSidebarScope.of(context)?.collapsed ?? false;
-    if (collapsed && hideWhenCollapsed) {
+    if (_CnSidebarScope.of(context)?.collapsed ?? false) {
       return const SizedBox.shrink();
     }
-
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-
-    return TextField(
+    return CnInput(
       controller: controller,
       enabled: enabled,
       onChanged: onChanged,
-      decoration: InputDecoration(
-        hintText: placeholder ?? 'Search',
-        isDense: true,
-        prefixIcon: leading ?? const Icon(Icons.search, size: 18),
-        suffixIcon: trailing,
-        filled: true,
-        fillColor: scheme.surface,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 10,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(math.max(0, cnTheme.radius - 6)),
-          borderSide: BorderSide(color: scheme.outlineVariant),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(math.max(0, cnTheme.radius - 6)),
-          borderSide: BorderSide(color: scheme.outlineVariant),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(math.max(0, cnTheme.radius - 6)),
-          borderSide: BorderSide(color: scheme.primary, width: 1.5),
-        ),
-      ),
+      placeholder: placeholder ?? 'Search',
+      leading: leading ?? const Icon(Icons.search, size: 16),
+      trailing: trailing,
     );
   }
 }
 
-/// A sub-item within a [CnSidebar], typically indented under a parent item.
-class CnSidebarSubItem extends StatelessWidget {
-  const CnSidebarSubItem({
-    super.key,
-    required this.label,
-    this.selected = false,
-    this.onTap,
-    this.indent = 24,
-    this.hideWhenCollapsed = true,
-    this.trailing,
-  });
-  final Widget label;
-  final bool selected;
-  final VoidCallback? onTap;
-  final double indent;
-  final bool hideWhenCollapsed;
-  final Widget? trailing;
-
+/// A sub-item indented under a [CnSidebarItem].
+///
+/// It hides while the sidebar is collapsed.
+class const CnSidebarSubItem({
+  super.key,
+  required final Widget label,
+  final bool selected = false,
+  final VoidCallback? onTap,
+  final double indent = 24,
+  final Widget? trailing,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final collapsed = _CnSidebarScope.of(context)?.collapsed ?? false;
-    if (collapsed && hideWhenCollapsed) {
+    if (_CnSidebarScope.of(context)?.collapsed ?? false) {
       return const SizedBox.shrink();
     }
-
     return Padding(
-      padding: EdgeInsets.only(left: indent),
+      padding: EdgeInsetsDirectional.only(start: indent),
       child: CnSidebarItem(
         label: label,
         selected: selected,
         onTap: onTap,
         trailing: trailing,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
     );
   }
 }
 
 /// A clickable navigation item in a [CnSidebar].
-class CnSidebarItem extends StatelessWidget {
-  const CnSidebarItem({
-    super.key,
-    required this.label,
-    this.icon,
-    this.trailing,
-    this.selected = false,
-    this.onTap,
-    this.padding,
-  });
-  final Widget label;
-  final Widget? icon;
-  final Widget? trailing;
-  final bool selected;
-  final VoidCallback? onTap;
-  final EdgeInsetsGeometry? padding;
-
+class const CnSidebarItem({
+  super.key,
+  required final Widget label,
+  final Widget? leading,
+  final Widget? trailing,
+  final bool selected = false,
+  final VoidCallback? onTap,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scope = _CnSidebarScope.of(context);
-    final collapsed = scope?.collapsed ?? false;
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-    final radius = BorderRadius.circular(math.max(0, cnTheme.radius - 6));
-
-    final background = selected
-        ? cnTheme.menuAccent.withValues(alpha: 0.12)
-        : Colors.transparent;
-    final foreground = selected ? cnTheme.menuAccent : scheme.onSurfaceVariant;
-
-    final content = collapsed
-        ? Center(child: icon ?? label)
-        : Row(
-            spacing: 10,
-            children: [
-              if (icon != null)
-                IconTheme(
-                  data: IconThemeData(color: foreground, size: 18),
-                  child: icon!,
-                ),
-              Expanded(
-                child: DefaultTextStyle(
-                  style:
-                      CnTheme.textThemeOf(context).bodySmall?.copyWith(
-                        color: foreground,
-                        fontWeight: selected ? .w600 : .w500,
-                      ) ??
-                      TextStyle(color: foreground),
-                  child: label,
-                ),
-              ),
-              if (trailing != null)
-                IconTheme(
-                  data: IconThemeData(color: foreground, size: 16),
-                  child: trailing!,
-                ),
-            ],
-          );
+    final collapsed = _CnSidebarScope.of(context)?.collapsed ?? false;
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
+    final radius = BorderRadius.circular(theme.radii.md);
+    final foreground = selected
+        ? colors.sidebarAccentForeground
+        : colors.sidebarForeground;
 
     final item = Container(
-      padding:
-          padding ??
-          EdgeInsets.symmetric(horizontal: collapsed ? 10 : 12, vertical: 10),
-      decoration: BoxDecoration(color: background, borderRadius: radius),
-      child: content,
+      padding: const .all(8),
+      decoration: BoxDecoration(
+        color: selected ? colors.sidebarAccent : null,
+        borderRadius: radius,
+      ),
+      child: IconTheme.merge(
+        data: IconThemeData(color: foreground, size: 16),
+        child: DefaultTextStyle.merge(
+          style: theme.text.sm.copyWith(
+            color: foreground,
+            fontWeight: selected ? .w500 : .w400,
+          ),
+          child: collapsed
+              ? Center(child: leading ?? label)
+              : Row(
+                  spacing: 8,
+                  children: [
+                    ?leading,
+                    Expanded(child: label),
+                    ?trailing,
+                  ],
+                ),
+        ),
+      ),
     );
 
-    final tooltip = collapsed ? _labelText(label) : null;
-    final inkWell = Material(
-      color: Colors.transparent,
-      child: InkWell(borderRadius: radius, onTap: onTap, child: item),
+    final button = Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        borderRadius: radius,
+        hoverColor: colors.sidebarAccent,
+        onTap: onTap,
+        child: item,
+      ),
     );
 
-    if (tooltip == null || tooltip.trim().isEmpty) {
-      return inkWell;
-    }
-
-    return Tooltip(message: tooltip, child: inkWell);
-  }
-
-  String? _labelText(Widget label) {
-    if (label is Text) {
-      return label.data;
-    }
-    return null;
+    final tooltip = collapsed && label is Text ? (label as Text).data : null;
+    return tooltip == null ? button : Tooltip(message: tooltip, child: button);
   }
 }
 
-class _CnSidebarScope extends InheritedWidget {
-  const _CnSidebarScope({
-    required this.controller,
-    required this.collapsed,
-    required super.child,
-  });
-  final CnSidebarController controller;
-  final bool collapsed;
-
+class const _CnSidebarScope({
+  required final bool collapsed,
+  required final ValueChanged<bool>? onCollapsedChanged,
+  required super.child,
+}) extends InheritedWidget {
   static _CnSidebarScope? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<_CnSidebarScope>();
   }
@@ -494,6 +282,6 @@ class _CnSidebarScope extends InheritedWidget {
   @override
   bool updateShouldNotify(_CnSidebarScope oldWidget) {
     return oldWidget.collapsed != collapsed ||
-        oldWidget.controller != controller;
+        oldWidget.onCollapsedChanged != onCollapsedChanged;
   }
 }

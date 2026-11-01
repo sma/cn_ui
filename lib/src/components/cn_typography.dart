@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
@@ -7,9 +5,7 @@ import '../theme/cn_theme.dart';
 /// Text style variants for [CnText].
 enum CnTextVariant { h1, h2, h3, h4, lead, p, large, small, muted }
 
-/// A text component with predefined typographic styles.
-///
-/// Provides heading, paragraph, and specialty text variants with consistent styling.
+/// Text in one of the styles of the type scale.
 ///
 /// See also:
 ///
@@ -17,21 +13,89 @@ enum CnTextVariant { h1, h2, h3, h4, lead, p, large, small, muted }
 ///  * [CnBlockquote], for quoted text.
 ///  * [CnList], for bulleted lists.
 class CnText extends StatelessWidget {
-  const CnText({
+  const CnText.h1(
+    this.text, {
     super.key,
-    required this.variant,
-    this.text,
-    this.child,
-    this.style,
     this.textAlign,
     this.maxLines,
     this.overflow,
     this.selectable = false,
-  }) : assert(text != null || child != null, 'Provide text or child.');
+  }) : variant = .h1;
+
+  const CnText.h2(
+    this.text, {
+    super.key,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.selectable = false,
+  }) : variant = .h2;
+
+  const CnText.h3(
+    this.text, {
+    super.key,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.selectable = false,
+  }) : variant = .h3;
+
+  const CnText.h4(
+    this.text, {
+    super.key,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.selectable = false,
+  }) : variant = .h4;
+
+  const CnText.lead(
+    this.text, {
+    super.key,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.selectable = false,
+  }) : variant = .lead;
+
+  const CnText.p(
+    this.text, {
+    super.key,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.selectable = false,
+  }) : variant = .p;
+
+  const CnText.large(
+    this.text, {
+    super.key,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.selectable = false,
+  }) : variant = .large;
+
+  const CnText.small(
+    this.text, {
+    super.key,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.selectable = false,
+  }) : variant = .small;
+
+  const CnText.muted(
+    this.text, {
+    super.key,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.selectable = false,
+  }) : variant = .muted;
+
   final CnTextVariant variant;
-  final String? text;
-  final Widget? child;
-  final TextStyle? style;
+  final String text;
   final TextAlign? textAlign;
   final int? maxLines;
   final TextOverflow? overflow;
@@ -39,170 +103,105 @@ class CnText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedStyle = _styleForVariant(
-      CnTheme.textThemeOf(context),
-      CnTheme.colorSchemeOf(context),
-    ).merge(style);
-
-    final content = child ?? Text(text!);
+    final theme = CnTheme.of(context);
+    final style = _style(theme);
 
     if (selectable) {
-      return SelectableText.rich(
-        TextSpan(
-          style: resolvedStyle,
-          children: [WidgetSpan(child: content)],
-        ),
+      return SelectableText(
+        text,
+        style: style,
         textAlign: textAlign,
+        maxLines: maxLines,
       );
     }
-
-    return DefaultTextStyle(
-      style: resolvedStyle,
+    return Text(
+      text,
+      style: style,
+      textAlign: textAlign,
       maxLines: maxLines,
-      overflow: overflow ?? TextOverflow.clip,
-      child: Align(alignment: _alignmentFor(textAlign), child: content),
+      overflow: overflow,
     );
   }
 
-  AlignmentGeometry _alignmentFor(TextAlign? align) {
-    return switch (align) {
-      .center => .center,
-      .right => .centerRight,
-      .end => .centerEnd,
-      .left => .centerLeft,
-      .start => .centerStart,
-      .justify => .centerLeft,
-      null => .centerStart,
-    };
-  }
-
-  TextStyle _styleForVariant(TextTheme theme, ColorScheme scheme) {
+  TextStyle _style(CnTheme theme) {
+    final text = theme.text;
+    final colors = theme.colors;
     return switch (variant) {
-      .h1 => (theme.displaySmall ?? theme.headlineMedium)!.copyWith(
-        fontWeight: .w700,
-        letterSpacing: -0.8,
-      ),
-      .h2 => (theme.headlineMedium ?? theme.titleLarge)!.copyWith(
-        fontWeight: .w700,
-        letterSpacing: -0.6,
-      ),
-      .h3 => (theme.titleLarge ?? theme.titleMedium)!.copyWith(
-        fontWeight: .w600,
-      ),
-      .h4 => (theme.titleMedium ?? theme.titleSmall)!.copyWith(
-        fontWeight: .w600,
-      ),
-      .lead => (theme.titleMedium ?? theme.bodyLarge)!.copyWith(
-        color: scheme.onSurfaceVariant,
-        fontWeight: .w500,
-      ),
-      .large => (theme.titleSmall ?? theme.bodyLarge)!.copyWith(
-        fontWeight: .w600,
-      ),
-      .small => (theme.bodySmall ?? theme.labelMedium)!.copyWith(
-        fontWeight: .w500,
-      ),
-      .muted => (theme.bodySmall ?? theme.labelSmall)!.copyWith(
-        color: scheme.onSurfaceVariant,
-      ),
-      .p => (theme.bodyMedium ?? theme.bodyLarge)!.copyWith(height: 1.6),
+      .h1 => text.xl4.copyWith(fontWeight: .w800, letterSpacing: -0.9),
+      .h2 => text.xl3.semibold.copyWith(letterSpacing: -0.75),
+      .h3 => text.xl2.semibold.copyWith(letterSpacing: -0.6),
+      .h4 => text.xl.semibold.copyWith(letterSpacing: -0.5),
+      .lead => text.xl.copyWith(color: colors.mutedForeground),
+      .large => text.lg.semibold,
+      .small => text.sm.medium,
+      .muted => text.sm.copyWith(color: colors.mutedForeground),
+      .p => text.base.copyWith(height: 1.75),
     };
   }
 }
 
-/// An inline code snippet component for displaying code within text.
-class CnInlineCode extends StatelessWidget {
-  const CnInlineCode({super.key, required this.code, this.style});
-  final String code;
-  final TextStyle? style;
-
+/// An inline code snippet.
+class const CnInlineCode({super.key, required final String code})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
+    final theme = CnTheme.of(context);
 
     return Container(
       padding: const .symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: .circular(math.max(0, cnTheme.radius - 6)),
-        border: Border.all(color: scheme.outlineVariant),
+        color: theme.colors.muted,
+        borderRadius: .circular(theme.radii.sm),
       ),
-      child: Text(
-        code,
-        style:
-            style ??
-            CnTheme.textThemeOf(context).bodySmall?.copyWith(
-              fontFamily: 'IBM Plex Mono',
-              fontWeight: .w600,
-              color: scheme.onSurface,
-            ),
-      ),
+      child: Text(code, style: theme.text.mono.medium),
     );
   }
 }
 
-/// A blockquote component for displaying quoted text.
-class CnBlockquote extends StatelessWidget {
-  const CnBlockquote({super.key, required this.child});
-  final Widget child;
-
+/// A quoted text.
+class const CnBlockquote({super.key, required final Widget child})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final theme = CnTheme.of(context);
 
     return Container(
-      padding: const .only(left: 16),
+      padding: const EdgeInsetsDirectional.only(start: 24),
       decoration: BoxDecoration(
-        border: Border(
-          left: BorderSide(color: scheme.outlineVariant, width: 3),
+        border: BorderDirectional(
+          start: BorderSide(color: theme.colors.border, width: 2),
         ),
       ),
-      child: DefaultTextStyle(
-        style:
-            CnTheme.textThemeOf(context).bodyMedium?.copyWith(
-              fontStyle: FontStyle.italic,
-              color: scheme.onSurface,
-            ) ??
-            TextStyle(color: scheme.onSurface),
+      child: DefaultTextStyle.merge(
+        style: theme.text.base.copyWith(fontStyle: FontStyle.italic),
         child: child,
       ),
     );
   }
 }
 
-/// A bulleted list component for displaying items with markers.
-class CnList extends StatelessWidget {
-  const CnList({
-    super.key,
-    required this.items,
-    this.marker,
-    this.spacing = 8,
-    this.indent = 8,
-  });
-  final List<Widget> items;
-  final Widget? marker;
-  final double spacing;
-  final double indent;
-
+/// A bulleted list.
+class const CnList({
+  super.key,
+  required final List<Widget> items,
+  final Widget? marker,
+  final double spacing = 8,
+  final double indent = 8,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final resolvedMarker = marker ?? const Text('•');
-
     return Column(
       crossAxisAlignment: .start,
+      spacing: spacing,
       children: [
         for (final item in items)
-          Padding(
-            padding: .only(bottom: spacing),
-            child: Row(
-              crossAxisAlignment: .start,
-              spacing: indent,
-              children: [
-                resolvedMarker,
-                Expanded(child: item),
-              ],
-            ),
+          Row(
+            crossAxisAlignment: .start,
+            spacing: indent,
+            children: [
+              marker ?? const Text('•'),
+              Expanded(child: item),
+            ],
           ),
       ],
     );

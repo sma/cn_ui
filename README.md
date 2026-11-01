@@ -1,6 +1,6 @@
 # CN UI
 
-Flutter UI library inspired by shadcn/ui, with a web demo that mirrors the component documentation and examples, **created by Codex 5.2**, with a tiny bit of help by a human **as a test** whether an AI is capable to do such a task.
+Flutter UI library inspired by shadcn/ui, with a web demo that mirrors the component documentation and examples, **created by Codex 5.2** and refactored by **Opus 5.5**, with a tiny bit of help by a human **as a test** whether an AI is capable to do such a task.
 
 Starting with an initial prompt to port, this has been refined by 10 additional prompts. The human added line numbers to the code block widget, fixed the collapsible and wrote the avatar group widget which was then integrated by the AI.
 
@@ -25,6 +25,7 @@ import 'package:cn_ui/cn_ui.dart';
 
 MaterialApp(
   theme: const CnTheme().toThemeData(),
+  darkTheme: const CnTheme(colors: CnColors.dark).toThemeData(),
 )
 ```
 
@@ -41,11 +42,13 @@ flutter run -d chrome
 
 Use `CnTheme` to configure the component system:
 
-- `style` (classic / newYork)
-- `baseColor`, `themeColor`
+- `colors`: the color tokens, named like the shadcn/ui CSS variables (`CnColors.light`, `CnColors.dark`)
 - `fontFamily`
-- `radius`
-- `menuColor`, `menuAccent`
+- `radius`: the base of the radius scale
+
+Components read tokens through `CnTheme.of(context)`, e.g. `.colors.accent`, `.text.sm` or `.radii.md`. `toThemeData` configures Material from the same tokens.
+
+See [conventions.md](conventions.md) for the rules the component APIs follow.
 
 ## Components
 

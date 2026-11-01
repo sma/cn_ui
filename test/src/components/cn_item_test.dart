@@ -8,7 +8,7 @@ void main() {
   testWidgets('CnItem - default', (tester) async {
     await goldenTest(
       tester,
-      CnItem(onTap: () {}, child: const Text('Item')),
+      CnItem(onTap: () {}, title: const Text('Item')),
       'goldens/item/default.png',
       height: 100,
     );

@@ -9,9 +9,9 @@ void main() {
     await goldenTest(
       tester,
       CnCollapsible(
-        initiallyExpanded: false,
+        value: false,
         title: Text('Collapsible Title'),
-        child: Text('Collapsible content'),
+        content: Text('Collapsible content'),
       ),
       'goldens/collapsible/expanded.png',
       height: 200,

@@ -1,47 +1,30 @@
-import 'dart:math' as math;
-
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
 import '../theme/cn_theme.dart';
 
-/// A keyboard key component for displaying keyboard shortcuts.
-///
-/// Renders keyboard keys with styled borders and backgrounds for documentation and UI hints.
+/// A keyboard key, for displaying shortcuts.
 ///
 /// See also:
 ///
 ///  * [CnKbdGroup], for grouping multiple keyboard keys.
-class CnKbd extends StatelessWidget {
-  const CnKbd({
-    super.key,
-    required this.child,
-    this.padding,
-    this.backgroundColor,
-    this.borderColor,
-  });
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-  final Color? backgroundColor;
-  final Color? borderColor;
-
+class const CnKbd({super.key, required final Widget child})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
+    final theme = CnTheme.of(context);
 
     return Container(
-      padding:
-          padding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const .symmetric(horizontal: 4),
+      constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+      alignment: .center,
       decoration: BoxDecoration(
-        color: backgroundColor ?? scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(math.max(0, cnTheme.radius - 6)),
-        border: Border.all(color: borderColor ?? scheme.outlineVariant),
+        color: theme.colors.muted,
+        borderRadius: .circular(theme.radii.sm),
       ),
-      child: DefaultTextStyle(
-        style:
-            CnTheme.textThemeOf(context).labelSmall
-                ?.copyWith(fontWeight: .w600) ??
-            const TextStyle(fontWeight: FontWeight.w600),
+      child: DefaultTextStyle.merge(
+        style: theme.text.xs.medium.copyWith(
+          color: theme.colors.mutedForeground,
+        ),
         child: child,
       ),
     );
@@ -49,11 +32,11 @@ class CnKbd extends StatelessWidget {
 }
 
 /// A group of keyboard keys for [CnKbd].
-class CnKbdGroup extends StatelessWidget {
-  const CnKbdGroup({super.key, required this.children, this.spacing = 6});
-  final List<Widget> children;
-  final double spacing;
-
+class const CnKbdGroup({
+  super.key,
+  required final List<Widget> children,
+  final double spacing = 4,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisSize: .min, spacing: spacing, children: children);

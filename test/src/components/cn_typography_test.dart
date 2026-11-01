@@ -10,10 +10,10 @@ void main() {
       tester,
       goldenColumn(
         children: const [
-          CnText(variant: CnTextVariant.h1, text: 'Heading 1'),
-          CnText(variant: CnTextVariant.h2, text: 'Heading 2'),
-          CnText(variant: CnTextVariant.h3, text: 'Heading 3'),
-          CnText(variant: CnTextVariant.p, text: 'Paragraph text'),
+          CnText.h1('Heading 1'),
+          CnText.h2('Heading 2'),
+          CnText.h3('Heading 3'),
+          CnText.p('Paragraph text'),
         ],
         spacing: 16,
       ),

@@ -1,118 +1,71 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
+import 'cn_overlay_internal.dart';
 
-/// A modal dialog component for displaying content over the main interface.
-///
-/// Provides a centered overlay with optional title, description, content, and action buttons.
+/// Shows a modal dialog. Close it with [Navigator.pop].
+Future<T?> showCnDialog<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+  bool barrierDismissible = true,
+}) {
+  return showDialog<T>(
+    context: context,
+    barrierDismissible: barrierDismissible,
+    builder: builder,
+  );
+}
+
+/// A centered modal surface with a title, description, content and actions.
 ///
 /// See also:
 ///
-///  * [CnAlertDialog], for simpler alert-style dialogs.
-///  * [CnSheet], for bottom sheet dialogs.
-///  * [CnDrawer], for side panel dialogs.
-class CnDialog extends StatelessWidget {
-  const CnDialog({
-    super.key,
-    this.title,
-    this.description,
-    this.content,
-    this.actions = const [],
-    this.padding,
-    this.actionsPadding,
-    this.maxWidth = 440,
-    this.showCloseButton = true,
-    this.onClose,
-  });
-  final Widget? title;
-  final Widget? description;
-  final Widget? content;
-  final List<Widget> actions;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? actionsPadding;
-  final double maxWidth;
-  final bool showCloseButton;
-  final VoidCallback? onClose;
-
+///  * [CnAlertDialog], for confirmations.
+///  * [CnSheet], for panels attached to a screen edge.
+///  * [CnDrawer], for panels that can be swiped away.
+class const CnDialog({
+  super.key,
+  final Widget? title,
+  final Widget? description,
+  final Widget? content,
+  final List<Widget> actions = const [],
+  final double maxWidth = 440,
+  final bool showCloseButton = true,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final cnTheme = CnTheme.of(context);
-    final scheme = CnTheme.colorSchemeOf(context);
-    final close = onClose ?? () => Navigator.of(context).maybePop();
-
-    final header = (title == null && description == null)
-        ? null
-        : Column(
-            crossAxisAlignment: .start,
-            spacing: 6,
-            children: [
-              if (title != null)
-                DefaultTextStyle(
-                  style:
-                      CnTheme.textThemeOf(context).titleLarge ??
-                      const TextStyle(),
-                  child: title!,
-                ),
-              if (description != null)
-                DefaultTextStyle(
-                  style:
-                      CnTheme.textThemeOf(context).bodyMedium
-                          ?.copyWith(color: scheme.onSurfaceVariant) ??
-                      TextStyle(color: scheme.onSurfaceVariant),
-                  child: description!,
-                ),
-            ],
-          );
-    final hasBodyContent = header != null || content != null;
-    final actionsTopPadding = hasBodyContent ? 4.0 : 20.0;
+    final theme = CnTheme.of(context);
 
     return Dialog(
-      backgroundColor: scheme.surface,
+      backgroundColor: theme.colors.background,
       surfaceTintColor: Colors.transparent,
-      insetPadding: const .symmetric(horizontal: 24, vertical: 24),
+      elevation: 0,
+      insetPadding: const .all(24),
       shape: RoundedRectangleBorder(
-        borderRadius: .circular(cnTheme.radius),
-        side: BorderSide(color: scheme.outlineVariant),
+        borderRadius: .circular(theme.radius),
+        side: BorderSide(color: theme.colors.border),
       ),
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth),
-        child: Padding(
-          padding: padding ?? const .fromLTRB(24, 20, 24, 20),
-          child: Column(
-            mainAxisSize: .min,
-            crossAxisAlignment: .start,
-            children: [
-              if (showCloseButton)
-                Align(
-                  alignment: .centerEnd,
-                  child: IconButton(
-                    icon: const Icon(Icons.close),
-                    tooltip: 'Close',
-                    onPressed: close,
-                  ),
-                ),
-              if (header != null || content != null || actions.isNotEmpty)
-                Column(
-                  crossAxisAlignment: .start,
-                  spacing: 16,
-                  children: [
-                    ?header,
-                    ?content,
-                    if (actions.isNotEmpty)
-                      Padding(
-                        padding: (actionsPadding ?? .zero).add(
-                          EdgeInsets.only(top: actionsTopPadding),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: .end,
-                          spacing: 12,
-                          children: actions,
-                        ),
-                      ),
-                  ],
-                ),
-            ],
-          ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const .all(24),
+              child: Column(
+                mainAxisSize: .min,
+                crossAxisAlignment: .stretch,
+                spacing: 16,
+                children: [
+                  CnOverlayHeader(title: title, description: description),
+                  if (content != null)
+                    Flexible(child: SingleChildScrollView(child: content!)),
+                  if (actions.isNotEmpty)
+                    Row(mainAxisAlignment: .end, spacing: 8, children: actions),
+                ],
+              ),
+            ),
+            if (showCloseButton) const CnOverlayCloseButton(),
+          ],
         ),
       ),
     );

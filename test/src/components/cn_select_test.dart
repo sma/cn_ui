@@ -13,9 +13,9 @@ void main() {
         child: CnSelect<String>(
           value: 'option1',
           items: const [
-            DropdownMenuItem(value: 'option1', child: Text('Option 1')),
-            DropdownMenuItem(value: 'option2', child: Text('Option 2')),
-            DropdownMenuItem(value: 'option3', child: Text('Option 3')),
+            CnSelectItem(value: 'option1', child: Text('Option 1')),
+            CnSelectItem(value: 'option2', child: Text('Option 2')),
+            CnSelectItem(value: 'option3', child: Text('Option 3')),
           ],
           onChanged: (_) {},
         ),

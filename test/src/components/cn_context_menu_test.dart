@@ -1,6 +1,6 @@
 import 'package:cn_ui/src/components/cn_button.dart';
 import 'package:cn_ui/src/components/cn_context_menu.dart';
-import 'package:cn_ui/src/components/cn_dropdown_menu.dart';
+import 'package:cn_ui/src/components/cn_menu_entry.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -12,9 +12,9 @@ void main() {
       tester,
       CnContextMenu(
         entries: [
-          CnDropdownMenuAction(label: 'Copy', onSelected: () {}),
-          CnDropdownMenuAction(label: 'Paste', onSelected: () {}),
-          CnDropdownMenuAction(label: 'Delete', onSelected: () {}),
+          CnMenuAction(label: Text('Copy'), onSelected: () {}),
+          CnMenuAction(label: Text('Paste'), onSelected: () {}),
+          CnMenuAction(label: Text('Delete'), onSelected: () {}),
         ],
         child: CnButton(onPressed: () {}, child: const Text('Right click')),
       ),

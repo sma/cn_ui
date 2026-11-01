@@ -1,13 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_button.dart';
 import 'cn_select.dart';
-
-/// Selection mode variants for [CnCalendar].
-enum CnCalendarSelectionMode { single, range, multiple }
 
 /// Header style variants for [CnCalendar].
 enum CnCalendarHeaderVariant { chevrons, dropdowns }
@@ -47,23 +42,29 @@ class CnCalendarDayState {
   bool get isRangeMiddle => inRange && !isRangeEdge;
 }
 
-/// A calendar component for selecting dates with single, range, or multiple selection modes.
+/// A range of days in a [CnCalendar].
+@immutable
+class const CnDateRange({
+  required final DateTime start,
+  required final DateTime end,
+});
+
+enum _CalendarMode { single, range, multiple }
+
+/// A month grid for choosing dates.
 ///
-/// Provides a full-featured calendar with navigation, weekday labels, and customizable day rendering.
+/// Use [CnCalendar.single], [CnCalendar.range] or [CnCalendar.multiple]. The
+/// month is internal state, which [focusedMonth] can move.
 ///
 /// See also:
 ///
-///  * [CnDatePickerField], for a date picker input field.
+///  * [CnDatePicker], for a date picker input field.
 class CnCalendar extends StatefulWidget {
-  const CnCalendar({
+  /// Creates a calendar for choosing one day.
+  const CnCalendar.single({
     super.key,
-    this.selectionMode = .single,
-    this.selectedDate,
-    this.selectedRange,
-    this.selectedDates,
-    this.onDateSelected,
-    this.onRangeSelected,
-    this.onDatesSelected,
+    DateTime? value,
+    ValueChanged<DateTime>? onChanged,
     this.focusedMonth,
     this.onMonthChanged,
     this.showOutsideDays = true,
@@ -71,23 +72,83 @@ class CnCalendar extends StatefulWidget {
     this.firstDayOfWeek = DateTime.monday,
     this.weekdayLabels,
     this.isDateDisabled,
-    this.isDateSelectable,
     this.dayBuilder,
     this.monthsToDisplay = 1,
-    this.headerVariant = CnCalendarHeaderVariant.chevrons,
+    this.headerVariant = .chevrons,
     this.firstYear,
     this.lastYear,
-    this.padding = const .all(12),
-    this.daySize = 40,
-    this.gridSpacing = 6,
-  }) : assert(monthsToDisplay > 0, 'monthsToDisplay must be at least 1.');
-  final CnCalendarSelectionMode selectionMode;
-  final DateTime? selectedDate;
-  final DateTimeRange? selectedRange;
-  final Set<DateTime>? selectedDates;
-  final ValueChanged<DateTime>? onDateSelected;
-  final ValueChanged<DateTimeRange>? onRangeSelected;
-  final ValueChanged<Set<DateTime>>? onDatesSelected;
+    this.daySize = 32,
+    this.gridSpacing = 4,
+  }) : _mode = .single,
+       _date = value,
+       _onDate = onChanged,
+       _range = null,
+       _onRange = null,
+       _dates = null,
+       _onDates = null;
+
+  /// Creates a calendar for choosing a range of days.
+  const CnCalendar.range({
+    super.key,
+    CnDateRange? value,
+    ValueChanged<CnDateRange>? onChanged,
+    this.focusedMonth,
+    this.onMonthChanged,
+    this.showOutsideDays = true,
+    this.showWeekdayLabels = true,
+    this.firstDayOfWeek = DateTime.monday,
+    this.weekdayLabels,
+    this.isDateDisabled,
+    this.dayBuilder,
+    this.monthsToDisplay = 1,
+    this.headerVariant = .chevrons,
+    this.firstYear,
+    this.lastYear,
+    this.daySize = 32,
+    this.gridSpacing = 4,
+  }) : _mode = .range,
+       _date = null,
+       _onDate = null,
+       _range = value,
+       _onRange = onChanged,
+       _dates = null,
+       _onDates = null;
+
+  /// Creates a calendar for choosing several days.
+  const CnCalendar.multiple({
+    super.key,
+    Set<DateTime> value = const {},
+    ValueChanged<Set<DateTime>>? onChanged,
+    this.focusedMonth,
+    this.onMonthChanged,
+    this.showOutsideDays = true,
+    this.showWeekdayLabels = true,
+    this.firstDayOfWeek = DateTime.monday,
+    this.weekdayLabels,
+    this.isDateDisabled,
+    this.dayBuilder,
+    this.monthsToDisplay = 1,
+    this.headerVariant = .chevrons,
+    this.firstYear,
+    this.lastYear,
+    this.daySize = 32,
+    this.gridSpacing = 4,
+  }) : assert(monthsToDisplay > 0, 'monthsToDisplay must be at least 1.'),
+       _mode = .multiple,
+       _date = null,
+       _onDate = null,
+       _range = null,
+       _onRange = null,
+       _dates = value,
+       _onDates = onChanged;
+
+  final _CalendarMode _mode;
+  final DateTime? _date;
+  final ValueChanged<DateTime>? _onDate;
+  final CnDateRange? _range;
+  final ValueChanged<CnDateRange>? _onRange;
+  final Set<DateTime>? _dates;
+  final ValueChanged<Set<DateTime>>? _onDates;
   final DateTime? focusedMonth;
   final ValueChanged<DateTime>? onMonthChanged;
   final bool showOutsideDays;
@@ -95,13 +156,11 @@ class CnCalendar extends StatefulWidget {
   final int firstDayOfWeek;
   final List<String>? weekdayLabels;
   final bool Function(DateTime date)? isDateDisabled;
-  final bool Function(DateTime date)? isDateSelectable;
   final CnCalendarDayBuilder? dayBuilder;
   final int monthsToDisplay;
   final CnCalendarHeaderVariant headerVariant;
   final int? firstYear;
   final int? lastYear;
-  final EdgeInsetsGeometry padding;
   final double daySize;
   final double gridSpacing;
 
@@ -111,21 +170,17 @@ class CnCalendar extends StatefulWidget {
 
 class _CnCalendarState extends State<CnCalendar> {
   late DateTime _focusedMonth;
-  DateTime? _selectedDate;
-  DateTime? _rangeStart;
-  DateTime? _rangeEnd;
-  Set<DateTime> _selectedDates = <DateTime>{};
+
+  /// The first day of a range while the user is about to pick the last one.
+  DateTime? _pendingStart;
 
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
     _focusedMonth = _monthStart(
-      widget.focusedMonth ?? DateTime(now.year, now.month, 1),
+      widget.focusedMonth ?? widget._date ?? widget._range?.start ?? now,
     );
-    _selectedDate = widget.selectedDate;
-    _selectedDates = _normalizeDates(widget.selectedDates ?? const {});
-    _syncRangeFromWidget();
   }
 
   @override
@@ -135,37 +190,28 @@ class _CnCalendarState extends State<CnCalendar> {
         widget.focusedMonth != null) {
       _focusedMonth = _monthStart(widget.focusedMonth!);
     }
-    if (widget.selectedDate != oldWidget.selectedDate) {
-      _selectedDate = widget.selectedDate;
-    }
-    if (widget.selectedDates != oldWidget.selectedDates) {
-      _selectedDates = _normalizeDates(widget.selectedDates ?? const {});
-    }
-    if (widget.selectedRange != oldWidget.selectedRange) {
-      _syncRangeFromWidget();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final textTheme = CnTheme.textThemeOf(context);
+    final colors = CnTheme.of(context).colors;
+    final text = CnTheme.of(context).text;
     final weekdayLabels = _resolvedWeekdayLabels();
-    final rangeStart = _rangeStart;
-    final rangeEnd = _rangeEnd;
-    final selectedDate = _selectedDate;
+    final rangeStart = _pendingStart ?? widget._range?.start;
+    final rangeEnd = _pendingStart != null ? null : widget._range?.end;
+    final selectedDate = widget._date;
     final months = [
       for (var i = 0; i < widget.monthsToDisplay; i++)
         _monthAtOffset(_focusedMonth, i),
     ];
 
     return Padding(
-      padding: widget.padding,
+      padding: const .all(12),
       child: Column(
         crossAxisAlignment: .start,
         spacing: 8,
         children: [
-          _buildHeader(textTheme, months),
+          _buildHeader(text, months),
           Row(
             crossAxisAlignment: .start,
             spacing: widget.monthsToDisplay > 1 ? 24 : 0,
@@ -174,8 +220,8 @@ class _CnCalendarState extends State<CnCalendar> {
                 Expanded(
                   child: _buildMonthView(
                     month,
-                    scheme,
-                    textTheme,
+                    colors,
+                    text,
                     weekdayLabels,
                     selectedDate,
                     rangeStart,
@@ -189,17 +235,17 @@ class _CnCalendarState extends State<CnCalendar> {
     );
   }
 
-  Widget _buildHeader(TextTheme textTheme, List<DateTime> months) {
+  Widget _buildHeader(CnTextStyles text, List<DateTime> months) {
     final header = widget.headerVariant;
     if (header == CnCalendarHeaderVariant.dropdowns &&
         widget.monthsToDisplay == 1) {
       return Row(
         children: [
-          CnButton(
+          CnButton.icon(
             variant: .ghost,
-            size: .icon,
+            size: .sm,
             onPressed: _handlePreviousMonth,
-            child: const Icon(Icons.chevron_left),
+            icon: const Icon(Icons.chevron_left),
           ),
           Expanded(
             child: Row(
@@ -212,7 +258,7 @@ class _CnCalendarState extends State<CnCalendar> {
                     value: _focusedMonth.month,
                     items: [
                       for (var month = 1; month <= 12; month++)
-                        DropdownMenuItem(
+                        CnSelectItem(
                           value: month,
                           child: Text(_monthName(month)),
                         ),
@@ -233,10 +279,7 @@ class _CnCalendarState extends State<CnCalendar> {
                     value: _focusedMonth.year,
                     items: [
                       for (final year in _yearOptions())
-                        DropdownMenuItem(
-                          value: year,
-                          child: Text(year.toString()),
-                        ),
+                        CnSelectItem(value: year, child: Text(year.toString())),
                     ],
                     onChanged: (value) {
                       if (value == null) {
@@ -251,11 +294,11 @@ class _CnCalendarState extends State<CnCalendar> {
               ],
             ),
           ),
-          CnButton(
+          CnButton.icon(
             variant: .ghost,
-            size: .icon,
+            size: .sm,
             onPressed: _handleNextMonth,
-            child: const Icon(Icons.chevron_right),
+            icon: const Icon(Icons.chevron_right),
           ),
         ],
       );
@@ -263,11 +306,11 @@ class _CnCalendarState extends State<CnCalendar> {
 
     return Row(
       children: [
-        CnButton(
+        CnButton.icon(
           variant: .ghost,
-          size: .icon,
+          size: .sm,
           onPressed: _handlePreviousMonth,
-          child: const Icon(Icons.chevron_left),
+          icon: const Icon(Icons.chevron_left),
         ),
         Expanded(
           child: Row(
@@ -277,16 +320,16 @@ class _CnCalendarState extends State<CnCalendar> {
               for (final month in months)
                 Text(
                   '${_monthName(month.month)} ${month.year}',
-                  style: textTheme.titleMedium,
+                  style: text.base.semibold,
                 ),
             ],
           ),
         ),
-        CnButton(
+        CnButton.icon(
           variant: .ghost,
-          size: .icon,
+          size: .sm,
           onPressed: _handleNextMonth,
-          child: const Icon(Icons.chevron_right),
+          icon: const Icon(Icons.chevron_right),
         ),
       ],
     );
@@ -294,8 +337,8 @@ class _CnCalendarState extends State<CnCalendar> {
 
   Widget _buildMonthView(
     DateTime month,
-    ColorScheme scheme,
-    TextTheme textTheme,
+    CnColors colors,
+    CnTextStyles text,
     List<String> weekdayLabels,
     DateTime? selectedDate,
     DateTime? rangeStart,
@@ -317,8 +360,8 @@ class _CnCalendarState extends State<CnCalendar> {
                       child: Center(
                         child: Text(
                           label,
-                          style: textTheme.labelSmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
+                          style: text.xs.medium.copyWith(
+                            color: colors.mutedForeground,
                             fontWeight: .w600,
                           ),
                         ),
@@ -346,7 +389,7 @@ class _CnCalendarState extends State<CnCalendar> {
             }
             return _buildDayCell(
               dayInfo.date,
-              scheme,
+              colors,
               selectedDate,
               rangeStart,
               rangeEnd,
@@ -360,7 +403,7 @@ class _CnCalendarState extends State<CnCalendar> {
 
   Widget _buildDayCell(
     DateTime date,
-    ColorScheme scheme,
+    CnColors colors,
     DateTime? selectedDate,
     DateTime? rangeStart,
     DateTime? rangeEnd,
@@ -372,49 +415,49 @@ class _CnCalendarState extends State<CnCalendar> {
     final isDisabled = _isDisabled(date);
     final isToday = _isSameDay(date, DateTime.now());
     final isSelectedSingle =
-        widget.selectionMode == .single &&
+        widget._mode == .single &&
         selectedDate != null &&
         _isSameDay(date, selectedDate);
     final isSelectedMultiple =
-        widget.selectionMode == .multiple &&
-        _selectedDates.any((item) => _isSameDay(item, date));
+        widget._mode == .multiple &&
+        widget._dates!.any((item) => _isSameDay(item, date));
     final isSelected = isSelectedSingle || isSelectedMultiple;
 
     final inRange =
-        widget.selectionMode == .range &&
+        widget._mode == .range &&
         rangeStart != null &&
         rangeEnd != null &&
         !_isBefore(date, rangeStart) &&
         !_isAfter(date, rangeEnd);
     final isRangeStart =
-        widget.selectionMode == .range &&
+        widget._mode == .range &&
         rangeStart != null &&
         _isSameDay(date, rangeStart);
     final isRangeEnd =
-        widget.selectionMode == .range &&
+        widget._mode == .range &&
         rangeEnd != null &&
         _isSameDay(date, rangeEnd);
     final isRangeEdge = isRangeStart || isRangeEnd;
 
     final background = isSelected || isRangeEdge
-        ? scheme.primary
+        ? colors.primary
         : inRange
-        ? scheme.primary.withValues(alpha: 0.12)
+        ? colors.primary.withValues(alpha: 0.12)
         : Colors.transparent;
     final foreground = isSelected || isRangeEdge
-        ? scheme.onPrimary
+        ? colors.primaryForeground
         : isDisabled
-        ? scheme.onSurfaceVariant.withValues(alpha: 0.5)
+        ? colors.mutedForeground.withValues(alpha: 0.5)
         : isOutside
-        ? scheme.onSurfaceVariant
-        : scheme.onSurface;
+        ? colors.mutedForeground
+        : colors.foreground;
 
     final cnTheme = CnTheme.of(context);
-    final baseRadius = math.max(0.0, cnTheme.radius - 6);
+    final baseRadius = cnTheme.radii.sm;
     final radius = inRange && !isRangeEdge
         ? BorderRadius.zero
         : BorderRadius.circular(baseRadius);
-    final textStyle = CnTheme.textThemeOf(context).bodySmall?.copyWith(
+    final textStyle = CnTheme.of(context).text.xs.copyWith(
       color: foreground,
       fontWeight: isSelected || isRangeEdge ? .w600 : .w500,
     );
@@ -440,7 +483,7 @@ class _CnCalendarState extends State<CnCalendar> {
         decoration: BoxDecoration(
           color: background,
           borderRadius: radius,
-          border: isToday ? Border.all(color: scheme.primary, width: 1) : null,
+          border: isToday ? Border.all(color: colors.primary, width: 1) : null,
         ),
         child: Center(child: label),
       ),
@@ -451,38 +494,24 @@ class _CnCalendarState extends State<CnCalendar> {
     if (_isDisabled(date)) {
       return;
     }
-    if (widget.selectionMode == .single) {
-      setState(() => _selectedDate = date);
-      widget.onDateSelected?.call(date);
+    if (widget._mode == .single) {
+      widget._onDate?.call(date);
       return;
     }
 
-    if (widget.selectionMode == .multiple) {
-      final next = _toggleDateSelection(date);
-      widget.onDatesSelected?.call(next);
+    if (widget._mode == .multiple) {
+      widget._onDates?.call(_toggleDateSelection(date));
       return;
     }
 
-    final rangeStart = _rangeStart;
-    final rangeEnd = _rangeEnd;
-    if (rangeStart == null || rangeEnd != null) {
-      setState(() {
-        _rangeStart = date;
-        _rangeEnd = null;
-      });
+    final start = _pendingStart;
+    if (start == null || _isBefore(date, start)) {
+      setState(() => _pendingStart = date);
       return;
     }
 
-    if (_isBefore(date, rangeStart)) {
-      setState(() {
-        _rangeStart = date;
-        _rangeEnd = null;
-      });
-      return;
-    }
-
-    setState(() => _rangeEnd = date);
-    widget.onRangeSelected?.call(DateTimeRange(start: rangeStart, end: date));
+    setState(() => _pendingStart = null);
+    widget._onRange?.call(CnDateRange(start: start, end: date));
   }
 
   void _handlePreviousMonth() {
@@ -544,11 +573,6 @@ class _CnCalendarState extends State<CnCalendar> {
     return [for (var i = 0; i < 7; i++) labels[(startIndex + i) % 7]];
   }
 
-  void _syncRangeFromWidget() {
-    _rangeStart = widget.selectedRange?.start;
-    _rangeEnd = widget.selectedRange?.end;
-  }
-
   DateTime _monthAtOffset(DateTime month, int offset) {
     return DateTime(month.year, month.month + offset, 1);
   }
@@ -564,14 +588,7 @@ class _CnCalendarState extends State<CnCalendar> {
   }
 
   bool _isDisabled(DateTime date) {
-    if (widget.isDateSelectable != null) {
-      return !widget.isDateSelectable!(date);
-    }
     return widget.isDateDisabled?.call(date) ?? false;
-  }
-
-  Set<DateTime> _normalizeDates(Set<DateTime> dates) {
-    return {for (final date in dates) _normalizeDate(date)};
   }
 
   DateTime _normalizeDate(DateTime date) {
@@ -580,14 +597,11 @@ class _CnCalendarState extends State<CnCalendar> {
 
   Set<DateTime> _toggleDateSelection(DateTime date) {
     final normalized = _normalizeDate(date);
-    final next = Set<DateTime>.from(_selectedDates);
+    final next = {for (final item in widget._dates!) _normalizeDate(item)};
     final alreadySelected = next.any((item) => _isSameDay(item, normalized));
     next.removeWhere((item) => _isSameDay(item, normalized));
     if (!alreadySelected) {
       next.add(normalized);
-    }
-    if (widget.selectedDates == null) {
-      setState(() => _selectedDates = next);
     }
     return next;
   }

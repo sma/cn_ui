@@ -1,67 +1,26 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../theme/cn_theme.dart';
+import 'cn_dialog.dart';
 
-/// A builder function for creating dialogs with a [CnDialogController].
-typedef CnDialogBuilder = Widget Function(CnDialogController dialog);
-
-/// Shows a dialog using the provided builder function.
-Future<T?> showCnDialog<T>({
-  required BuildContext context,
-  required CnDialogBuilder builder,
-  bool barrierDismissible = true,
-}) {
-  return showDialog<T>(
-    context: context,
-    barrierDismissible: barrierDismissible,
-    builder: (context) => builder(CnDialogController(context)),
-  );
-}
-
-/// A controller for managing dialog interactions and results.
-class CnDialogController {
-  CnDialogController(this._context);
-  final BuildContext _context;
-
-  void cancel<T extends Object?>([T? result]) {
-    Navigator.of(_context).pop(result);
-  }
-
-  void result<T extends Object?>([T? result]) {
-    Navigator.of(_context).pop(result);
-  }
-}
-
-/// A simple alert dialog component wrapping Flutter's AlertDialog.
+/// A dialog asking the user to confirm an action.
 ///
-/// Provides a basic alert interface with title, content, and action buttons.
-///
-/// See also:
-///
-///  * [CnDialog], for more customizable dialogs.
-///  * [showCnDialog], for showing dialogs programmatically.
-class CnAlertDialog extends StatelessWidget {
-  const CnAlertDialog({
-    super.key,
-    this.actions = const [],
-    this.content,
-    this.title,
-  });
-  final List<Widget> actions;
-  final Widget? content;
-  final Widget? title;
-
+/// Show it with [showCnDialog]. Unlike [CnDialog], it has no close button, so
+/// the user has to pick one of the [actions].
+class const CnAlertDialog({
+  super.key,
+  final Widget? title,
+  final Widget? description,
+  final Widget? content,
+  final List<Widget> actions = const [],
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final cnTheme = CnTheme.of(context);
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: .circular(cnTheme.radius)),
+    return CnDialog(
       title: title,
+      description: description,
       content: content,
       actions: actions,
-      actionsPadding: const .fromLTRB(24, 0, 24, 20),
-      contentPadding: const .fromLTRB(24, 16, 24, 20),
-      titlePadding: const .fromLTRB(24, 24, 24, 8),
+      showCloseButton: false,
     );
   }
 }

@@ -1,11 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
-
-/// Orientation variants for [CnInputGroup].
-enum CnInputGroupOrientation { horizontal, vertical }
 
 /// Alignment variants for [CnInputGroupAddon].
 enum CnInputGroupAddonAlign { center, start, end }
@@ -23,16 +18,10 @@ class CnInputGroup extends StatefulWidget {
   const CnInputGroup({
     super.key,
     required this.children,
-    this.orientation = .horizontal,
-    this.padding,
-    this.borderRadius,
-    this.backgroundColor,
+    this.direction = .horizontal,
   });
   final List<Widget> children;
-  final CnInputGroupOrientation orientation;
-  final EdgeInsetsGeometry? padding;
-  final BorderRadiusGeometry? borderRadius;
-  final Color? backgroundColor;
+  final Axis direction;
 
   @override
   State<CnInputGroup> createState() => _CnInputGroupState();
@@ -50,17 +39,13 @@ class _CnInputGroupState extends State<CnInputGroup> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final cnTheme = CnTheme.of(context);
-    final resolvedRadius =
-        widget.borderRadius ??
-        BorderRadius.circular(math.max(0, cnTheme.radius - 4));
-    final resolvedBackground = widget.backgroundColor ?? scheme.surface;
-    final borderColor = _hasFocus ? scheme.primary : scheme.outlineVariant;
+    final borderColor = _hasFocus ? colors.ring : colors.input;
 
-    final children = _buildChildren(widget.children, scheme.outlineVariant);
+    final children = _buildChildren(widget.children, colors.border);
 
-    final content = widget.orientation == .horizontal
+    final content = widget.direction == .horizontal
         ? Row(crossAxisAlignment: .center, children: children)
         : Column(crossAxisAlignment: .stretch, children: children);
 
@@ -71,16 +56,11 @@ class _CnInputGroupState extends State<CnInputGroup> {
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
         decoration: BoxDecoration(
-          color: resolvedBackground,
-          borderRadius: resolvedRadius,
+          borderRadius: .circular(cnTheme.radii.md),
           border: Border.all(color: borderColor),
         ),
         clipBehavior: Clip.antiAlias,
-        padding: widget.padding ?? EdgeInsets.zero,
-        child: _CnInputGroupScope(
-          orientation: widget.orientation,
-          child: content,
-        ),
+        child: _CnInputGroupScope(direction: widget.direction, child: content),
       ),
     );
   }
@@ -92,7 +72,7 @@ class _CnInputGroupState extends State<CnInputGroup> {
       if (index != items.length - 1) {
         children.add(
           _CnInputGroupDivider(
-            orientation: widget.orientation,
+            direction: widget.direction,
             color: dividerColor,
           ),
         );
@@ -107,22 +87,14 @@ class CnInputGroupAddon extends StatelessWidget {
   const CnInputGroupAddon({
     super.key,
     required this.child,
-    this.padding,
-    this.backgroundColor,
     this.align = .center,
   });
   final Widget child;
-  final EdgeInsetsGeometry? padding;
-  final Color? backgroundColor;
   final CnInputGroupAddonAlign align;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final resolvedPadding =
-        padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 10);
-    final resolvedBackground =
-        backgroundColor ?? scheme.surfaceContainerHighest;
+    final colors = CnTheme.of(context).colors;
 
     return Align(
       alignment: switch (align) {
@@ -131,17 +103,12 @@ class CnInputGroupAddon extends StatelessWidget {
         .center => Alignment.center,
       },
       child: Container(
-        padding: resolvedPadding,
-        color: resolvedBackground,
-        child: DefaultTextStyle(
-          style:
-              CnTheme.textThemeOf(context).bodySmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: .w600,
-              ) ??
-              TextStyle(color: scheme.onSurfaceVariant),
+        padding: const .symmetric(horizontal: 12, vertical: 8),
+        child: DefaultTextStyle.merge(
+          style: CnTheme.of(context).text.xs
+              .copyWith(color: colors.mutedForeground),
           child: IconTheme(
-            data: IconThemeData(color: scheme.onSurfaceVariant, size: 18),
+            data: IconThemeData(color: colors.mutedForeground, size: 16),
             child: child,
           ),
         ),
@@ -150,35 +117,20 @@ class CnInputGroupAddon extends StatelessWidget {
   }
 }
 
-/// A text addon within a [CnInputGroup].
-class CnInputGroupText extends StatelessWidget {
-  const CnInputGroupText({super.key, required this.text});
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return CnInputGroupAddon(child: Text(text));
-  }
-}
-
 /// A button within a [CnInputGroup].
 class CnInputGroupButton extends StatelessWidget {
   const CnInputGroupButton({
     super.key,
     required this.child,
-    this.padding,
     this.expand = false,
   });
   final Widget child;
-  final EdgeInsetsGeometry? padding;
   final bool expand;
 
   @override
   Widget build(BuildContext context) {
     final scope = _CnInputGroupScope.of(context);
-    final resolved = padding == null
-        ? child
-        : Padding(padding: padding!, child: child);
+    final resolved = Padding(padding: const .all(4), child: child);
     if (expand && scope != null) {
       return Expanded(child: resolved);
     }
@@ -197,9 +149,8 @@ class CnInputGroupInput extends StatelessWidget {
     this.keyboardType,
     this.onChanged,
     this.expand = true,
-    this.contentPadding,
-    this.prefixIcon,
-    this.suffixIcon,
+    this.leading,
+    this.trailing,
   });
   final TextEditingController? controller;
   final String? placeholder;
@@ -208,9 +159,8 @@ class CnInputGroupInput extends StatelessWidget {
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
   final bool expand;
-  final EdgeInsetsGeometry? contentPadding;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
+  final Widget? leading;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -222,15 +172,15 @@ class CnInputGroupInput extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: placeholder,
-        filled: false,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
-        contentPadding:
-            contentPadding ??
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        prefixIcon: prefixIcon,
-        suffixIcon: suffixIcon,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 10,
+        ),
+        prefixIcon: leading,
+        suffixIcon: trailing,
       ),
     );
 
@@ -268,13 +218,12 @@ class CnInputGroupTextarea extends StatelessWidget {
       maxLines: maxLines,
       decoration: InputDecoration(
         hintText: placeholder,
-        filled: false,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 12,
+          horizontal: 12,
+          vertical: 10,
         ),
       ),
     );
@@ -284,13 +233,13 @@ class CnInputGroupTextarea extends StatelessWidget {
 }
 
 class _CnInputGroupDivider extends StatelessWidget {
-  const _CnInputGroupDivider({required this.orientation, required this.color});
-  final CnInputGroupOrientation orientation;
+  const _CnInputGroupDivider({required this.direction, required this.color});
+  final Axis direction;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    if (orientation == .vertical) {
+    if (direction == .vertical) {
       return Divider(height: 1, thickness: 1, color: color);
     }
     return VerticalDivider(width: 1, thickness: 1, color: color);
@@ -298,8 +247,8 @@ class _CnInputGroupDivider extends StatelessWidget {
 }
 
 class _CnInputGroupScope extends InheritedWidget {
-  const _CnInputGroupScope({required this.orientation, required super.child});
-  final CnInputGroupOrientation orientation;
+  const _CnInputGroupScope({required this.direction, required super.child});
+  final Axis direction;
 
   static _CnInputGroupScope? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<_CnInputGroupScope>();
@@ -307,13 +256,13 @@ class _CnInputGroupScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_CnInputGroupScope oldWidget) {
-    return oldWidget.orientation != orientation;
+    return oldWidget.direction != direction;
   }
 }
 
 Widget _wrapExpanded(BuildContext context, Widget child, bool expand) {
   final scope = _CnInputGroupScope.of(context);
-  if (expand && scope != null && scope.orientation == .horizontal) {
+  if (expand && scope != null && scope.direction == .horizontal) {
     return Expanded(child: child);
   }
   return child;

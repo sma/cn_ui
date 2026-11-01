@@ -1,49 +1,31 @@
-import '../../cn_ui.dart';
+import 'package:flutter/widgets.dart';
 
-/// A text label component for form fields with optional required indicator.
-///
-/// Displays an asterisk when the [required] parameter is true.
+import '../theme/cn_theme.dart';
+
+/// A label for a form control. With [required], it shows an asterisk.
 ///
 /// See also:
 ///
-///  * [CnFormField], which automatically includes labels.
-class CnLabel extends StatelessWidget {
-  const CnLabel({
-    super.key,
-    required this.child,
-    this.required = false,
-    this.requiredColor,
-    this.style,
-  });
-  final Widget child;
-  final bool required;
-  final Color? requiredColor;
-  final TextStyle? style;
-
+///  * [CnField], which includes a label.
+class const CnLabel({
+  super.key,
+  required final Widget child,
+  final bool required = false,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final resolvedStyle = style ?? CnTheme.textThemeOf(context).labelLarge;
+    final theme = CnTheme.of(context);
+    final style = theme.text.sm.medium;
 
     return Row(
       mainAxisSize: .min,
       spacing: 4,
       children: [
-        DefaultTextStyle(
-          style: resolvedStyle ?? const TextStyle(),
-          child: child,
+        Flexible(
+          child: DefaultTextStyle.merge(style: style, child: child),
         ),
-        if (required) ...[
-          Text(
-            '*',
-            style:
-                resolvedStyle?.copyWith(
-                  color: requiredColor ?? scheme.error,
-                  fontWeight: .w700,
-                ) ??
-                TextStyle(color: requiredColor ?? scheme.error),
-          ),
-        ],
+        if (required)
+          Text('*', style: style.copyWith(color: theme.colors.destructive)),
       ],
     );
   }

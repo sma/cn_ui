@@ -1,82 +1,53 @@
 import 'package:material_ui/material_ui.dart';
 
-import 'cn_dropdown_menu.dart';
+import 'cn_menu_entry.dart';
 import 'cn_menu_styles.dart';
 
-/// A context menu component triggered by right-click or long-press.
-///
-/// Provides a menu overlay with actions, checkboxes, radio items, and submenus at the cursor position.
+/// A menu that opens at the pointer on right-click or long-press.
 ///
 /// See also:
 ///
 ///  * [CnDropdownMenu], for click-triggered dropdown menus.
 ///  * [CnMenubar], for horizontal menu bars.
-class CnContextMenu extends StatelessWidget {
-  const CnContextMenu({
-    super.key,
-    required this.child,
-    required this.entries,
-    this.style,
-    this.alignmentOffset,
-    this.menuWidth,
-    this.openOnTap = false,
-  });
-  final Widget child;
-  final List<CnDropdownMenuEntry> entries;
-  final MenuStyle? style;
-  final Offset? alignmentOffset;
-  final double? menuWidth;
-  final bool openOnTap;
-
+class const CnContextMenu({
+  super.key,
+  required final Widget child,
+  required final List<CnMenuEntry> entries,
+  final double? width,
+  final bool openOnTap = false,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final resolvedStyle = style ?? cnMenuStyle(context, width: menuWidth);
-    final menuItemStyle = cnMenuItemStyle(context);
-    final submenuIcon = cnSubmenuIcon(context);
+    final menuStyle = cnMenuStyle(context, width: width);
 
-    return MenuTheme(
-      data: MenuThemeData(style: resolvedStyle, submenuIcon: submenuIcon),
-      child: MenuButtonTheme(
-        data: MenuButtonThemeData(style: menuItemStyle),
-        child: MenuAnchor(
-          style: resolvedStyle,
-          alignmentOffset: alignmentOffset,
-          menuChildren: buildCnDropdownMenuEntries(
-            context,
-            entries,
-            menuStyle: resolvedStyle,
-            menuItemStyle: menuItemStyle,
-          ),
-          builder: (context, controller, child) {
-            return GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTapDown: openOnTap
-                  ? (details) {
-                      _openAt(context, controller, details.globalPosition);
-                    }
-                  : null,
-              onSecondaryTapDown: (details) {
-                _openAt(context, controller, details.globalPosition);
-              },
-              onLongPressStart: (details) {
-                _openAt(context, controller, details.globalPosition);
-              },
-              child: child,
-            );
-          },
-          child: child,
+    return cnMenuTheme(
+      context,
+      menuStyle: menuStyle,
+      child: MenuAnchor(
+        style: menuStyle,
+        menuChildren: buildCnMenuEntries(
+          context,
+          entries,
+          menuStyle: menuStyle,
         ),
+        builder: (context, controller, child) {
+          void openAt(Offset position) {
+            final box = context.findRenderObject() as RenderBox?;
+            controller.open(position: box?.globalToLocal(position) ?? position);
+          }
+
+          return GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTapDown: openOnTap
+                ? (details) => openAt(details.globalPosition)
+                : null,
+            onSecondaryTapDown: (details) => openAt(details.globalPosition),
+            onLongPressStart: (details) => openAt(details.globalPosition),
+            child: child,
+          );
+        },
+        child: child,
       ),
     );
-  }
-
-  void _openAt(
-    BuildContext context,
-    MenuController controller,
-    Offset position,
-  ) {
-    final box = context.findRenderObject() as RenderBox?;
-    final local = box?.globalToLocal(position) ?? position;
-    controller.open(position: local);
   }
 }

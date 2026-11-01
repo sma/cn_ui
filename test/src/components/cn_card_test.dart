@@ -10,7 +10,7 @@ void main() {
       tester,
       const SizedBox(
         width: 300,
-        child: CnCard(child: Text('Simple card content')),
+        child: CnCard(content: Text('Simple card content')),
       ),
       'goldens/card/basic.png',
       height: 150,
@@ -23,7 +23,7 @@ void main() {
       const SizedBox(
         width: 300,
         child: CnCard(
-          header: Text(
+          title: Text(
             'Card Header',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
@@ -41,7 +41,7 @@ void main() {
       SizedBox(
         width: 300,
         child: CnCard(
-          header: const Text(
+          title: const Text(
             'Complete Card',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
@@ -55,7 +55,7 @@ void main() {
         ),
       ),
       'goldens/card/complete.png',
-      height: 250,
+      height: 320,
     );
   });
 }

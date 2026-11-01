@@ -2,191 +2,90 @@ import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
-/// A container with a draggable handle for resizing two panels.
+/// Two panels with a handle between them.
 ///
-/// Allows users to adjust the relative sizes of primary and secondary panels with ratio constraints.
-///
-/// See also:
-///
-///  * [CnResizeHandle], the visual handle for dragging.
-class CnResizable extends StatefulWidget {
-  const CnResizable({
-    super.key,
-    required this.primary,
-    required this.secondary,
-    this.direction = .horizontal,
-    this.initialRatio = 0.5,
-    this.minRatio = 0.2,
-    this.maxRatio = 0.8,
-    this.handleSize = 12,
-    this.onChanged,
-    this.handle,
-  });
-  final Axis direction;
-  final Widget primary;
-  final Widget secondary;
-  final double initialRatio;
-  final double minRatio;
-  final double maxRatio;
-  final double handleSize;
-  final ValueChanged<double>? onChanged;
-  final Widget? handle;
-
-  @override
-  State<CnResizable> createState() => _CnResizableState();
-}
-
-class _CnResizableState extends State<CnResizable> {
-  late double _ratio;
-
-  @override
-  void initState() {
-    super.initState();
-    _ratio = _clampRatio(widget.initialRatio);
-  }
-
-  double _clampRatio(double value) {
-    return value.clamp(widget.minRatio, widget.maxRatio);
-  }
-
-  void _updateRatio(double delta, double available) {
-    if (available <= 0) {
-      return;
-    }
-    final nextRatio = _clampRatio(_ratio + delta / available);
-    if (nextRatio == _ratio) {
-      return;
-    }
-    setState(() => _ratio = nextRatio);
-    widget.onChanged?.call(_ratio);
-  }
-
+/// [value] is the share of the [primary] panel, from 0 to 1. A `null`
+/// [onChanged] makes the handle inert.
+class const CnResizable({
+  super.key,
+  required final Widget primary,
+  required final Widget secondary,
+  required final double value,
+  final ValueChanged<double>? onChanged,
+  final Axis direction = .horizontal,
+  final double minValue = 0.2,
+  final double maxValue = 0.8,
+  final double handleSize = 12,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final isHorizontal = direction == .horizontal;
+    final ratio = value.clamp(minValue, maxValue);
+    final scale = 1000;
+    final primaryFlex = (ratio * scale).round().clamp(1, scale - 1);
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isHorizontal = widget.direction == .horizontal;
         final mainSize = isHorizontal
             ? constraints.maxWidth
             : constraints.maxHeight;
+        final available = mainSize - handleSize;
+        final isRtl =
+            isHorizontal && Directionality.of(context) == TextDirection.rtl;
 
-        if (!mainSize.isFinite) {
-          return _buildFlexWithRatio(context, 1000);
+        void handleDrag(double delta) {
+          if (onChanged == null || !available.isFinite || available <= 0) {
+            return;
+          }
+          final signed = isRtl ? -delta : delta;
+          final next = (ratio + signed / available).clamp(minValue, maxValue);
+          if (next != ratio) {
+            onChanged!(next);
+          }
         }
 
-        final available = (mainSize - widget.handleSize).clamp(0.0, mainSize);
-        final firstSize = available * _ratio;
-        final secondSize = (available - firstSize).clamp(0.0, available);
-
         return Flex(
-          direction: widget.direction,
+          direction: direction,
           children: [
-            SizedBox(
-              width: isHorizontal ? firstSize : null,
-              height: isHorizontal ? null : firstSize,
-              child: widget.primary,
+            Expanded(flex: primaryFlex, child: primary),
+            MouseRegion(
+              cursor: isHorizontal
+                  ? SystemMouseCursors.resizeColumn
+                  : SystemMouseCursors.resizeRow,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onHorizontalDragUpdate: isHorizontal
+                    ? (details) => handleDrag(details.delta.dx)
+                    : null,
+                onVerticalDragUpdate: isHorizontal
+                    ? null
+                    : (details) => handleDrag(details.delta.dy),
+                child: SizedBox(
+                  width: isHorizontal ? handleSize : double.infinity,
+                  height: isHorizontal ? double.infinity : handleSize,
+                  child: Center(child: _Handle(isHorizontal: isHorizontal)),
+                ),
+              ),
             ),
-            _ResizeHandleArea(
-              direction: widget.direction,
-              size: widget.handleSize,
-              handle: widget.handle,
-              onDrag: (delta) => _updateRatio(delta, available),
-            ),
-            SizedBox(
-              width: isHorizontal ? secondSize : null,
-              height: isHorizontal ? null : secondSize,
-              child: widget.secondary,
-            ),
+            Expanded(flex: scale - primaryFlex, child: secondary),
           ],
         );
       },
     );
   }
-
-  Widget _buildFlexWithRatio(BuildContext context, int scale) {
-    final flex = (_ratio * scale).round().clamp(1, scale - 1);
-
-    return Flex(
-      direction: widget.direction,
-      children: [
-        Expanded(flex: flex, child: widget.primary),
-        _ResizeHandleArea(
-          direction: widget.direction,
-          size: widget.handleSize,
-          handle: widget.handle,
-          onDrag: (_) {},
-        ),
-        Expanded(flex: scale - flex, child: widget.secondary),
-      ],
-    );
-  }
 }
 
-class _ResizeHandleArea extends StatelessWidget {
-  const _ResizeHandleArea({
-    required this.direction,
-    required this.size,
-    required this.handle,
-    required this.onDrag,
-  });
-  final Axis direction;
-  final double size;
-  final Widget? handle;
-  final ValueChanged<double> onDrag;
-
+class const _Handle({required final bool isHorizontal})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final isHorizontal = direction == .horizontal;
-    final cursor = isHorizontal
-        ? SystemMouseCursors.resizeColumn
-        : SystemMouseCursors.resizeRow;
-
-    return MouseRegion(
-      cursor: cursor,
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onHorizontalDragUpdate: isHorizontal
-            ? (details) => onDrag(details.delta.dx)
-            : null,
-        onVerticalDragUpdate: isHorizontal
-            ? null
-            : (details) => onDrag(details.delta.dy),
-        child: SizedBox(
-          width: isHorizontal ? size : double.infinity,
-          height: isHorizontal ? double.infinity : size,
-          child: Center(child: handle ?? CnResizeHandle(direction: direction)),
-        ),
-      ),
-    );
-  }
-}
-
-/// A visual handle for resizing panels in a [CnResizable].
-class CnResizeHandle extends StatelessWidget {
-  const CnResizeHandle({
-    super.key,
-    this.direction = .horizontal,
-    this.thickness = 3,
-    this.length = 36,
-    this.color,
-  });
-  final Axis direction;
-  final double thickness;
-  final double length;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-    final isHorizontal = direction == .horizontal;
-
+    final theme = CnTheme.of(context);
     return Container(
-      width: isHorizontal ? thickness : length,
-      height: isHorizontal ? length : thickness,
+      width: isHorizontal ? 3 : 36,
+      height: isHorizontal ? 36 : 3,
       decoration: BoxDecoration(
-        color: color ?? scheme.outlineVariant,
-        borderRadius: .circular(cnTheme.radius),
+        color: theme.colors.border,
+        borderRadius: .circular(theme.radii.full),
       ),
     );
   }

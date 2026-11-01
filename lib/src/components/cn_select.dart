@@ -1,43 +1,106 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../../cn_ui.dart';
+import '../theme/cn_theme.dart';
+import 'cn_field.dart';
 
-/// A dropdown select component that wraps Flutter's DropdownButtonFormField.
+/// Size variants for [CnSelect].
+enum CnSelectSize { sm, md }
+
+/// An entry in the list of a [CnSelect].
+sealed class CnSelectEntry<T> {
+  const CnSelectEntry();
+}
+
+/// A selectable option.
+class const CnSelectItem<T>({
+  required final T value,
+  required final Widget child,
+  final bool enabled = true,
+}) extends CnSelectEntry<T>;
+
+/// A labeled group of options.
+class const CnSelectGroup<T>({
+  required final Widget label,
+  required final List<CnSelectItem<T>> items,
+}) extends CnSelectEntry<T>;
+
+/// A dropdown for choosing one value from a list.
 ///
-/// Provides a simple interface for selecting a single value from a list of options.
+/// A `null` [onChanged] disables it. With a [validator], it takes part in the
+/// validation of an enclosing [CnForm].
 ///
 /// See also:
 ///
-///  * [CnNativeSelect], which provides a more feature-rich select with option groups.
 ///  * [CnCombobox], for a searchable select component.
-class CnSelect<T> extends StatelessWidget {
-  const CnSelect({
-    super.key,
-    required this.items,
-    this.value,
-    this.onChanged,
-    this.placeholder,
-    this.isExpanded = true,
-  });
-  final List<DropdownMenuItem<T>> items;
-  final T? value;
-  final ValueChanged<T?>? onChanged;
-  final String? placeholder;
-  final bool isExpanded;
-
+class const CnSelect<T>({
+  super.key,
+  required final List<CnSelectEntry<T>> items,
+  final T? value,
+  final ValueChanged<T?>? onChanged,
+  final String? placeholder,
+  final FormFieldValidator<T>? validator,
+  final bool expand = true,
+  final CnSelectSize size = .md,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final cnTheme = CnTheme.of(context);
+    final theme = CnTheme.of(context);
+    final hasError = CnField.hasError(context);
+
     return DropdownButtonFormField<T>(
       key: ValueKey(value),
       initialValue: value,
-      items: items,
+      items: _buildItems(theme),
       onChanged: onChanged,
-      isExpanded: isExpanded,
-      decoration: InputDecoration(hintText: placeholder),
-      borderRadius: .circular(cnTheme.radius),
-      dropdownColor: cnTheme.menuColor,
+      validator: validator,
+      isExpanded: expand,
       isDense: true,
+      forceErrorText: hasError ? '' : null,
+      style: theme.text.sm.copyWith(color: theme.colors.foreground),
+      borderRadius: .circular(theme.radii.md),
+      dropdownColor: theme.colors.popover,
+      icon: Icon(
+        Icons.expand_more,
+        size: 16,
+        color: theme.colors.mutedForeground,
+      ),
+      decoration: InputDecoration(
+        hintText: placeholder,
+        contentPadding: size == .sm
+            ? const EdgeInsets.symmetric(horizontal: 12, vertical: 6)
+            : null,
+        // The field shows the message, so only the border changes here.
+        errorStyle: hasError ? const TextStyle(fontSize: 0, height: 0) : null,
+      ),
     );
+  }
+
+  List<DropdownMenuItem<T>> _buildItems(CnTheme theme) {
+    DropdownMenuItem<T> option(CnSelectItem<T> item) {
+      return DropdownMenuItem<T>(
+        value: item.value,
+        enabled: item.enabled,
+        child: item.child,
+      );
+    }
+
+    return [
+      for (final entry in items)
+        ...switch (entry) {
+          CnSelectItem<T>() => [option(entry)],
+          CnSelectGroup<T>() => [
+            DropdownMenuItem<T>(
+              enabled: false,
+              child: DefaultTextStyle.merge(
+                style: theme.text.xs.copyWith(
+                  color: theme.colors.mutedForeground,
+                ),
+                child: entry.label,
+              ),
+            ),
+            for (final item in entry.items) option(item),
+          ],
+        },
+    ];
   }
 }

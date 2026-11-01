@@ -21,12 +21,12 @@ class ThemePlayground extends StatelessWidget {
         children: [
           Text(
             'Theme Playground',
-            style: CnTheme.textThemeOf(context).headlineMedium,
+            style: CnTheme.of(context).text.xl2.semibold,
           ),
           Text(
             'Tune the tokens used by every component. This mirrors the '
             'shadcn/ui create flow, but as Flutter-native config.',
-            style: CnTheme.textThemeOf(context).bodyLarge,
+            style: CnTheme.of(context).text.base,
           ),
           Padding(
             padding: const EdgeInsets.only(top: 20),
@@ -61,41 +61,36 @@ class ThemePlayground extends StatelessWidget {
                           spacing: 16,
                           children: [
                             _TokenCard(
-                              title: 'Style',
-                              child: SegmentedButton<CnStyle>(
+                              title: 'Mode',
+                              child: SegmentedButton<Brightness>(
                                 segments: const [
                                   ButtonSegment(
-                                    value: .classic,
-                                    label: Text('Classic'),
+                                    value: .light,
+                                    label: Text('Light'),
                                   ),
                                   ButtonSegment(
-                                    value: .newYork,
-                                    label: Text('New York'),
+                                    value: .dark,
+                                    label: Text('Dark'),
                                   ),
                                 ],
-                                selected: {theme.style},
+                                selected: {theme.colors.brightness},
                                 onSelectionChanged: (value) {
-                                  onChanged(theme.copyWith(style: value.first));
+                                  onChanged(
+                                    theme.copyWith(
+                                      colors: value.first == .dark
+                                          ? CnColors.dark
+                                          : CnColors.light,
+                                    ),
+                                  );
                                 },
                               ),
                             ),
                             _TokenCard(
-                              title: 'Base Color',
-                              child: _ColorSelect(
-                                value: theme.baseColor,
-                                options: _baseColors,
-                                onChanged: (value) =>
-                                    onChanged(theme.copyWith(baseColor: value)),
-                              ),
-                            ),
-                            _TokenCard(
-                              title: 'Theme Color',
-                              child: _ColorSelect(
-                                value: theme.themeColor,
-                                options: _accentColors,
-                                onChanged: (value) => onChanged(
-                                  theme.copyWith(themeColor: value),
-                                ),
+                              title: 'Primary Color',
+                              child: _PrimarySelect(
+                                colors: theme.colors,
+                                onChanged: (colors) =>
+                                    onChanged(theme.copyWith(colors: colors)),
                               ),
                             ),
                             _TokenCard(
@@ -114,7 +109,7 @@ class ThemePlayground extends StatelessWidget {
                                 spacing: 8,
                                 children: [
                                   Text('${theme.radius.toStringAsFixed(0)} px'),
-                                  Slider(
+                                  CnSlider(
                                     value: theme.radius,
                                     min: 0,
                                     max: 20,
@@ -124,25 +119,6 @@ class ThemePlayground extends StatelessWidget {
                                     ),
                                   ),
                                 ],
-                              ),
-                            ),
-                            _TokenCard(
-                              title: 'Menu Color',
-                              child: _ColorSelect(
-                                value: theme.menuColor,
-                                options: _menuColors,
-                                onChanged: (value) =>
-                                    onChanged(theme.copyWith(menuColor: value)),
-                              ),
-                            ),
-                            _TokenCard(
-                              title: 'Menu Accent',
-                              child: _ColorSelect(
-                                value: theme.menuAccent,
-                                options: _accentColors,
-                                onChanged: (value) => onChanged(
-                                  theme.copyWith(menuAccent: value),
-                                ),
                               ),
                             ),
                           ],
@@ -171,7 +147,7 @@ class _Section extends StatelessWidget {
       crossAxisAlignment: .start,
       spacing: 12,
       children: [
-        Text(title, style: CnTheme.textThemeOf(context).titleLarge),
+        Text(title, style: CnTheme.of(context).text.lg.semibold),
         child,
       ],
     );
@@ -188,7 +164,7 @@ class _TokenCard extends StatelessWidget {
     return SizedBox(
       width: 280,
       child: CnCard(
-        header: Text(title, style: CnTheme.textThemeOf(context).titleMedium),
+        title: Text(title, style: CnTheme.of(context).text.base.semibold),
         content: child,
       ),
     );
@@ -201,24 +177,22 @@ class _ColorOption {
   final Color color;
 }
 
-class _ColorSelect extends StatelessWidget {
-  const _ColorSelect({
-    required this.value,
-    required this.options,
-    required this.onChanged,
-  });
-  final Color value;
-  final List<_ColorOption> options;
-  final ValueChanged<Color> onChanged;
+class _PrimarySelect extends StatelessWidget {
+  const _PrimarySelect({required this.colors, required this.onChanged});
+  final CnColors colors;
+  final ValueChanged<CnColors> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return CnSelect<Color>(
-      value: value,
+    final base = colors.brightness == .dark ? CnColors.dark : CnColors.light;
+    final options = [_ColorOption('Neutral', base.primary), ..._primaryColors];
+
+    return CnSelect<int>(
+      value: colors.primary.toARGB32(),
       items: [
         for (final option in options)
-          DropdownMenuItem(
-            value: option.color,
+          CnSelectItem(
+            value: option.color.toARGB32(),
             child: Row(
               spacing: 8,
               children: [
@@ -228,9 +202,7 @@ class _ColorSelect extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: option.color,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: CnTheme.colorSchemeOf(context).outlineVariant,
-                    ),
+                    border: Border.all(color: colors.border),
                   ),
                 ),
                 Text(option.label),
@@ -239,9 +211,17 @@ class _ColorSelect extends StatelessWidget {
           ),
       ],
       onChanged: (value) {
-        if (value != null) {
-          onChanged(value);
+        if (value == null) {
+          return;
         }
+        onChanged(
+          value == base.primary.toARGB32()
+              ? base
+              : base.copyWith(
+                  primary: Color(value),
+                  primaryForeground: const Color(0xFFFFFFFF),
+                ),
+        );
       },
     );
   }
@@ -257,8 +237,7 @@ class _FontSelect extends StatelessWidget {
     return CnSelect<String>(
       value: value,
       items: [
-        for (final font in _fonts)
-          DropdownMenuItem(value: font, child: Text(font)),
+        for (final font in _fonts) CnSelectItem(value: font, child: Text(font)),
       ],
       onChanged: (value) {
         if (value != null) {
@@ -279,7 +258,7 @@ class _TokenPreviewCard extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: CnCard(
-        header: Text(title, style: CnTheme.textThemeOf(context).titleMedium),
+        title: Text(title, style: CnTheme.of(context).text.base.semibold),
         content: child,
       ),
     );
@@ -291,7 +270,7 @@ class _TokenSurfacePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return _TokenPreviewCard(
       title: 'Type & surface',
@@ -299,11 +278,11 @@ class _TokenSurfacePreview extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 12,
         children: [
-          Text('Design System', style: CnTheme.textThemeOf(context).titleLarge),
+          Text('Design System', style: CnTheme.of(context).text.lg.semibold),
           Text(
             'Blend typography, color, and tone from a single theme.',
-            style: CnTheme.textThemeOf(context).bodySmall
-                ?.copyWith(color: scheme.onSurfaceVariant),
+            style: CnTheme.of(context).text.xs
+                .copyWith(color: colors.mutedForeground),
           ),
           Wrap(
             spacing: 8,
@@ -358,7 +337,7 @@ class _TokenControlsPreviewState extends State<_TokenControlsPreview> {
         children: [
           const CnInput(
             placeholder: 'Search tokens',
-            prefixIcon: Icon(Icons.search),
+            leading: Icon(Icons.search),
           ),
           Row(
             spacing: 12,
@@ -396,13 +375,7 @@ class _TokenMenuPreview extends StatefulWidget {
 }
 
 class _TokenMenuPreviewState extends State<_TokenMenuPreview> {
-  late final CnSidebarController controller = CnSidebarController();
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  bool collapsed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -410,37 +383,36 @@ class _TokenMenuPreviewState extends State<_TokenMenuPreview> {
       title: 'Menu tokens',
       child: SizedBox(
         height: 250,
-        child: CnSidebarProvider(
-          controller: controller,
-          child: CnSidebar(
-            expandedWidth: 220,
-            collapsedWidth: 220,
-            child: Column(
-              crossAxisAlignment: .stretch,
-              spacing: 8,
-              children: [
-                const CnSidebarHeader(child: Text('Workspace')),
-                const CnSidebarSearch(placeholder: 'Search'),
-                const CnSidebarSeparator(),
-                CnSidebarContent(
-                  children: const [
-                    CnSidebarItem(
-                      icon: Icon(Icons.dashboard_outlined),
-                      label: Text('Overview'),
-                      selected: true,
-                    ),
-                    CnSidebarItem(
-                      icon: Icon(Icons.bar_chart_outlined),
-                      label: Text('Reports'),
-                    ),
-                    CnSidebarItem(
-                      icon: Icon(Icons.settings_outlined),
-                      label: Text('Settings'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+        child: CnSidebar(
+          collapsed: collapsed,
+          onCollapsedChanged: (value) => setState(() => collapsed = value),
+          expandedWidth: 220,
+          collapsedWidth: 220,
+          child: Column(
+            crossAxisAlignment: .stretch,
+            spacing: 8,
+            children: [
+              const CnSidebarHeader(child: Text('Workspace')),
+              const CnSidebarSearch(placeholder: 'Search'),
+              const CnSidebarSeparator(),
+              CnSidebarContent(
+                children: const [
+                  CnSidebarItem(
+                    leading: Icon(Icons.dashboard_outlined),
+                    label: Text('Overview'),
+                    selected: true,
+                  ),
+                  CnSidebarItem(
+                    leading: Icon(Icons.bar_chart_outlined),
+                    label: Text('Reports'),
+                  ),
+                  CnSidebarItem(
+                    leading: Icon(Icons.settings_outlined),
+                    label: Text('Settings'),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -453,7 +425,7 @@ class _TokenDataPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     return _TokenPreviewCard(
       title: 'Data & status',
       child: Column(
@@ -472,14 +444,14 @@ class _TokenDataPreview extends StatelessWidget {
             title: const Text('Heads up'),
             description: Text(
               'Your theme tokens now apply to alerts and data tables.',
-              style: CnTheme.textThemeOf(context).bodySmall
-                  ?.copyWith(color: scheme.onSurfaceVariant),
+              style: CnTheme.of(context).text.xs
+                  .copyWith(color: colors.mutedForeground),
             ),
           ),
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(CnTheme.of(context).radius),
-              border: Border.all(color: scheme.outlineVariant),
+              border: Border.all(color: colors.border),
             ),
             child: Column(
               children: [
@@ -560,22 +532,20 @@ class _TokenTableRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
         mainAxisAlignment: .spaceBetween,
         children: [
-          DefaultTextStyle(
-            style: CnTheme.textThemeOf(context).bodySmall ?? const TextStyle(),
+          DefaultTextStyle.merge(
+            style: CnTheme.of(context).text.xs,
             child: leading,
           ),
-          DefaultTextStyle(
-            style:
-                CnTheme.textThemeOf(context).bodySmall
-                    ?.copyWith(color: scheme.onSurfaceVariant) ??
-                TextStyle(color: scheme.onSurfaceVariant),
+          DefaultTextStyle.merge(
+            style: CnTheme.of(context).text.xs
+                .copyWith(color: colors.mutedForeground),
             child: trailing,
           ),
         ],
@@ -595,23 +565,10 @@ const _fonts = [
   'IBM Plex Mono',
 ];
 
-const _baseColors = [
-  _ColorOption('Paper', Color(0xFFF7F4EF)),
-  _ColorOption('Mist', Color(0xFFF2F4F8)),
-  _ColorOption('Snow', Color(0xFFFFFFFF)),
-  _ColorOption('Sand', Color(0xFFF8F1E8)),
-];
-
-const _accentColors = [
+const _primaryColors = [
   _ColorOption('Indigo', Color(0xFF1D4ED8)),
   _ColorOption('Emerald', Color(0xFF047857)),
   _ColorOption('Coral', Color(0xFFF97316)),
   _ColorOption('Amber', Color(0xFFB45309)),
   _ColorOption('Rose', Color(0xFFBE123C)),
-];
-
-const _menuColors = [
-  _ColorOption('Paper', Color(0xFFFDFBF7)),
-  _ColorOption('Slate', Color(0xFFF8FAFC)),
-  _ColorOption('Ice', Color(0xFFF3F4F6)),
 ];

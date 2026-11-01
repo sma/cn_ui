@@ -14,7 +14,7 @@ void main() {
           CnToggleGroupItem(value: 'center', child: Text('Center')),
           CnToggleGroupItem(value: 'right', child: Text('Right')),
         ],
-        selectedValues: const {'center'},
+        value: const {'center'},
         onChanged: (_) {},
       ),
       'goldens/toggle_group/single.png',
@@ -26,14 +26,14 @@ void main() {
     await goldenTest(
       tester,
       CnToggleGroup(
-        joined: true,
+        spacing: 0,
         items: const [
           CnToggleGroupItem(value: 'bold', child: Text('B')),
           CnToggleGroupItem(value: 'italic', child: Text('I')),
           CnToggleGroupItem(value: 'underline', child: Text('U')),
         ],
-        selectedValues: const {'bold', 'italic'},
-        allowMultiple: true,
+        value: const {'bold', 'italic'},
+        multiple: true,
         onChanged: (_) {},
       ),
       'goldens/toggle_group/joined.png',

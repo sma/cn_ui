@@ -2,165 +2,101 @@ import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
-/// An accordion component for collapsible content panels.
+/// A list of sections that expand and collapse.
 ///
-/// Provides expandable/collapsible sections with single or multiple panel expansion support.
+/// [value] holds the open items. With [multiple], several can be open at once.
 ///
 /// See also:
 ///
 ///  * [CnCollapsible], for a single collapsible panel.
-class CnAccordion extends StatefulWidget {
-  const CnAccordion({
-    super.key,
-    required this.items,
-    this.allowMultiple = false,
-    this.initialOpenIndices = const {},
-    this.onChanged,
-    this.headerPadding,
-    this.contentPadding,
-  });
-  final List<CnAccordionItem> items;
-  final bool allowMultiple;
-  final Set<int> initialOpenIndices;
-  final ValueChanged<Set<int>>? onChanged;
-  final EdgeInsetsGeometry? headerPadding;
-  final EdgeInsetsGeometry? contentPadding;
+class const CnAccordion<T>({
+  super.key,
+  required final List<CnAccordionItem<T>> items,
+  required final Set<T> value,
+  final ValueChanged<Set<T>>? onChanged,
+  final bool multiple = false,
+}) extends StatelessWidget {
+  static const _duration = Duration(milliseconds: 220);
 
-  @override
-  State<CnAccordion> createState() => _CnAccordionState();
-}
-
-class _CnAccordionState extends State<CnAccordion> {
-  late Set<int> _openIndices;
-  static const _animationDuration = Duration(milliseconds: 220);
-
-  @override
-  void initState() {
-    super.initState();
-    _openIndices = _sanitizeOpenIndices(widget.initialOpenIndices);
-  }
-
-  @override
-  void didUpdateWidget(covariant CnAccordion oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.items.length != widget.items.length ||
-        oldWidget.allowMultiple != widget.allowMultiple ||
-        oldWidget.initialOpenIndices != widget.initialOpenIndices) {
-      _openIndices = _sanitizeOpenIndices(widget.initialOpenIndices);
-    }
-  }
-
-  Set<int> _sanitizeOpenIndices(Set<int> indices) {
-    final sanitized = indices.where((index) => index < widget.items.length);
-    if (widget.allowMultiple || sanitized.isEmpty) {
-      return {...sanitized};
-    }
-    return {sanitized.first};
-  }
-
-  void _toggle(int index, bool isExpanded) {
-    setState(() {
-      if (isExpanded) {
-        _openIndices.remove(index);
-      } else {
-        if (!widget.allowMultiple) {
-          _openIndices.clear();
-        }
-        _openIndices.add(index);
-      }
-    });
-    widget.onChanged?.call({..._openIndices});
+  void _toggle(T item) {
+    onChanged?.call(
+      value.contains(item)
+          ? ({...value}..remove(item))
+          : (multiple ? {...value, item} : {item}),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final cnTheme = CnTheme.of(context);
-    final scheme = CnTheme.colorSchemeOf(context);
-    final headerPadding =
-        widget.headerPadding ?? const .symmetric(horizontal: 16, vertical: 8);
-    final contentPadding =
-        widget.contentPadding ?? const .fromLTRB(16, 0, 16, 16);
-
     return Material(
-      color: scheme.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: .circular(cnTheme.radius),
-        side: BorderSide(color: scheme.outlineVariant),
-      ),
-      clipBehavior: Clip.antiAlias,
+      type: MaterialType.transparency,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: .min,
+        crossAxisAlignment: .stretch,
         children: [
-          for (var index = 0; index < widget.items.length; index++) ...[
-            _buildPanel(
-              context,
-              widget.items[index],
-              index,
-              _openIndices.contains(index),
-              headerPadding,
-              contentPadding,
-            ),
-            if (index != widget.items.length - 1)
-              Divider(height: 1, color: scheme.outlineVariant),
+          for (var index = 0; index < items.length; index++) ...[
+            _buildItem(context, items[index]),
+            if (index != items.length - 1) const Divider(height: 1),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildPanel(
-    BuildContext context,
-    CnAccordionItem item,
-    int index,
-    bool isExpanded,
-    EdgeInsetsGeometry headerPadding,
-    EdgeInsetsGeometry contentPadding,
-  ) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final disabled = item.isDisabled;
-    final titleStyle = CnTheme.textThemeOf(context).titleSmall?.copyWith(
-      color: disabled
-          ? scheme.onSurfaceVariant.withValues(alpha: 0.5)
-          : scheme.onSurface,
-    );
-    final trailingColor = disabled
-        ? scheme.onSurfaceVariant.withValues(alpha: 0.4)
-        : scheme.onSurfaceVariant;
-
-    final header = Padding(
-      padding: headerPadding,
-      child: Row(
-        spacing: 8,
-        children: [
-          Expanded(
-            child: DefaultTextStyle(
-              style: titleStyle ?? const TextStyle(),
-              child: item.title,
-            ),
-          ),
-          item.trailing ??
-              AnimatedRotation(
-                turns: isExpanded ? 0.5 : 0,
-                duration: _animationDuration,
-                child: Icon(Icons.expand_more, color: trailingColor),
-              ),
-        ],
-      ),
-    );
+  Widget _buildItem(BuildContext context, CnAccordionItem<T> item) {
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
+    final enabled = item.enabled && onChanged != null;
+    final open = value.contains(item.value);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: .stretch,
       children: [
         InkWell(
-          onTap: disabled ? null : () => _toggle(index, isExpanded),
-          child: header,
+          hoverColor: Colors.transparent,
+          onTap: enabled ? () => _toggle(item.value) : null,
+          child: Padding(
+            padding: const .symmetric(vertical: 16),
+            child: Row(
+              spacing: 16,
+              children: [
+                Expanded(
+                  child: DefaultTextStyle.merge(
+                    style: theme.text.sm.medium.copyWith(
+                      color: enabled
+                          ? colors.foreground
+                          : colors.foreground.resolve(const {.disabled}),
+                    ),
+                    child: item.title,
+                  ),
+                ),
+                item.trailing ??
+                    AnimatedRotation(
+                      turns: open ? 0.5 : 0,
+                      duration: _duration,
+                      child: Icon(
+                        Icons.expand_more,
+                        size: 16,
+                        color: colors.mutedForeground,
+                      ),
+                    ),
+              ],
+            ),
+          ),
         ),
         ClipRect(
           child: AnimatedAlign(
-            duration: _animationDuration,
+            duration: _duration,
+            curve: Curves.easeOut,
             alignment: .topStart,
-            heightFactor: isExpanded ? 1 : 0,
-            child: Padding(padding: contentPadding, child: item.content),
+            heightFactor: open ? 1 : 0,
+            child: Padding(
+              padding: const .only(bottom: 16),
+              child: DefaultTextStyle.merge(
+                style: theme.text.sm,
+                child: item.content,
+              ),
+            ),
           ),
         ),
       ],
@@ -168,16 +104,11 @@ class _CnAccordionState extends State<CnAccordion> {
   }
 }
 
-/// An item in a [CnAccordion].
-class CnAccordionItem {
-  const CnAccordionItem({
-    required this.title,
-    required this.content,
-    this.trailing,
-    this.isDisabled = false,
-  });
-  final Widget title;
-  final Widget content;
-  final Widget? trailing;
-  final bool isDisabled;
-}
+/// An item in a [CnAccordion], identified by its [value].
+class const CnAccordionItem<T>({
+  required final T value,
+  required final Widget title,
+  required final Widget content,
+  final Widget? trailing,
+  final bool enabled = true,
+});

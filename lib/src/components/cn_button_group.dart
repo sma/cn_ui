@@ -1,15 +1,34 @@
-import 'dart:math' as math;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
-/// Orientation variants for [CnButtonGroup].
-enum CnButtonGroupOrientation { horizontal, vertical }
+/// Where a child sits in a [CnButtonGroup].
+@immutable
+class const CnButtonGroupPosition({
+  required final Axis direction,
+  required final bool isFirst,
+  required final bool isLast,
+}) {
+  /// Rounds only the corners on the outside of the group.
+  BorderRadiusGeometry borderRadius(double radius) {
+    final corner = Radius.circular(radius);
+    if (direction == .horizontal) {
+      return BorderRadiusDirectional.horizontal(
+        start: isFirst ? corner : Radius.zero,
+        end: isLast ? corner : Radius.zero,
+      );
+    }
+    return BorderRadius.vertical(
+      top: isFirst ? corner : Radius.zero,
+      bottom: isLast ? corner : Radius.zero,
+    );
+  }
+}
 
-/// A container for grouping buttons together with shared borders.
+/// Arranges buttons as one connected control.
 ///
-/// Arranges buttons horizontally or vertically with connected styling.
+/// The group only lays out its children. Children such as [CnButton] ask
+/// [CnButtonGroup.of] for their position and adapt their own corners.
 ///
 /// See also:
 ///
@@ -18,104 +37,97 @@ enum CnButtonGroupOrientation { horizontal, vertical }
 class const CnButtonGroup({
   super.key,
   required final List<Widget> children,
-  final CnButtonGroupOrientation orientation = .horizontal,
-  final EdgeInsetsGeometry? padding,
-  final BorderRadiusGeometry? borderRadius,
-  final Color? backgroundColor,
-  final Color? borderColor,
+  final Axis direction = .horizontal,
 }) extends StatelessWidget {
+  /// Returns the position of the calling widget in the enclosing group.
+  static CnButtonGroupPosition? of(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<_CnButtonGroupScope>()
+        ?.position;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-    final resolvedRadius =
-        borderRadius ?? BorderRadius.circular(math.max(0, cnTheme.radius - 4));
-    final resolvedBackground = backgroundColor ?? scheme.surface;
-    final resolvedBorder = borderColor ?? scheme.outlineVariant;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    // Neighbors overlap by one pixel so that they share their border.
+    var overlap = 0;
+    final items = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      final child = children[i];
+      final separated =
+          child is CnButtonGroupSeparator ||
+          (i > 0 && children[i - 1] is CnButtonGroupSeparator);
+      if (i > 0 && !separated) {
+        overlap++;
+      }
+      final shift = overlap.toDouble();
+      items.add(
+        Transform.translate(
+          offset: direction == .horizontal
+              ? Offset(isRtl ? shift : -shift, 0)
+              : Offset(0, -shift),
+          child: _CnButtonGroupScope(
+            position: CnButtonGroupPosition(
+              direction: direction,
+              isFirst: i == 0,
+              isLast: i == children.length - 1,
+            ),
+            child: child,
+          ),
+        ),
+      );
+    }
 
-    final content = orientation == .horizontal
+    return direction == .horizontal
         ? IntrinsicHeight(
             child: Row(
               mainAxisSize: .min,
               crossAxisAlignment: .stretch,
-              children: children,
+              children: items,
             ),
           )
         : IntrinsicWidth(
             child: Column(
               mainAxisSize: .min,
               crossAxisAlignment: .stretch,
-              children: children,
+              children: items,
             ),
           );
-
-    return _CnButtonGroupScope(
-      orientation: orientation,
-      child: Material(
-        color: resolvedBackground,
-        shape: RoundedRectangleBorder(
-          borderRadius: resolvedRadius,
-          side: BorderSide(color: resolvedBorder),
-        ),
-        clipBehavior: .antiAlias,
-        child: Padding(padding: padding ?? .zero, child: content),
-      ),
-    );
   }
 }
 
 /// A divider for separating buttons in a [CnButtonGroup].
-class const CnButtonGroupSeparator({
-  super.key,
-  final CnButtonGroupOrientation? orientation,
-  final double thickness = 1,
-  final Color? color,
-}) extends StatelessWidget {
+class const CnButtonGroupSeparator({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final resolvedOrientation =
-        orientation ??
-        _CnButtonGroupScope.of(context)?.orientation ??
-        .horizontal;
-    final resolvedColor = color ?? scheme.outlineVariant;
-
-    if (resolvedOrientation == .vertical) {
-      return Divider(
-        height: thickness,
-        thickness: thickness,
-        color: resolvedColor,
-      );
+    final color = CnTheme.of(context).colors.border;
+    if (CnButtonGroup.of(context)?.direction == .vertical) {
+      return Divider(height: 1, thickness: 1, color: color);
     }
-
-    return VerticalDivider(
-      width: thickness,
-      thickness: thickness,
-      color: resolvedColor,
-    );
+    return VerticalDivider(width: 1, thickness: 1, color: color);
   }
 }
 
 /// A text label within a [CnButtonGroup].
-class const CnButtonGroupText({
-  super.key,
-  required final Widget child,
-  final EdgeInsetsGeometry? padding,
-  final TextStyle? style,
-}) extends StatelessWidget {
+class const CnButtonGroupText({super.key, required final Widget child})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final resolvedStyle =
-        style ??
-        CnTheme.textThemeOf(context).bodySmall
-            ?.copyWith(color: scheme.onSurfaceVariant, fontWeight: .w600);
+    final theme = CnTheme.of(context);
+    final radius = theme.radii.md;
 
-    return Padding(
-      padding:
-          padding ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: DefaultTextStyle(
-        style: resolvedStyle ?? TextStyle(color: scheme.onSurfaceVariant),
+    return Container(
+      alignment: .center,
+      padding: const .symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: theme.colors.muted,
+        borderRadius:
+            CnButtonGroup.of(context)?.borderRadius(radius) ??
+            BorderRadius.circular(radius),
+        border: Border.all(color: theme.colors.input),
+      ),
+      child: DefaultTextStyle.merge(
+        style: theme.text.sm.medium,
         textAlign: .center,
         child: child,
       ),
@@ -124,15 +136,13 @@ class const CnButtonGroupText({
 }
 
 class const _CnButtonGroupScope({
-  required final CnButtonGroupOrientation orientation,
+  required final CnButtonGroupPosition position,
   required super.child,
 }) extends InheritedWidget {
-  static _CnButtonGroupScope? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<_CnButtonGroupScope>();
-  }
-
   @override
   bool updateShouldNotify(_CnButtonGroupScope oldWidget) {
-    return oldWidget.orientation != orientation;
+    return oldWidget.position.direction != position.direction ||
+        oldWidget.position.isFirst != position.isFirst ||
+        oldWidget.position.isLast != position.isLast;
   }
 }

@@ -1,196 +1,322 @@
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Visual style presets for [CnTheme].
-enum CnStyle { classic, newYork }
+import 'cn_colors.dart';
 
-/// A theme extension for customizing the CN UI component library.
+export 'cn_colors.dart';
+
+/// The radius scale, derived from a base radius like the shadcn/ui variables.
+@immutable
+class const CnRadii(final double base) {
+  double get sm => base * 0.6;
+  double get md => base * 0.8;
+  double get lg => base;
+  double get xl => base * 1.4;
+
+  /// A radius for fully rounded shapes such as pills.
+  double get full => 999;
+}
+
+/// The type scale, named like the Tailwind sizes shadcn/ui uses.
 ///
-/// Provides control over visual style, colors, fonts, border radius, and menu styling.
-/// Use [CnTheme.of] to access the theme from any BuildContext.
+/// The styles carry no color, so they inherit the color of their surroundings.
+@immutable
+class CnTextStyles {
+  CnTextStyles._(String fontFamily)
+    : xs = _style(fontFamily, 12, 16),
+      sm = _style(fontFamily, 14, 20),
+      base = _style(fontFamily, 16, 24),
+      lg = _style(fontFamily, 18, 28),
+      xl = _style(fontFamily, 20, 28),
+      xl2 = _style(fontFamily, 24, 32),
+      xl3 = _style(fontFamily, 30, 36),
+      xl4 = _style(fontFamily, 36, 40),
+      mono = fontFamily.trim().isEmpty
+          ? const TextStyle(
+              fontFamily: 'monospace',
+              fontSize: 14,
+              height: 20 / 14,
+            )
+          : _style('IBM Plex Mono', 14, 20);
+
+  final TextStyle xs;
+  final TextStyle sm;
+  final TextStyle base;
+  final TextStyle lg;
+  final TextStyle xl;
+  final TextStyle xl2;
+  final TextStyle xl3;
+  final TextStyle xl4;
+  final TextStyle mono;
+
+  static final _cache = <String, CnTextStyles>{};
+
+  static CnTextStyles _of(String fontFamily) {
+    return _cache.putIfAbsent(fontFamily, () => CnTextStyles._(fontFamily));
+  }
+
+  static TextStyle _style(String fontFamily, double size, double lineHeight) {
+    final style = TextStyle(fontSize: size, height: lineHeight / size);
+    if (fontFamily.trim().isEmpty) {
+      return style;
+    }
+    try {
+      return GoogleFonts.getFont(fontFamily, textStyle: style);
+    } catch (_) {
+      return style.copyWith(fontFamily: fontFamily);
+    }
+  }
+}
+
+/// Font weight shortcuts for the styles in [CnTextStyles].
+extension CnTextStyleWeights on TextStyle {
+  TextStyle get medium => copyWith(fontWeight: FontWeight.w500);
+  TextStyle get semibold => copyWith(fontWeight: FontWeight.w600);
+}
+
+/// The design tokens of the component library.
 ///
-/// See also:
-///
-///  * [ThemeExtension], the Flutter base class for theme extensions.
-///  * [ColorScheme], for Material 3 color configuration.
+/// Components read their colors, text styles and radii from here. Use
+/// [toThemeData] to configure Material widgets from the same tokens.
 @immutable
 class const CnTheme({
-  final CnStyle style = .classic,
-  final Color baseColor = const Color(0xFFF7F4EF),
-  final Color themeColor = const Color(0xFF1D4ED8),
-  final String fontFamily = 'Space Grotesk',
-  final double radius = 12,
-  final Color menuColor = const Color(0xFFFDFBF7),
-  final Color menuAccent = const Color(0xFF1D4ED8),
+  final CnColors colors = CnColors.light,
+  final String fontFamily = 'Geist',
+  final double radius = 10,
 }) extends ThemeExtension<CnTheme> {
   /// Returns the current [CnTheme].
   static CnTheme of(BuildContext context) {
-    final theme = Theme.of(context);
-    return theme.extension<CnTheme>() ?? const CnTheme();
+    return Theme.of(context).extension<CnTheme>() ??
+        const CnTheme(fontFamily: '');
   }
 
-  /// Returns the current Material text theme.
-  static TextTheme textThemeOf(BuildContext context) {
-    return TextTheme.of(context);
-  }
+  /// The radius scale derived from [radius].
+  CnRadii get radii => CnRadii(radius);
 
-  /// Returns the current Material color scheme.
-  static ColorScheme colorSchemeOf(BuildContext context) {
-    return ColorScheme.of(context);
-  }
+  /// The type scale in [fontFamily].
+  CnTextStyles get text => CnTextStyles._of(fontFamily);
 
-  /// Converts this CN theme into a Material theme.
-  ThemeData toThemeData({Brightness brightness = .light}) {
-    Color matching(Color c) => ThemeData.estimateBrightnessForColor(c) == .light
-        ? Colors.black
-        : Colors.white;
-
-    final secondaryColor = Color.alphaBlend(Colors.white70, themeColor);
-
+  /// Converts this theme into a Material theme.
+  ThemeData toThemeData() {
+    final text = this.text;
+    final radii = this.radii;
     final colorScheme = ColorScheme(
-      brightness: brightness,
-      primary: themeColor,
-      onPrimary: matching(themeColor),
-      secondary: secondaryColor,
-      onSecondary: matching(secondaryColor),
-      error: Colors.red,
-      onError: matching(Colors.red),
-      surface: baseColor,
-      onSurface: matching(baseColor),
-      // primaryContainer: Colors.green,
-      // secondaryContainer: Colors.blue,
-      outline: Colors.black38,
-      outlineVariant: Colors.black12,
-      surfaceTint: Colors.pink,
-      surfaceBright: Colors.purple,
+      brightness: colors.brightness,
+      primary: colors.primary,
+      onPrimary: colors.primaryForeground,
+      secondary: colors.secondary,
+      onSecondary: colors.secondaryForeground,
+      secondaryContainer: colors.secondary,
+      onSecondaryContainer: colors.secondaryForeground,
+      tertiary: colors.accent,
+      onTertiary: colors.accentForeground,
+      error: colors.destructive,
+      onError: colors.destructiveForeground,
+      surface: colors.background,
+      onSurface: colors.foreground,
+      onSurfaceVariant: colors.mutedForeground,
+      surfaceContainerLowest: colors.background,
+      surfaceContainerLow: colors.card,
+      surfaceContainer: colors.popover,
+      surfaceContainerHigh: colors.popover,
+      surfaceContainerHighest: colors.muted,
+      surfaceTint: Colors.transparent,
+      outline: colors.input,
+      outlineVariant: colors.border,
+      inverseSurface: colors.foreground,
+      onInverseSurface: colors.background,
+      inversePrimary: colors.primaryForeground,
     );
-
-    final baseTextTheme = ThemeData(brightness: brightness).textTheme;
-    TextTheme textTheme;
-    if (fontFamily.trim().isEmpty) {
-      textTheme = baseTextTheme;
-    } else {
-      try {
-        textTheme = GoogleFonts.getTextTheme(fontFamily, baseTextTheme);
-      } catch (_) {
-        textTheme = baseTextTheme.apply(fontFamily: fontFamily);
-      }
+    final textTheme = TextTheme(
+      displayLarge: text.xl4.semibold,
+      displayMedium: text.xl4.semibold,
+      displaySmall: text.xl3.semibold,
+      headlineLarge: text.xl3.semibold,
+      headlineMedium: text.xl2.semibold,
+      headlineSmall: text.xl.semibold,
+      titleLarge: text.lg.semibold,
+      titleMedium: text.base.semibold,
+      titleSmall: text.sm.semibold,
+      bodyLarge: text.base,
+      bodyMedium: text.sm,
+      bodySmall: text.xs,
+      labelLarge: text.sm.medium,
+      labelMedium: text.xs.medium,
+      labelSmall: text.xs.medium,
+    ).apply(bodyColor: colors.foreground, displayColor: colors.foreground);
+    final divider = BorderSide(color: colors.border);
+    OutlineInputBorder inputBorder(Color color, [double width = 1]) {
+      return OutlineInputBorder(
+        borderRadius: .circular(radii.md),
+        borderSide: BorderSide(color: color, width: width),
+      );
     }
 
-    textTheme = _applyStyle(textTheme);
-
-    final shape = RoundedRectangleBorder(
+    final surface = RoundedRectangleBorder(
       borderRadius: .circular(radius),
-      side: BorderSide(color: colorScheme.outlineVariant),
+      side: divider,
     );
 
     return ThemeData(
       useMaterial3: true,
+      brightness: colors.brightness,
       visualDensity: .standard,
       colorScheme: colorScheme,
       textTheme: textTheme,
-      dividerTheme: DividerThemeData(color: colorScheme.outlineVariant),
+      scaffoldBackgroundColor: colors.background,
+      canvasColor: colors.background,
+      dividerColor: colors.border,
+      hoverColor: colors.accent,
+      focusColor: colors.accent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      splashFactory: NoSplash.splashFactory,
+      iconTheme: IconThemeData(color: colors.foreground, size: 16),
+      dividerTheme: DividerThemeData(
+        color: colors.border,
+        space: 1,
+        thickness: 1,
+      ),
       cardTheme: CardThemeData(
-        shape: shape,
+        color: colors.card,
         surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        margin: .zero,
+        shape: surface,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: colors.background,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        shape: surface,
+        titleTextStyle: text.lg.semibold.copyWith(color: colors.foreground),
+        contentTextStyle: text.sm.copyWith(color: colors.mutedForeground),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: colorScheme.surface,
-        border: OutlineInputBorder(
-          borderRadius: .circular(radius),
-          borderSide: BorderSide(color: colorScheme.outline),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: .circular(radius),
-          borderSide: BorderSide(color: colorScheme.outlineVariant),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: .circular(radius),
-          borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
-        ),
+        filled: false,
+        isDense: true,
+        contentPadding: const .symmetric(horizontal: 12, vertical: 10),
+        hintStyle: text.sm.copyWith(color: colors.mutedForeground),
+        errorStyle: text.xs.copyWith(color: colors.destructive),
+        border: inputBorder(colors.input),
+        enabledBorder: inputBorder(colors.input),
+        disabledBorder: inputBorder(colors.input.resolve(const {.disabled})),
+        focusedBorder: inputBorder(colors.ring, 2),
+        errorBorder: inputBorder(colors.destructive),
+        focusedErrorBorder: inputBorder(colors.destructive, 2),
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: colors.foreground,
+        selectionColor: colors.primary.withValues(alpha: 0.2),
+        selectionHandleColor: colors.primary,
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: colorScheme.inverseSurface,
-        contentTextStyle: textTheme.bodyMedium?.copyWith(
-          color: colorScheme.onInverseSurface,
-        ),
+        backgroundColor: colors.popover,
+        contentTextStyle: text.sm.copyWith(color: colors.popoverForeground),
+        actionTextColor: colors.foreground,
+        elevation: 0,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: .circular(radius)),
+        shape: surface,
       ),
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
-          color: colorScheme.inverseSurface,
-          borderRadius: .circular(math.max(0, radius - 2)),
+          color: colors.foreground,
+          borderRadius: .circular(radii.md),
         ),
-        textStyle: textTheme.bodySmall?.copyWith(
-          color: colorScheme.onInverseSurface,
-        ),
-      ),
-      tabBarTheme: TabBarThemeData(
-        dividerColor: colorScheme.outlineVariant,
-        labelColor: colorScheme.onSurface,
-        unselectedLabelColor: colorScheme.onSurfaceVariant,
-        indicator: UnderlineTabIndicator(
-          borderSide: BorderSide(color: colorScheme.primary, width: 2),
-        ),
+        padding: const .symmetric(horizontal: 12, vertical: 6),
+        textStyle: text.xs.copyWith(color: colors.background),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.surface,
+        backgroundColor: colors.background,
+        foregroundColor: colors.foreground,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: colorScheme.onSurface),
-        titleTextStyle: textTheme.titleLarge?.copyWith(
-          color: colorScheme.onSurface,
-        ),
+        scrolledUnderElevation: 0,
+        iconTheme: IconThemeData(color: colors.foreground),
+        titleTextStyle: text.lg.semibold.copyWith(color: colors.foreground),
       ),
       drawerTheme: DrawerThemeData(
-        backgroundColor: menuColor,
+        backgroundColor: colors.sidebar,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: .circular(radius)),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: .resolveWith((states) {
+          if (!states.contains(WidgetState.selected)) {
+            return Colors.transparent;
+          }
+          return colors.primary.resolve(states);
+        }),
+        checkColor: colors.primaryForeground,
+        overlayColor: .all(Colors.transparent),
+        side: WidgetStateBorderSide.fromMap({
+          WidgetState.selected: BorderSide(color: colors.primary),
+          WidgetState.any: BorderSide(color: colors.input),
+        }),
+        shape: RoundedRectangleBorder(borderRadius: .circular(radii.sm)),
+      ),
+      radioTheme: RadioThemeData(
+        fillColor: .resolveWith((states) {
+          if (!states.contains(WidgetState.selected)) {
+            return colors.input;
+          }
+          return colors.primary.resolve(states);
+        }),
+        overlayColor: .all(Colors.transparent),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: .resolveWith((states) {
+          return states.contains(WidgetState.selected)
+              ? colors.primaryForeground
+              : colors.background;
+        }),
+        trackColor: .resolveWith((states) {
+          return states.contains(WidgetState.selected)
+              ? colors.primary.resolve(states)
+              : colors.input;
+        }),
+        trackOutlineColor: .all(Colors.transparent),
+        overlayColor: .all(Colors.transparent),
+      ),
+      sliderTheme: SliderThemeData(
+        activeTrackColor: colors.primary,
+        inactiveTrackColor: colors.muted,
+        thumbColor: colors.background,
+        overlayColor: Colors.transparent,
+        trackHeight: 4,
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: colors.primary,
+        linearTrackColor: colors.primary.withValues(alpha: 0.2),
+      ),
+      scrollbarTheme: ScrollbarThemeData(
+        thumbColor: .all(colors.border),
+        radius: .circular(radii.full),
+      ),
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          backgroundColor: .all(colors.popover),
+          surfaceTintColor: .all(Colors.transparent),
+          elevation: .all(0),
+          side: .all(divider),
+          shape: .all(
+            RoundedRectangleBorder(borderRadius: .circular(radii.md)),
+          ),
+        ),
       ),
       extensions: [this],
     );
   }
 
-  TextTheme _applyStyle(TextTheme base) {
-    if (style == .newYork) {
-      return base.copyWith(
-        displaySmall: base.displaySmall?.copyWith(
-          fontWeight: .w600,
-          letterSpacing: -0.5,
-        ),
-        headlineMedium: base.headlineMedium?.copyWith(
-          fontWeight: .w600,
-          letterSpacing: -0.4,
-        ),
-        titleLarge: base.titleLarge?.copyWith(fontWeight: .w600),
-        titleMedium: base.titleMedium?.copyWith(fontWeight: .w600),
-      );
-    }
-    return base;
-  }
-
   @override
-  CnTheme copyWith({
-    CnStyle? style,
-    Color? baseColor,
-    Color? themeColor,
-    String? fontFamily,
-    double? radius,
-    Color? menuColor,
-    Color? menuAccent,
-  }) {
+  CnTheme copyWith({CnColors? colors, String? fontFamily, double? radius}) {
     return CnTheme(
-      style: style ?? this.style,
-      baseColor: baseColor ?? this.baseColor,
-      themeColor: themeColor ?? this.themeColor,
+      colors: colors ?? this.colors,
       fontFamily: fontFamily ?? this.fontFamily,
       radius: radius ?? this.radius,
-      menuColor: menuColor ?? this.menuColor,
-      menuAccent: menuAccent ?? this.menuAccent,
     );
   }
 
@@ -200,13 +326,9 @@ class const CnTheme({
       return this;
     }
     return CnTheme(
-      style: t < 0.5 ? style : other.style,
-      baseColor: Color.lerp(baseColor, other.baseColor, t) ?? baseColor,
-      themeColor: Color.lerp(themeColor, other.themeColor, t) ?? themeColor,
+      colors: colors.lerp(other.colors, t),
       fontFamily: t < 0.5 ? fontFamily : other.fontFamily,
       radius: lerpDouble(radius, other.radius, t) ?? radius,
-      menuColor: Color.lerp(menuColor, other.menuColor, t) ?? menuColor,
-      menuAccent: Color.lerp(menuAccent, other.menuAccent, t) ?? menuAccent,
     );
   }
 }

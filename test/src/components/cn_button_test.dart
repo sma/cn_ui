@@ -64,7 +64,7 @@ void main() {
             child: const Text('Download'),
           ),
           CnButton(
-            size: CnButtonSize.icon,
+            size: CnButtonSize.md,
             onPressed: () {},
             child: const Icon(Icons.settings),
           ),

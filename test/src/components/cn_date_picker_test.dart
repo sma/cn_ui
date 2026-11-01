@@ -5,15 +5,12 @@ import 'package:material_ui/material_ui.dart';
 import '../../helpers/golden_test_helper.dart';
 
 void main() {
-  testWidgets('CnDatePickerField - default', (tester) async {
+  testWidgets('CnDatePicker - default', (tester) async {
     await goldenTest(
       tester,
       SizedBox(
         width: 300,
-        child: CnDatePickerField(
-          value: DateTime(2024, 1, 15),
-          onChanged: (_) {},
-        ),
+        child: CnDatePicker(value: DateTime(2024, 1, 15), onChanged: (_) {}),
       ),
       'goldens/date_picker/default.png',
       height: 150,

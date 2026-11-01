@@ -1,5 +1,7 @@
+import 'package:cn_ui/src/components/cn_menu_entry.dart';
 import 'package:cn_ui/src/components/cn_menubar.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../helpers/golden_test_helper.dart';
 
@@ -10,17 +12,17 @@ void main() {
       CnMenubar(
         menus: [
           CnMenu(
-            label: 'File',
+            label: Text('File'),
             entries: [
-              CnMenuAction(label: 'New', onSelected: () {}),
-              CnMenuAction(label: 'Open', onSelected: () {}),
+              CnMenuAction(label: Text('New'), onSelected: () {}),
+              CnMenuAction(label: Text('Open'), onSelected: () {}),
             ],
           ),
           CnMenu(
-            label: 'Edit',
+            label: Text('Edit'),
             entries: [
-              CnMenuAction(label: 'Cut', onSelected: () {}),
-              CnMenuAction(label: 'Copy', onSelected: () {}),
+              CnMenuAction(label: Text('Cut'), onSelected: () {}),
+              CnMenuAction(label: Text('Copy'), onSelected: () {}),
             ],
           ),
         ],

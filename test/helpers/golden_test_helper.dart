@@ -4,63 +4,49 @@ import 'package:material_ui/material_ui.dart';
 
 /// Configuration for a theme variant in golden tests
 class ThemeVariantConfig {
-  const ThemeVariantConfig({
-    required this.name,
-    required this.cnTheme,
-    required this.brightness,
-  });
+  const ThemeVariantConfig({required this.name, required this.cnTheme});
   final String name;
   final CnTheme cnTheme;
-  final Brightness brightness;
 }
 
 /// The three theme variants used in golden tests
 class GoldenThemeVariants {
-  // Theme 1: Default classic theme
+  // Theme 1: Default light theme
   static const classic = ThemeVariantConfig(
     name: 'Classic',
-    cnTheme: CnTheme(
-      style: CnStyle.classic,
-      baseColor: Color(0xFFF7F4EF),
-      themeColor: Color(0xFF1D4ED8),
-      fontFamily: '', // Use default font for testing to avoid Google Fonts HTTP requests
-      radius: 12,
-    ),
-    brightness: Brightness.light,
+    // Use default font for testing to avoid Google Fonts HTTP requests
+    cnTheme: CnTheme(fontFamily: '', radius: 12),
   );
 
   // Theme 2: White on black with pink primary + max border radius
-  static const darkPink = ThemeVariantConfig(
+  static final darkPink = ThemeVariantConfig(
     name: 'Dark Pink',
     cnTheme: CnTheme(
-      style: CnStyle.classic,
-      baseColor: Color(0xFF000000),
-      themeColor: Color(0xFFEC4899), // Pink
-      fontFamily: '', // Use default font for testing
+      colors: CnColors.dark.copyWith(
+        background: const Color(0xFF000000),
+        primary: const Color(0xFFEC4899),
+      ),
+      fontFamily: '',
       radius: 99,
     ),
-    brightness: Brightness.dark,
   );
 
   // Theme 3: Black on white with purple primary + no border radius
-  static const lightPurple = ThemeVariantConfig(
+  static final lightPurple = ThemeVariantConfig(
     name: 'Light Purple',
     cnTheme: CnTheme(
-      style: CnStyle.classic,
-      baseColor: Color(0xFFFFFFFF),
-      themeColor: Color(0xFF9333EA), // Purple
-      fontFamily: '', // Use default font for testing
+      colors: CnColors.light.copyWith(primary: const Color(0xFF9333EA)),
+      fontFamily: '',
       radius: 0,
     ),
-    brightness: Brightness.light,
   );
 
-  static const all = [classic, darkPink, lightPurple];
+  static final all = [classic, darkPink, lightPurple];
 }
 
 /// Wraps a widget with a specific theme variant for golden testing
 Widget _wrapWithTheme(Widget child, ThemeVariantConfig config) {
-  final themeData = config.cnTheme.toThemeData(brightness: config.brightness);
+  final themeData = config.cnTheme.toThemeData();
 
   return Theme(
     data: themeData,

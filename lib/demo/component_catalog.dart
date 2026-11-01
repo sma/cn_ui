@@ -26,6 +26,34 @@ class ComponentExample {
   final String code;
 }
 
+/// Holds the value of a controlled component in a preview.
+class _Stateful<T> extends StatefulWidget {
+  const _Stateful({required this.initial, required this.builder});
+  final T initial;
+  final Widget Function(
+    BuildContext context,
+    T value,
+    ValueChanged<T> onChanged,
+  )
+  builder;
+
+  @override
+  State<_Stateful<T>> createState() => _StatefulState<T>();
+}
+
+class _StatefulState<T> extends State<_Stateful<T>> {
+  late T value = widget.initial;
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(
+      context,
+      value,
+      (next) => setState(() => value = next),
+    );
+  }
+}
+
 final List<ComponentEntry> componentCatalog = [
   ComponentEntry(
     name: 'Button',
@@ -88,10 +116,9 @@ CnButton(
             CnButton(size: .sm, onPressed: () {}, child: const Text('Small')),
             CnButton(onPressed: () {}, child: const Text('Medium')),
             CnButton(size: .lg, onPressed: () {}, child: const Text('Large')),
-            CnButton(
-              size: .icon,
+            CnButton.icon(
               onPressed: () {},
-              child: const Icon(Icons.star_border),
+              icon: const Icon(Icons.star_border),
             ),
           ],
         ),
@@ -101,10 +128,9 @@ CnButton(onPressed: () {}, child: Text('Medium'))
 
 CnButton(size: .lg, onPressed: () {}, child: Text('Large'))
 
-CnButton(
-  size: .icon,
+CnButton.icon(
   onPressed: () {},
-  child: Icon(Icons.star_border),
+  icon: Icon(Icons.star_border),
 )''',
       ),
     ],
@@ -115,29 +141,22 @@ CnButton(
     examples: [
       ComponentExample(
         title: 'Joined actions',
-        description: 'Buttons share a single outline.',
+        description: 'Buttons adapt their corners to their position.',
         preview: (context) => const _ButtonGroupJoinedPreview(),
-        code: '''final radius = CnTheme.of(context).radius - 4;
-
-CnButtonGroup(
+        code: '''CnButtonGroup(
   children: [
     CnButton(
-      variant: .ghost,
-      borderRadius: .horizontal(left: .circular(radius)),
+      variant: .outline,
       onPressed: () {},
       child: Text('Back'),
     ),
-    CnButtonGroupSeparator(),
     CnButton(
-      variant: .ghost,
-      borderRadius: .zero,
+      variant: .outline,
       onPressed: () {},
       child: Text('Details'),
     ),
-    CnButtonGroupSeparator(),
     CnButton(
-      variant: .ghost,
-      borderRadius: .horizontal(right: .circular(radius)),
+      variant: .outline,
       onPressed: () {},
       child: Text('Next'),
     ),
@@ -149,7 +168,7 @@ CnButtonGroup(
         description: 'Mix text and separators between actions.',
         preview: (context) => const _ButtonGroupStackedPreview(),
         code: '''CnButtonGroup(
-  orientation: .vertical,
+  direction: .vertical,
   children: [
     CnButton(variant: .ghost, onPressed: () {}, child: Text('Personal')),
     CnButtonGroupSeparator(),
@@ -233,13 +252,13 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         title: 'Header and footer',
         description: 'Structured content with actions.',
         preview: (context) => CnCard(
-          header: Text(
+          title: Text(
             'Project Alpha',
-            style: CnTheme.textThemeOf(context).titleMedium,
+            style: CnTheme.of(context).text.base.semibold,
           ),
           content: Text(
             'Track milestones, review feedback, and share updates in one place.',
-            style: CnTheme.textThemeOf(context).bodyMedium,
+            style: CnTheme.of(context).text.sm,
           ),
           footer: CnButton(
             variant: .outline,
@@ -248,7 +267,7 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
           ),
         ),
         code: '''CnCard(
-  header: Text('Project Alpha'),
+  title: Text('Project Alpha'),
   content: Text('Track milestones and share updates.'),
   footer: CnButton(
     variant: .outline,
@@ -261,12 +280,12 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         title: 'Media card',
         description: 'Combine imagery, text, and actions.',
         preview: (context) {
-          final scheme = CnTheme.colorSchemeOf(context);
+          final colors = CnTheme.of(context).colors;
           final radius = CnTheme.of(context).radius;
           return SizedBox(
             width: 320,
             child: CnCard(
-              child: Column(
+              content: Column(
                 crossAxisAlignment: .start,
                 spacing: 12,
                 children: [
@@ -275,20 +294,17 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
                     decoration: BoxDecoration(
                       borderRadius: .circular(radius - 4),
                       gradient: LinearGradient(
-                        colors: [
-                          scheme.primaryContainer,
-                          scheme.secondaryContainer,
-                        ],
+                        colors: [colors.accent, colors.secondary],
                       ),
                     ),
                   ),
                   Text(
                     'Summer release',
-                    style: CnTheme.textThemeOf(context).titleSmall,
+                    style: CnTheme.of(context).text.sm.semibold,
                   ),
                   Text(
                     'New components, tokens, and layouts for the web kit.',
-                    style: CnTheme.textThemeOf(context).bodySmall,
+                    style: CnTheme.of(context).text.xs,
                   ),
                   Row(
                     spacing: 8,
@@ -307,7 +323,7 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
           );
         },
         code: '''CnCard(
-  child: Column(
+  content: Column(
     crossAxisAlignment: .start,
     spacing: 12,
     children: [
@@ -352,7 +368,7 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         title: 'Manual',
         description: 'Compact carousel without indicators.',
         preview: (context) {
-          final scheme = CnTheme.colorSchemeOf(context);
+          final colors = CnTheme.of(context).colors;
           return SizedBox(
             width: 520,
             child: CnCarousel(
@@ -363,29 +379,29 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
               autoPlay: false,
               items: [
                 Container(
-                  color: scheme.surfaceContainerHighest,
+                  color: colors.muted,
                   child: Center(
                     child: Text(
                       'Release notes',
-                      style: CnTheme.textThemeOf(context).titleSmall,
+                      style: CnTheme.of(context).text.sm.semibold,
                     ),
                   ),
                 ),
                 Container(
-                  color: scheme.primaryContainer,
+                  color: colors.accent,
                   child: Center(
                     child: Text(
                       'Team updates',
-                      style: CnTheme.textThemeOf(context).titleSmall,
+                      style: CnTheme.of(context).text.sm.semibold,
                     ),
                   ),
                 ),
                 Container(
-                  color: scheme.secondaryContainer,
+                  color: colors.secondary,
                   child: Center(
                     child: Text(
                       'Product tour',
-                      style: CnTheme.textThemeOf(context).titleSmall,
+                      style: CnTheme.of(context).text.sm.semibold,
                     ),
                   ),
                 ),
@@ -414,14 +430,18 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         title: 'Multiple',
         description: 'Allow multiple panels to stay open.',
         preview: (context) => const _AccordionPreview(),
-        code: '''CnAccordion(
-  allowMultiple: true,
+        code: '''CnAccordion<String>(
+  value: open,
+  onChanged: (value) => setState(() => open = value),
+  multiple: true,
   items: [
     CnAccordionItem(
+      value: 'product',
       title: Text('Product'),
       content: Text('Manage pricing, inventory, and channels.'),
     ),
     CnAccordionItem(
+      value: 'marketing',
       title: Text('Marketing'),
       content: Text('Plan campaigns and social launches.'),
     ),
@@ -432,11 +452,12 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         title: 'Single',
         description: 'Only one panel open at a time.',
         preview: (context) => const _AccordionSinglePreview(),
-        code: '''CnAccordion(
-  allowMultiple: false,
+        code: '''CnAccordion<String>(
+  value: open,
+  onChanged: (value) => setState(() => open = value),
   items: [
-    CnAccordionItem(title: Text('Overview'), content: Text('...')),
-    CnAccordionItem(title: Text('Details'), content: Text('...')),
+    CnAccordionItem(value: 'overview', title: Text('Overview'), content: Text('...')),
+    CnAccordionItem(value: 'details', title: Text('Details'), content: Text('...')),
   ],
 )''',
       ),
@@ -451,9 +472,11 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         description: 'Toggle open and closed content.',
         preview: (context) => const _CollapsiblePreview(),
         code: '''CnCollapsible(
+  value: open,
+  onChanged: (value) => setState(() => open = value),
   title: Text('Team notes'),
-  subtitle: Text('Shipping weekly on Wednesdays.'),
-  child: Text('Capture decisions and align on priorities.'),
+  description: Text('Shipping weekly on Wednesdays.'),
+  content: Text('Capture decisions and align on priorities.'),
 )''',
       ),
       ComponentExample(
@@ -461,10 +484,12 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         description: 'Add context with icons and badges.',
         preview: (context) => const _CollapsibleIconPreview(),
         code: '''CnCollapsible(
+  value: open,
+  onChanged: (value) => setState(() => open = value),
   title: Text('Weekly report'),
   leading: Icon(Icons.description_outlined),
   trailing: CnBadge(variant: .outline, child: Text('Draft')),
-  child: Text('Share updates with the team.'),
+  content: Text('Share updates with the team.'),
 )''',
       ),
     ],
@@ -486,20 +511,20 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         title: 'Square',
         description: 'Square thumbnails and covers.',
         preview: (context) {
-          final scheme = CnTheme.colorSchemeOf(context);
+          final colors = CnTheme.of(context).colors;
           return SizedBox(
             width: 200,
             child: CnAspectRatio(
               aspectRatio: 1,
               child: Container(
                 decoration: BoxDecoration(
-                  color: scheme.surfaceContainerHighest,
+                  color: colors.muted,
                   borderRadius: .circular(CnTheme.of(context).radius - 6),
                 ),
                 child: Center(
                   child: Text(
                     '1:1',
-                    style: CnTheme.textThemeOf(context).titleSmall,
+                    style: CnTheme.of(context).text.sm.semibold,
                   ),
                 ),
               ),
@@ -552,9 +577,10 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         description: 'Adjust side-by-side panels.',
         preview: (context) => const _ResizablePreview(),
         code: '''CnResizable(
+  value: ratio,
+  onChanged: (value) => setState(() => ratio = value),
   primary: Container(color: Colors.black12),
   secondary: Container(color: Colors.black26),
-  onChanged: (ratio) {},
 )''',
       ),
       ComponentExample(
@@ -563,6 +589,8 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         preview: (context) => const _ResizableVerticalPreview(),
         code: '''CnResizable(
   direction: .vertical,
+  value: ratio,
+  onChanged: (value) => setState(() => ratio = value),
   primary: Container(color: Colors.black12),
   secondary: Container(color: Colors.black26),
 )''',
@@ -580,12 +608,12 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
           width: 320,
           child: CnInput(
             placeholder: 'Email address',
-            prefixIcon: Icon(Icons.mail_outline),
+            leading: Icon(Icons.mail_outline),
           ),
         ),
         code: '''CnInput(
   placeholder: 'Email address',
-  prefixIcon: Icon(Icons.mail_outline),
+  leading: Icon(Icons.mail_outline),
 )''',
       ),
       ComponentExample(
@@ -595,14 +623,14 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
           width: 320,
           child: CnInput(
             placeholder: 'Search projects',
-            prefixIcon: Icon(Icons.search),
-            suffixIcon: Icon(Icons.tune),
+            leading: Icon(Icons.search),
+            trailing: Icon(Icons.tune),
           ),
         ),
         code: '''CnInput(
   placeholder: 'Search projects',
-  prefixIcon: Icon(Icons.search),
-  suffixIcon: Icon(Icons.tune),
+  leading: Icon(Icons.search),
+  trailing: Icon(Icons.tune),
 )''',
       ),
     ],
@@ -617,12 +645,11 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         preview: (context) => const _InputGroupPreview(),
         code: '''CnInputGroup(
   children: [
-    CnInputGroupText(text: 'https://'),
+    CnInputGroupAddon(child: Text('https://')),
     CnInputGroupInput(placeholder: 'studio.io'),
     CnInputGroupButton(
       child: CnButton(
         variant: .ghost,
-        borderRadius: BorderRadius.zero,
         onPressed: () {},
         child: Text('Go'),
       ),
@@ -638,7 +665,7 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
   children: [
     CnInputGroupAddon(child: Icon(Icons.search)),
     CnInputGroupInput(placeholder: 'Search'),
-    CnInputGroupText(text: 'USD'),
+    CnInputGroupAddon(child: Text('USD')),
   ],
 )''',
       ),
@@ -684,8 +711,8 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
   formKey: formKey,
   child: Column(
     children: [
-      CnFormField(
-        labelText: 'Name',
+      CnField(
+        label: Text('Name'),
         required: true,
         child: TextFormField(decoration: InputDecoration(hintText: 'Ada Lovelace')),
       ),
@@ -702,7 +729,7 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
     crossAxisAlignment: .start,
     spacing: 12,
     children: [
-      CnFormField(labelText: 'Workspace', child: CnInput()),
+      CnField(label: Text('Workspace'), child: CnInput()),
       Row(
         mainAxisAlignment: .end,
         spacing: 8,
@@ -730,11 +757,10 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
     crossAxisAlignment: .start,
     spacing: 16,
     children: [
-      CnFieldLegend(child: Text('Contact details')),
       CnFieldGroup(
         children: [
-          CnField(labelText: 'Name', child: CnInput()),
-          CnField(labelText: 'Email', child: CnInput()),
+          CnField(label: Text('Name'), child: CnInput()),
+          CnField(label: Text('Email'), child: CnInput()),
         ],
       ),
     ],
@@ -747,8 +773,8 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         preview: (context) => const _FieldHorizontalPreview(),
         code: '''CnField(
   layout: .horizontal,
-  labelText: 'Workspace',
-  descriptionText: 'Shown on your public profile.',
+  label: Text('Workspace'),
+  description: Text('Shown on your public profile.'),
   child: CnInput(),
 )''',
       ),
@@ -796,7 +822,7 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         title: 'Default',
         description: 'Pick a date from a modal calendar.',
         preview: (context) => const _DatePickerPreview(),
-        code: '''CnDatePickerField(
+        code: '''CnDatePicker(
   placeholder: 'Pick a date',
   value: selectedDate,
   onChanged: (value) => setState(() => selectedDate = value),
@@ -806,9 +832,9 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         title: 'Preset',
         description: 'Prefill a date and disable clearing.',
         preview: (context) => const _DatePickerPresetPreview(),
-        code: '''CnDatePickerField(
+        code: '''CnDatePicker(
   value: DateTime(2024, 2, 10),
-  allowClear: false,
+  clearable: false,
   onChanged: (value) {},
 )''',
       ),
@@ -989,9 +1015,9 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         description: 'Single and multiple selection in a joined row.',
         preview: (context) => const _ToggleGroupPreview(),
         code: '''CnToggleGroup(
-  joined: true,
-  allowMultiple: false,
-  selectedValues: {'left'},
+  spacing: 0,
+  multiple: false,
+  value: {'left'},
   onChanged: (value) => setState(() => selected = value),
   items: [
     CnToggleGroupItem(value: 'left', child: Icon(Icons.format_align_left)),
@@ -1005,8 +1031,8 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         description: 'Standalone toggles with multiple selection.',
         preview: (context) => const _ToggleGroupSeparatedPreview(),
         code: '''CnToggleGroup(
-  allowMultiple: true,
-  selectedValues: {'bold'},
+  multiple: true,
+  value: {'bold'},
   onChanged: (value) => setState(() => selected = value),
   items: [
     CnToggleGroupItem(value: 'bold', child: Icon(Icons.format_bold)),
@@ -1026,7 +1052,7 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         description: 'Vertical layout for longer labels.',
         preview: (context) => const _RadioPreview(),
         code: '''CnRadioGroup<String>(
-  groupValue: plan,
+  value: plan,
   onChanged: (value) => setState(() => plan = value ?? plan),
   child: Column(
     children: [
@@ -1041,7 +1067,7 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         description: 'Horizontal layout for compact choices.',
         preview: (context) => const _RadioInlinePreview(),
         code: '''CnRadioGroup<String>(
-  groupValue: plan,
+  value: plan,
   onChanged: (value) => setState(() => plan = value ?? plan),
   child: Row(
     spacing: 16,
@@ -1066,9 +1092,9 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
   value: team,
   placeholder: 'Pick a team',
   items: [
-    DropdownMenuItem(value: 'design', child: Text('Design')),
-    DropdownMenuItem(value: 'product', child: Text('Product')),
-    DropdownMenuItem(value: 'engineering', child: Text('Engineering')),
+    CnSelectItem(value: 'design', child: Text('Design')),
+    CnSelectItem(value: 'product', child: Text('Product')),
+    CnSelectItem(value: 'engineering', child: Text('Engineering')),
   ],
   onChanged: (value) => setState(() => team = value),
 )''',
@@ -1078,11 +1104,11 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         description: 'Shrink the select for inline layouts.',
         preview: (context) => const _SelectCompactPreview(),
         code: '''CnSelect<String>(
-  isExpanded: false,
+  expand: false,
   value: plan,
   items: [
-    DropdownMenuItem(value: 'starter', child: Text('Starter')),
-    DropdownMenuItem(value: 'pro', child: Text('Pro')),
+    CnSelectItem(value: 'starter', child: Text('Starter')),
+    CnSelectItem(value: 'pro', child: Text('Pro')),
   ],
 )''',
       ),
@@ -1099,10 +1125,10 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         code: '''CnNativeSelect<String?>(
   value: team,
   placeholder: 'Select team',
-  entries: [
-    CnNativeSelectOption(value: 'design', label: 'Design'),
-    CnNativeSelectOption(value: 'product', label: 'Product'),
-    CnNativeSelectOption(value: 'engineering', label: 'Engineering'),
+  items: [
+    CnSelectItem(value: 'design', child: Text('Design')),
+    CnSelectItem(value: 'product', child: Text('Product')),
+    CnSelectItem(value: 'engineering', child: Text('Engineering')),
   ],
   onChanged: (value) => setState(() => team = value),
 )''',
@@ -1113,19 +1139,19 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         preview: (context) => const _NativeSelectGroupPreview(),
         code: '''CnNativeSelect<String?>(
   placeholder: 'Choose a plan',
-  entries: [
-    CnNativeSelectOptGroup(
-      label: 'Personal',
-      options: [
-        CnNativeSelectOption(value: 'starter', label: 'Starter'),
-        CnNativeSelectOption(value: 'plus', label: 'Plus'),
+  items: [
+    CnSelectGroup(
+      label: Text('Personal'),
+      items: [
+        CnSelectItem(value: 'starter', child: Text('Starter')),
+        CnSelectItem(value: 'plus', child: Text('Plus')),
       ],
     ),
-    CnNativeSelectOptGroup(
-      label: 'Business',
-      options: [
-        CnNativeSelectOption(value: 'pro', label: 'Pro'),
-        CnNativeSelectOption(value: 'enterprise', label: 'Enterprise'),
+    CnSelectGroup(
+      label: Text('Business'),
+      items: [
+        CnSelectItem(value: 'pro', child: Text('Pro')),
+        CnSelectItem(value: 'enterprise', child: Text('Enterprise')),
       ],
     ),
   ],
@@ -1142,11 +1168,12 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         title: 'Default',
         description: 'Two-tab layout with fixed width.',
         preview: (context) => const _TabsPreview(),
-        code: '''CnTabs(
-  contentHeight: 120,
+        code: '''CnTabs<String>(
+  value: tab,
+  onChanged: (value) => setState(() => tab = value),
   tabs: [
-    CnTab(label: 'Overview', child: Text('Overview content')),
-    CnTab(label: 'Details', child: Text('Detail content')),
+    CnTab(value: 'overview', label: Text('Overview'), content: Text('Overview content')),
+    CnTab(value: 'details', label: Text('Details'), content: Text('Detail content')),
   ],
 )''',
       ),
@@ -1154,12 +1181,13 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         title: 'Scrollable',
         description: 'Use scrollable tabs for larger sets.',
         preview: (context) => const _TabsScrollablePreview(),
-        code: '''CnTabs(
-  isScrollable: true,
+        code: '''CnTabs<String>(
+  value: tab,
+  onChanged: (value) => setState(() => tab = value),
   tabs: [
-    CnTab(label: 'Overview', child: Text('...')),
-    CnTab(label: 'Analytics', child: Text('...')),
-    CnTab(label: 'Billing', child: Text('...')),
+    CnTab(value: 'overview', label: Text('Overview'), content: Text('...')),
+    CnTab(value: 'analytics', label: Text('Analytics'), content: Text('...')),
+    CnTab(value: 'billing', label: Text('Billing'), content: Text('...')),
   ],
 )''',
       ),
@@ -1216,10 +1244,10 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         code: '''CnMenubar(
   menus: [
     CnMenu(
-      label: 'File',
+      label: Text('File'),
       entries: [
-        CnMenuAction(label: 'New tab', onSelected: () {}),
-        CnMenuAction(label: 'New window', onSelected: () {}),
+        CnMenuAction(label: Text('New tab'), onSelected: () {}),
+        CnMenuAction(label: Text('New window'), onSelected: () {}),
       ],
     ),
   ],
@@ -1230,7 +1258,7 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         description: 'Add icons and destructive actions.',
         preview: (context) => const _MenubarIconPreview(),
         code: '''CnMenuAction(
-  label: 'Delete',
+  label: Text('Delete'),
   role: .destructive,
   leading: Icon(Icons.delete_outline),
   onSelected: () {},
@@ -1249,16 +1277,16 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         code: '''CnNavigationMenu(
   items: [
     CnNavigationMenuItem(
-      label: 'Solutions',
+      label: Text('Solutions'),
       links: [
         CnNavigationMenuLink(
-          title: 'Analytics',
-          description: 'Real-time insights for your team.',
+          title: Text('Analytics'),
+          description: Text('Real-time insights for your team.'),
           onTap: () {},
         ),
       ],
     ),
-    CnNavigationMenuItem(label: 'Pricing', onTap: () {}),
+    CnNavigationMenuItem(label: Text('Pricing'), onTap: () {}),
   ],
 )''',
       ),
@@ -1267,11 +1295,11 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         description: 'Add leading icons to items and links.',
         preview: (context) => const _NavigationMenuIconPreview(),
         code: '''CnNavigationMenuItem(
-  label: 'Resources',
+  label: Text('Resources'),
   leading: Icon(Icons.book_outlined),
   links: [
     CnNavigationMenuLink(
-      title: 'Docs',
+      title: Text('Docs'),
       leading: Icon(Icons.description_outlined),
     ),
   ],
@@ -1288,9 +1316,9 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         description: 'Pagination with previous and next.',
         preview: (context) => const _PaginationPreview(),
         code: '''CnPagination(
-  currentPage: page,
-  totalPages: 12,
-  onPageChanged: (value) => setState(() => page = value),
+  value: page,
+  pageCount: 12,
+  onChanged: (value) => setState(() => page = value),
 )''',
       ),
       ComponentExample(
@@ -1298,11 +1326,11 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         description: 'Smaller pagination without prev/next.',
         preview: (context) => const _PaginationCompactPreview(),
         code: '''CnPagination(
-  currentPage: page,
-  totalPages: 12,
+  value: page,
+  pageCount: 12,
   showPrevNext: false,
   maxButtons: 7,
-  onPageChanged: (value) => setState(() => page = value),
+  onChanged: (value) => setState(() => page = value),
 )''',
       ),
     ],
@@ -1315,11 +1343,9 @@ CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
         title: 'Default',
         description: 'Header, groups, and footer content.',
         preview: (context) => const _SidebarPreview(),
-        code: '''final controller = CnSidebarController();
-
-CnSidebarProvider(
-  controller: controller,
-  child: CnSidebar(
+        code: '''CnSidebar(
+    collapsed: collapsed,
+    onCollapsedChanged: (value) => setState(() => collapsed = value),
     child: Column(
       crossAxisAlignment: .stretch,
       spacing: 12,
@@ -1336,15 +1362,15 @@ CnSidebarProvider(
         CnSidebarContent(
           children: [
             CnSidebarGroup(
-              title: 'Projects',
+              title: Text('Projects'),
               children: [
                 CnSidebarItem(
-                  icon: Icon(Icons.dashboard_outlined),
+                  leading: Icon(Icons.dashboard_outlined),
                   label: Text('Overview'),
                   selected: true,
                 ),
                 CnSidebarItem(
-                  icon: Icon(Icons.people_outline),
+                  leading: Icon(Icons.people_outline),
                   label: Text('Team'),
                 ),
               ],
@@ -1354,18 +1380,15 @@ CnSidebarProvider(
         CnSidebarFooter(child: Text('v2.3.1')),
       ],
     ),
-  ),
 )''',
       ),
       ComponentExample(
         title: 'Collapsed',
         description: 'Icon-only sidebar for tight layouts.',
         preview: (context) => const _SidebarCollapsedPreview(),
-        code: '''final controller = CnSidebarController(collapsed: true);
-
-CnSidebarProvider(
-  controller: controller,
-  child: CnSidebar(
+        code: '''CnSidebar(
+    collapsed: collapsed,
+    onCollapsedChanged: (value) => setState(() => collapsed = value),
     child: Column(
       crossAxisAlignment: .stretch,
       spacing: 12,
@@ -1373,13 +1396,12 @@ CnSidebarProvider(
         CnSidebarHeader(child: CnSidebarTrigger()),
         CnSidebarContent(
           children: [
-            CnSidebarItem(icon: Icon(Icons.inbox_outlined), label: Text('Inbox')),
-            CnSidebarItem(icon: Icon(Icons.settings_outlined), label: Text('Settings')),
+            CnSidebarItem(leading: Icon(Icons.inbox_outlined), label: Text('Inbox')),
+            CnSidebarItem(leading: Icon(Icons.settings_outlined), label: Text('Settings')),
           ],
         ),
       ],
     ),
-  ),
 )''',
       ),
       ComponentExample(
@@ -1405,10 +1427,10 @@ CnSidebarProvider(
       CnSidebarContent(
         children: [
           CnSidebarGroup(
-            title: 'Collections',
+            title: Text('Collections'),
             children: [
               CnSidebarItem(
-                icon: Icon(Icons.folder_open_outlined),
+                leading: Icon(Icons.folder_open_outlined),
                 label: Text('Design'),
                 selected: true,
               ),
@@ -1511,7 +1533,7 @@ CnSidebarProvider(
         code: '''CnCommand(
   groups: [
     CnCommandGroup(
-      label: 'Suggestions',
+      label: Text('Suggestions'),
       items: [
         CnCommandItem(
           label: 'New project',
@@ -1529,7 +1551,7 @@ CnSidebarProvider(
         preview: (context) => const _CommandEmptyPreview(),
         code: '''CnCommand(
   emptyText: 'No results found.',
-  groups: [CnCommandGroup(label: 'Suggestions', items: [])],
+  groups: [CnCommandGroup(label: Text('Suggestions'), items: [])],
 )''',
       ),
     ],
@@ -1544,8 +1566,8 @@ CnSidebarProvider(
         preview: (context) => const _ContextMenuPreview(),
         code: '''CnContextMenu(
   entries: [
-    CnDropdownMenuAction(label: 'Rename', onSelected: () {}),
-    CnDropdownMenuAction(label: 'Duplicate', onSelected: () {}),
+    CnMenuAction(label: Text('Rename'), onSelected: () {}),
+    CnMenuAction(label: Text('Duplicate'), onSelected: () {}),
   ],
   child: Container(child: Text('Right click here')),
 )''',
@@ -1556,9 +1578,9 @@ CnSidebarProvider(
         preview: (context) => const _ContextMenuSelectionPreview(),
         code: '''CnContextMenu(
   entries: [
-    CnDropdownMenuCheckboxItem(label: 'Pin to top', checked: true),
-    CnDropdownMenuRadioItem(
-      label: 'Compact',
+    CnMenuCheckboxItem(label: Text('Pin to top'), value: true),
+    CnMenuRadioItem(
+      label: Text('Compact'),
       value: 'compact',
       groupValue: 'compact',
     ),
@@ -1570,7 +1592,7 @@ CnSidebarProvider(
   ),
   ComponentEntry(
     name: 'Drawer',
-    description: 'Mobile-friendly drawer overlay.',
+    description: 'Panel on a screen edge that can be swiped away.',
     examples: [
       ComponentExample(
         title: 'Start drawer',
@@ -1584,12 +1606,12 @@ CnSidebarProvider(
       ),
       ComponentExample(
         title: 'End drawer',
-        description: 'Use the right side for secondary tasks.',
+        description: 'Use the end side for secondary tasks.',
         preview: (context) => const _DrawerEndPreview(),
         code: '''showCnDrawer(
   context: context,
   side: .end,
-  builder: (_) => CnDrawer(side: .end, title: Text('Filters')),
+  builder: (_) => CnDrawer(title: Text('Filters')),
 )''',
       ),
     ],
@@ -1604,7 +1626,7 @@ CnSidebarProvider(
         preview: (context) => const _HoverCardPreview(),
         code: '''CnHoverCard(
   content: Text('Project owner and activity'),
-  child: CnAvatar(initials: 'CN'),
+  child: CnAvatar(child: Text('CN')),
 )''',
       ),
       ComponentExample(
@@ -1621,11 +1643,11 @@ CnSidebarProvider(
   ),
   ComponentEntry(
     name: 'Sheet',
-    description: 'Slide-in panel for contextual tasks.',
+    description: 'Panel on a screen edge for contextual tasks.',
     examples: [
       ComponentExample(
         title: 'Default',
-        description: 'Bottom sheet with actions.',
+        description: 'Sheet on the end side with actions.',
         preview: (context) => const _SheetPreview(),
         code: '''showCnSheet(
   context: context,
@@ -1640,8 +1662,6 @@ CnSidebarProvider(
         description: 'Shorter sheet for quick actions.',
         preview: (context) => const _SheetCompactPreview(),
         code: '''CnSheet(
-  heightFactor: 0.4,
-  showHandle: false,
   showCloseButton: false,
   title: Text('Quick add'),
 )''',
@@ -1687,22 +1707,16 @@ CnSidebarProvider(
         title: 'Selections',
         description: 'Checkbox and radio menu items.',
         preview: (context) => const _DropdownMenuPreview(),
-        code: '''CnDropdownMenu(
-  triggerBuilder: (context, controller) => CnButton(
+        code: '''CnDropdownMenu.builder(
+  builder: (context, toggle) => CnButton(
     variant: .outline,
-    onPressed: () {
-      if (controller.isOpen) {
-        controller.close();
-      } else {
-        controller.open();
-      }
-    },
+    onPressed: toggle,
     child: Text('Open menu'),
   ),
   entries: [
-    CnDropdownMenuCheckboxItem(
-      label: 'Pin to top',
-      checked: true,
+    CnMenuCheckboxItem(
+      label: Text('Pin to top'),
+      value: true,
       onChanged: (value) {},
     ),
   ],
@@ -1712,11 +1726,11 @@ CnSidebarProvider(
         title: 'Submenu',
         description: 'Nested options within a dropdown.',
         preview: (context) => const _DropdownMenuSubmenuPreview(),
-        code: '''CnDropdownMenuSubmenu(
-  label: 'Export',
+        code: '''CnMenuSubmenu(
+  label: Text('Export'),
   entries: [
-    CnDropdownMenuAction(label: 'PDF', onSelected: () {}),
-    CnDropdownMenuAction(label: 'CSV', onSelected: () {}),
+    CnMenuAction(label: Text('PDF'), onSelected: () {}),
+    CnMenuAction(label: Text('CSV'), onSelected: () {}),
   ],
 )''',
       ),
@@ -1730,16 +1744,10 @@ CnSidebarProvider(
         title: 'Quick actions',
         description: 'Popover with contextual actions.',
         preview: (context) => const _PopoverPreview(),
-        code: '''CnPopover(
-  triggerBuilder: (context, controller) => CnButton(
+        code: '''CnPopover.builder(
+  builder: (context, toggle) => CnButton(
     variant: .outline,
-    onPressed: () {
-      if (controller.isOpen) {
-        controller.close();
-      } else {
-        controller.open();
-      }
-    },
+    onPressed: toggle,
     child: Text('Open popover'),
   ),
   content: Column(
@@ -1756,16 +1764,10 @@ CnSidebarProvider(
         title: 'Form',
         description: 'Inline forms in a popover.',
         preview: (context) => const _PopoverFormPreview(),
-        code: '''CnPopover(
-  triggerBuilder: (context, controller) => CnButton(
+        code: '''CnPopover.builder(
+  builder: (context, toggle) => CnButton(
     variant: .outline,
-    onPressed: () {
-      if (controller.isOpen) {
-        controller.close();
-      } else {
-        controller.open();
-      }
-    },
+    onPressed: toggle,
     child: Text('Edit status'),
   ),
   content: Column(children: [CnInput(), CnButton(child: Text('Save'))]),
@@ -1783,12 +1785,12 @@ CnSidebarProvider(
         preview: (context) => const _AlertDialogPreview(),
         code: '''showCnDialog(
   context: context,
-  builder: (dialog) => CnAlertDialog(
+  builder: (context) => CnAlertDialog(
     title: Text('Are you absolutely sure?'),
     content: Text('This action cannot be undone.'),
     actions: [
-      CnButton(variant: .outline, onPressed: dialog.cancel, child: Text('Cancel')),
-      CnButton(onPressed: dialog.result, child: Text('Continue')),
+      CnButton(variant: .outline, onPressed: () => Navigator.pop(context), child: Text('Cancel')),
+      CnButton(onPressed: () => Navigator.pop(context), child: Text('Continue')),
     ],
   ),
 )''',
@@ -1819,40 +1821,13 @@ CnSidebarProvider(
           mainAxisSize: .min,
           spacing: 12,
           children: [
-            CnAvatar(initials: 'AM'),
-            CnAvatar(initials: 'CR', size: 48),
+            CnAvatar(child: Text('AM')),
+            CnAvatar(size: .lg, child: Text('CR')),
           ],
         ),
-        code: '''CnAvatar(initials: 'AM')
+        code: '''CnAvatar(child: Text('AM'))
 
-CnAvatar(initials: 'CR', size: 48)''',
-      ),
-      ComponentExample(
-        title: 'Custom colors',
-        description: 'Match avatar colors to roles.',
-        preview: (context) {
-          final scheme = CnTheme.colorSchemeOf(context);
-          return Wrap(
-            spacing: 12,
-            children: [
-              CnAvatar(
-                initials: 'PM',
-                backgroundColor: scheme.secondaryContainer,
-                foregroundColor: scheme.onSecondaryContainer,
-              ),
-              CnAvatar(
-                initials: 'ENG',
-                backgroundColor: scheme.tertiaryContainer,
-                foregroundColor: scheme.onTertiaryContainer,
-              ),
-            ],
-          );
-        },
-        code: '''CnAvatar(
-  initials: 'PM',
-  backgroundColor: scheme.secondaryContainer,
-  foregroundColor: scheme.onSecondaryContainer,
-)''',
+CnAvatar(child: Text('CR'), size: .lg)''',
       ),
     ],
   ),
@@ -1866,9 +1841,9 @@ CnAvatar(initials: 'CR', size: 48)''',
         preview: (context) => const _AvatarGroupPreview(),
         code: '''CnAvatarGroup(
   children: [
-    CnAvatar(initials: 'CN'),
-    CnAvatar(initials: 'MD'),
-    CnAvatar(initials: 'TL'),
+    CnAvatar(child: Text('CN')),
+    CnAvatar(child: Text('MD')),
+    CnAvatar(child: Text('TL')),
   ],
 )''',
       ),
@@ -1879,9 +1854,9 @@ CnAvatar(initials: 'CR', size: 48)''',
         code: '''CnAvatarGroup(
   direction: .vertical,
   children: [
-    CnAvatar(initials: 'CN'),
-    CnAvatar(initials: 'MD'),
-    CnAvatar(initials: 'TL'),
+    CnAvatar(child: Text('CN')),
+    CnAvatar(child: Text('MD')),
+    CnAvatar(child: Text('TL')),
   ],
 )''',
       ),
@@ -1895,10 +1870,9 @@ CnAvatar(initials: 'CR', size: 48)''',
         title: 'With presets',
         description: 'Quickly jump to common dates.',
         preview: (context) => const _CalendarPresetsPreview(),
-        code: '''CnCalendar(
-  selectionMode: .single,
-  selectedDate: selected,
-  onDateSelected: (value) => setState(() => selected = value),
+        code: '''CnCalendar.single(
+  value: selected,
+  onChanged: (value) => setState(() => selected = value),
 )
 
 Wrap(
@@ -1914,16 +1888,15 @@ Wrap(
         title: 'With time',
         description: 'Attach start and end times.',
         preview: (context) => const _CalendarWithTimePreview(),
-        code: '''CnCalendar(
-  selectionMode: .single,
-  selectedDate: selected,
-  onDateSelected: (value) => setState(() => selected = value),
+        code: '''CnCalendar.single(
+  value: selected,
+  onChanged: (value) => setState(() => selected = value),
 )
 
 CnSelect<TimeOfDay>(
   value: startTime,
   items: [
-    DropdownMenuItem(
+    CnSelectItem(
       value: TimeOfDay(hour: 10, minute: 30),
       child: Text('10:30'),
     ),
@@ -1935,21 +1908,19 @@ CnSelect<TimeOfDay>(
         title: 'Range',
         description: 'Show consecutive months for longer ranges.',
         preview: (context) => const _CalendarRangeMultiMonthPreview(),
-        code: '''CnCalendar(
-  selectionMode: .range,
+        code: '''CnCalendar.range(
   monthsToDisplay: 2,
-  selectedRange: range,
-  onRangeSelected: (value) => setState(() => range = value),
+  value: range,
+  onChanged: (value) => setState(() => range = value),
 )''',
       ),
       ComponentExample(
         title: 'Booked dates',
         description: 'Disable and decorate unavailable days.',
         preview: (context) => const _CalendarBookedPreview(),
-        code: '''CnCalendar(
-  selectionMode: .single,
-  selectedDate: selected,
-  isDateSelectable: (date) => !unavailable(date),
+        code: '''CnCalendar.single(
+  value: selected,
+  isDateDisabled: (date) => unavailable(date),
   dayBuilder: (context, date, state) => Text(
     date.day.toString(),
     style: state.textStyle?.copyWith(
@@ -1962,21 +1933,19 @@ CnSelect<TimeOfDay>(
         title: 'Multiple',
         description: 'Select multiple dates.',
         preview: (context) => const _CalendarMultiplePreview(),
-        code: '''CnCalendar(
-  selectionMode: .multiple,
-  selectedDates: selectedDates,
-  onDatesSelected: (value) => setState(() => selectedDates = value),
+        code: '''CnCalendar.multiple(
+  value: selectedDates,
+  onChanged: (value) => setState(() => selectedDates = value),
 )''',
       ),
       ComponentExample(
         title: 'Single with dropdowns',
         description: 'Pick month and year from dropdowns.',
         preview: (context) => const _CalendarDropdownPreview(),
-        code: '''CnCalendar(
-  selectionMode: .single,
+        code: '''CnCalendar.single(
   headerVariant: CnCalendarHeaderVariant.dropdowns,
-  selectedDate: selected,
-  onDateSelected: (value) => setState(() => selected = value),
+  value: selected,
+  onChanged: (value) => setState(() => selected = value),
 )''',
       ),
     ],
@@ -2097,10 +2066,8 @@ CnSelect<TimeOfDay>(
         preview: (context) => const _EmptyPreview(),
         code: '''CnEmpty(
   media: CnEmptyMedia(child: Icon(Icons.search_off)),
-  title: CnEmptyTitle(child: Text('No results found')),
-  description: CnEmptyDescription(
-    child: Text('Try adjusting your filters or search query.'),
-  ),
+  title: Text('No results found'),
+  description: Text('Try adjusting your filters or search query.'),
   actions: Row(
     mainAxisSize: .min,
     spacing: 8,
@@ -2115,17 +2082,15 @@ CnSelect<TimeOfDay>(
         title: 'With media',
         description: 'Highlight illustrations or iconography.',
         preview: (context) => const _EmptyMediaPreview(),
-        code: '''final scheme = CnTheme.colorSchemeOf(context);
+        code: '''final colors = CnTheme.of(context).colors;
 
 CnEmpty(
   media: CnEmptyMedia(
     variant: .image,
-    child: Container(color: scheme.surfaceContainerHighest),
+    child: Container(color: colors.muted),
   ),
-  title: CnEmptyTitle(child: Text('No projects yet')),
-  description: CnEmptyDescription(
-    child: Text('Create your first workspace to get started.'),
-  ),
+  title: Text('No projects yet'),
+  description: Text('Create your first workspace to get started.'),
 )''',
       ),
     ],
@@ -2141,9 +2106,9 @@ CnEmpty(
         code: '''CnItemGroup(
   children: [
     CnItem(
-      media: CnItemMedia(variant: .icon, child: Icon(Icons.description_outlined)),
-      title: CnItemTitle(child: Text('Briefing.pdf')),
-      description: CnItemDescription(child: Text('Updated 2h ago')),
+      leading: CnItemMedia(variant: .icon, child: Icon(Icons.description_outlined)),
+      title: Text('Briefing.pdf'),
+      description: Text('Updated 2h ago'),
     ),
   ],
 )''',
@@ -2153,10 +2118,10 @@ CnEmpty(
         description: 'Add trailing buttons or badges.',
         preview: (context) => const _ItemActionPreview(),
         code: '''CnItem(
-  media: CnItemMedia(child: Icon(Icons.people_outline)),
-  title: CnItemTitle(child: Text('Design team')),
-  description: CnItemDescription(child: Text('8 members')),
-  actions: CnButton(variant: .outline, onPressed: () {}, child: Text('View')),
+  leading: CnItemMedia(child: Icon(Icons.people_outline)),
+  title: Text('Design team'),
+  description: Text('8 members'),
+  trailing: CnButton(variant: .outline, onPressed: () {}, child: Text('View')),
 )''',
       ),
     ],
@@ -2295,8 +2260,12 @@ CnSkeleton(height: 140)''',
   rowId: (row) => row.id,
   searchable: true,
   rowsPerPage: 4,
-  enableSelection: true,
-  enableColumnVisibility: true,
+  page: page,
+  onPageChanged: (value) => setState(() => page = value),
+  selection: selected,
+  onSelectionChanged: (value) => setState(() => selected = value),
+  hiddenColumns: hiddenColumns,
+  onHiddenColumnsChanged: (value) => setState(() => hiddenColumns = value),
   columns: [
     CnDataTableColumn<Invoice>(
       id: 'invoice',
@@ -2316,6 +2285,8 @@ CnSkeleton(height: 140)''',
         code: '''CnDataTable<Invoice>(
   rows: invoices,
   rowsPerPage: 3,
+  page: page,
+  onPageChanged: (value) => setState(() => page = value),
   columns: [
     CnDataTableColumn<Invoice>(
       id: 'invoice',
@@ -2388,23 +2359,16 @@ CnSkeleton(height: 140)''',
         title: 'Type scale',
         description: 'Headings and body text styles.',
         preview: (context) => const _TypographyPreview(),
-        code: '''CnText(
-  variant: .h1,
-  text: 'Typography',
-)
+        code: '''CnText.h1('Typography')
 
-CnText(
-  variant: .lead,
-  text: 'Build readable, expressive interfaces.',
-)''',
+CnText.lead('Build readable, expressive interfaces.', expressive interfaces.',)''',
       ),
       ComponentExample(
         title: 'Rich content',
         description: 'Inline code, lists, and blockquotes.',
         preview: (context) => const _TypographyRichPreview(),
-        code: '''CnText(
-  variant: .p,
-  child: Wrap(
+        code: '''SizedBox(
+              child: Wrap(
     spacing: 6,
     children: [
       Text('Install with'),
@@ -2470,44 +2434,37 @@ CnBlockquote(child: Text('Good typography is invisible.'))''',
     ],
   ),
   ComponentEntry(
-    name: 'Sonner',
+    name: 'Toast',
     description: 'Stacked toast notifications with variants.',
     examples: [
       ComponentExample(
         title: 'Success',
         description: 'Call out completed actions.',
         preview: (context) => const _SonnerSuccessPreview(),
-        code: '''CnSonner.success(
+        code: '''CnToast.success(
   context,
-  title: 'Invite sent',
-  description: 'An email went out to design@studio.com',
+  title: Text('Invite sent'),
+  description: Text('An email went out to design@studio.com'),
 )''',
       ),
       ComponentExample(
         title: 'Loading',
         description: 'Show background work with progress.',
         preview: (context) => const _SonnerLoadingPreview(),
-        code: '''CnSonner.loading(
+        code: '''CnToast.loading(
   context,
-  title: 'Syncing workspace',
-  description: 'This can take a minute.',
+  title: Text('Syncing workspace'),
+  description: Text('This can take a minute.'),
 )''',
       ),
-    ],
-  ),
-  ComponentEntry(
-    name: 'Toast',
-    description: 'Transient feedback message.',
-    examples: [
       ComponentExample(
         title: 'With action',
         description: 'Give users a quick undo option.',
         preview: (context) => const _ToastPreview(),
         code: '''CnToast.show(
   context,
-  message: 'Invitation sent to design@studio.com',
-  actionLabel: 'Undo',
-  onAction: () {},
+  title: Text('Invitation sent to design@studio.com'),
+  action: CnButton(size: .xs, onPressed: () {}, child: Text('Undo')),
 )''',
       ),
       ComponentExample(
@@ -2516,7 +2473,7 @@ CnBlockquote(child: Text('Good typography is invisible.'))''',
         preview: (context) => const _ToastSimplePreview(),
         code: '''CnToast.show(
   context,
-  message: 'Saved successfully',
+  title: Text('Saved successfully'),
 )''',
       ),
     ],
@@ -2537,7 +2494,7 @@ class _CheckboxPreviewState extends State<_CheckboxPreview> {
   Widget build(BuildContext context) {
     return CnCheckbox(
       value: checked,
-      onChanged: (value) => setState(() => checked = value ?? false),
+      onChanged: (value) => setState(() => checked = value),
       label: const Text('Accept terms and conditions'),
     );
   }
@@ -2564,7 +2521,7 @@ class _InputOtpPreviewState extends State<_InputOtpPreview> {
           groupSize: 3,
           onChanged: (value) => setState(() => otp = value),
         ),
-        Text('Value: $otp', style: CnTheme.textThemeOf(context).bodySmall),
+        Text('Value: $otp', style: CnTheme.of(context).text.xs),
       ],
     );
   }
@@ -2610,8 +2567,8 @@ class _FormPreviewState extends State<_FormPreview> {
             Column(
               crossAxisAlignment: .start,
               children: [
-                CnFormField(
-                  labelText: 'Name',
+                CnField(
+                  label: Text('Name'),
                   required: true,
                   child: TextFormField(
                     decoration: const InputDecoration(hintText: 'Ada Lovelace'),
@@ -2620,9 +2577,9 @@ class _FormPreviewState extends State<_FormPreview> {
                         : null,
                   ),
                 ),
-                CnFormField(
-                  labelText: 'Email',
-                  descriptionText: 'We will only use this for updates.',
+                CnField(
+                  label: Text('Email'),
+                  description: Text('We will only use this for updates.'),
                   child: TextFormField(
                     decoration: const InputDecoration(
                       hintText: 'name@company.com',
@@ -2632,8 +2589,8 @@ class _FormPreviewState extends State<_FormPreview> {
                         : 'Enter a valid email',
                   ),
                 ),
-                CnFormField(
-                  labelText: 'Marketing',
+                CnField(
+                  label: Text('Marketing'),
                   child: CnSwitch(
                     value: marketing,
                     onChanged: (value) => setState(() => marketing = value),
@@ -2701,7 +2658,7 @@ class _DatePickerPreviewState extends State<_DatePickerPreview> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 280,
-      child: CnDatePickerField(
+      child: CnDatePicker(
         placeholder: 'Pick a date',
         value: selected,
         onChanged: (value) => setState(() => selected = value),
@@ -2754,7 +2711,7 @@ class _TogglePreviewState extends State<_TogglePreview> {
         CnToggle(
           value: muted,
           onChanged: (value) => setState(() => muted = value),
-          variant: .ghost,
+          variant: .standard,
           child: Icon(muted ? Icons.volume_off : Icons.volume_up),
         ),
       ],
@@ -2770,7 +2727,7 @@ class _ToggleGroupPreview extends StatefulWidget {
 }
 
 class _ToggleGroupPreviewState extends State<_ToggleGroupPreview> {
-  Set<Object?> selected = {'bold'};
+  Set<String> selected = {'bold'};
   Set<Object?> alignment = {'left'};
 
   @override
@@ -2784,11 +2741,11 @@ class _ToggleGroupPreviewState extends State<_ToggleGroupPreview> {
             crossAxisAlignment: .start,
             spacing: 8,
             children: [
-              Text('Single', style: CnTheme.textThemeOf(context).labelMedium),
+              Text('Single', style: CnTheme.of(context).text.xs.medium),
               CnToggleGroup(
-                joined: true,
-                allowMultiple: false,
-                selectedValues: alignment,
+                spacing: 0,
+                multiple: false,
+                value: alignment,
                 onChanged: (value) => setState(() => alignment = value),
                 items: const [
                   CnToggleGroupItem(
@@ -2811,10 +2768,10 @@ class _ToggleGroupPreviewState extends State<_ToggleGroupPreview> {
             crossAxisAlignment: .start,
             spacing: 8,
             children: [
-              Text('Multiple', style: CnTheme.textThemeOf(context).labelMedium),
+              Text('Multiple', style: CnTheme.of(context).text.xs.medium),
               CnToggleGroup(
-                allowMultiple: true,
-                selectedValues: selected,
+                multiple: true,
+                value: selected,
                 onChanged: (value) => setState(() => selected = value),
                 items: const [
                   CnToggleGroupItem(
@@ -2849,7 +2806,7 @@ class _RadioPreviewState extends State<_RadioPreview> {
   @override
   Widget build(BuildContext context) {
     return CnRadioGroup<String>(
-      groupValue: plan,
+      value: plan,
       onChanged: (value) => setState(() => plan = value ?? plan),
       child: Column(
         crossAxisAlignment: .start,
@@ -2880,9 +2837,9 @@ class _SelectPreviewState extends State<_SelectPreview> {
         value: team,
         placeholder: 'Pick a team',
         items: const [
-          DropdownMenuItem(value: 'design', child: Text('Design')),
-          DropdownMenuItem(value: 'product', child: Text('Product')),
-          DropdownMenuItem(value: 'engineering', child: Text('Engineering')),
+          CnSelectItem(value: 'design', child: Text('Design')),
+          CnSelectItem(value: 'product', child: Text('Product')),
+          CnSelectItem(value: 'engineering', child: Text('Engineering')),
         ],
         onChanged: (value) => setState(() => team = value),
       ),
@@ -2895,30 +2852,36 @@ class _TabsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CnTabs(
-      contentHeight: 120,
-      tabs: [
-        CnTab(
-          label: 'Overview',
-          child: Padding(
-            padding: const .only(top: 8),
-            child: Text(
-              'Track KPIs, generate reports, and spot trends.',
-              style: CnTheme.textThemeOf(context).bodyMedium,
+    return _Stateful<int>(
+      initial: 0,
+      builder: (context, value, onChanged) => CnTabs<int>(
+        value: value,
+        onChanged: onChanged,
+        tabs: [
+          CnTab<int>(
+            value: 0,
+            label: Text('Overview'),
+            content: Padding(
+              padding: const .only(top: 8),
+              child: Text(
+                'Track KPIs, generate reports, and spot trends.',
+                style: CnTheme.of(context).text.sm,
+              ),
             ),
           ),
-        ),
-        CnTab(
-          label: 'Details',
-          child: Padding(
-            padding: const .only(top: 8),
-            child: Text(
-              'Dive into weekly breakdowns and export data.',
-              style: CnTheme.textThemeOf(context).bodyMedium,
+          CnTab<int>(
+            value: 1,
+            label: Text('Details'),
+            content: Padding(
+              padding: const .only(top: 8),
+              child: Text(
+                'Dive into weekly breakdowns and export data.',
+                style: CnTheme.of(context).text.sm,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -2963,25 +2926,25 @@ class _MenubarPreview extends StatelessWidget {
       child: CnMenubar(
         menus: [
           CnMenu(
-            label: 'File',
+            label: Text('File'),
             entries: [
-              CnMenuAction(label: 'New tab', onSelected: () {}),
-              CnMenuAction(label: 'New window', onSelected: () {}),
+              CnMenuAction(label: Text('New tab'), onSelected: () {}),
+              CnMenuAction(label: Text('New window'), onSelected: () {}),
               const CnMenuSeparator(),
               CnMenuSubmenu(
-                label: 'Export',
+                label: Text('Export'),
                 entries: [
-                  CnMenuAction(label: 'PDF', onSelected: () {}),
-                  CnMenuAction(label: 'CSV', onSelected: () {}),
+                  CnMenuAction(label: Text('PDF'), onSelected: () {}),
+                  CnMenuAction(label: Text('CSV'), onSelected: () {}),
                 ],
               ),
             ],
           ),
           CnMenu(
-            label: 'Edit',
+            label: Text('Edit'),
             entries: [
-              CnMenuAction(label: 'Undo', onSelected: () {}),
-              CnMenuAction(label: 'Redo', onSelected: () {}),
+              CnMenuAction(label: Text('Undo'), onSelected: () {}),
+              CnMenuAction(label: Text('Redo'), onSelected: () {}),
             ],
           ),
         ],
@@ -2997,23 +2960,23 @@ class _NavigationMenuPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return CnNavigationMenu(
       items: [
-        CnNavigationMenuItem(label: 'Overview', onTap: () {}),
+        CnNavigationMenuItem(label: Text('Overview'), onTap: () {}),
         CnNavigationMenuItem(
-          label: 'Solutions',
+          label: Text('Solutions'),
           links: [
             CnNavigationMenuLink(
-              title: 'Analytics',
-              description: 'Real-time insights for your team.',
+              title: Text('Analytics'),
+              description: Text('Real-time insights for your team.'),
               onTap: () {},
             ),
             CnNavigationMenuLink(
-              title: 'Automation',
-              description: 'Trigger workflows and reduce toil.',
+              title: Text('Automation'),
+              description: Text('Trigger workflows and reduce toil.'),
               onTap: () {},
             ),
           ],
         ),
-        CnNavigationMenuItem(label: 'Pricing', onTap: () {}),
+        CnNavigationMenuItem(label: Text('Pricing'), onTap: () {}),
       ],
     );
   }
@@ -3032,9 +2995,9 @@ class _PaginationPreviewState extends State<_PaginationPreview> {
   @override
   Widget build(BuildContext context) {
     return CnPagination(
-      currentPage: page,
-      totalPages: 12,
-      onPageChanged: (value) => setState(() => page = value),
+      value: page,
+      pageCount: 12,
+      onChanged: (value) => setState(() => page = value),
     );
   }
 }
@@ -3192,6 +3155,8 @@ class _DataTablePreview extends StatefulWidget {
 class _DataTablePreviewState extends State<_DataTablePreview> {
   final TextEditingController _searchController = TextEditingController();
   Set<String> selected = {};
+  Set<String> hiddenColumns = {};
+  int page = 1;
 
   @override
   void dispose() {
@@ -3217,9 +3182,12 @@ class _DataTablePreviewState extends State<_DataTablePreview> {
         searchController: _searchController,
         searchPlaceholder: 'Filter invoices...',
         searchValue: (row) => '${row.invoice} ${row.status} ${row.email}',
-        enableSelection: true,
-        enableColumnVisibility: true,
-        selectedRowIds: selected,
+        selection: selected,
+        hiddenColumns: hiddenColumns,
+        onHiddenColumnsChanged: (value) =>
+            setState(() => hiddenColumns = value),
+        page: page,
+        onPageChanged: (value) => setState(() => page = value),
         onSelectionChanged: (value) => setState(() => selected = value),
         rowsPerPage: 4,
         minTableWidth: 720,
@@ -3267,11 +3235,10 @@ class _DataTablePreviewState extends State<_DataTablePreview> {
             cellBuilder: (_, row) => Text(_formatDate(row.date)),
           ),
         ],
-        rowActionsBuilder: (_, row) => CnButton(
+        rowActionsBuilder: (_, row) => CnButton.icon(
           variant: .ghost,
-          size: .icon,
           onPressed: () {},
-          child: const Icon(Icons.more_horiz, size: 18),
+          icon: const Icon(Icons.more_horiz, size: 18),
         ),
       ),
     );
@@ -3327,7 +3294,7 @@ class _CarouselPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return SizedBox(
       width: 640,
@@ -3343,22 +3310,22 @@ class _CarouselPreview extends StatelessWidget {
             icon: Icons.layers_outlined,
             title: 'Design systems',
             description: 'Ship a consistent UI faster.',
-            background: scheme.primaryContainer,
-            foreground: scheme.onPrimaryContainer,
+            background: colors.accent,
+            foreground: colors.accentForeground,
           ),
           _CarouselSlide(
             icon: Icons.auto_awesome_outlined,
             title: 'Feature highlights',
             description: 'Spotlight the updates that matter.',
-            background: scheme.secondaryContainer,
-            foreground: scheme.onSecondaryContainer,
+            background: colors.secondary,
+            foreground: colors.secondaryForeground,
           ),
           _CarouselSlide(
             icon: Icons.insights_outlined,
             title: 'Analytics snapshots',
             description: 'Share real-time performance insights.',
-            background: scheme.tertiaryContainer,
-            foreground: scheme.onTertiaryContainer,
+            background: colors.muted,
+            foreground: colors.foreground,
           ),
         ],
       ),
@@ -3382,7 +3349,7 @@ class _CarouselSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = CnTheme.textThemeOf(context);
+    final text = CnTheme.of(context).text;
 
     return Container(
       decoration: BoxDecoration(color: background),
@@ -3405,16 +3372,14 @@ class _CarouselSlide extends StatelessWidget {
           ),
           Text(
             title,
-            style: textTheme.titleLarge?.copyWith(
+            style: text.lg.semibold.copyWith(
               color: foreground,
               fontWeight: .w600,
             ),
           ),
           Text(
             description,
-            style: textTheme.bodyMedium?.copyWith(
-              color: foreground.withValues(alpha: 0.9),
-            ),
+            style: text.sm.copyWith(color: foreground.withValues(alpha: 0.9)),
           ),
         ],
       ),
@@ -3433,24 +3398,20 @@ class _TypographyPreview extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 8,
         children: [
-          const CnText(variant: .h1, text: 'Typography'),
-          const CnText(
-            variant: .lead,
-            text: 'Build readable, expressive interfaces with consistent type.',
+          const CnText.h1('Typography'),
+          const CnText.lead(
+            'Build readable, expressive interfaces with consistent type.',
           ),
           const Padding(
             padding: EdgeInsets.only(top: 8),
-            child: CnText(
-              variant: .p,
-              text:
-                  'Use typography tokens to create rhythm, hierarchy, and '
-                  'emphasis across your layouts.',
+            child: CnText.p(
+              'Use typography tokens to create rhythm, hierarchy, and '
+              'emphasis across your layouts.',
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: CnText(
-              variant: .p,
+            child: SizedBox(
               child: Wrap(
                 spacing: 6,
                 runSpacing: 6,
@@ -3473,7 +3434,7 @@ class _TypographyPreview extends StatelessWidget {
           ),
           const Padding(
             padding: EdgeInsets.only(top: 8),
-            child: CnText(variant: .large, text: 'Principles'),
+            child: CnText.large('Principles'),
           ),
           const CnList(
             items: [
@@ -3484,9 +3445,8 @@ class _TypographyPreview extends StatelessWidget {
           ),
           const Padding(
             padding: EdgeInsets.only(top: 4),
-            child: CnText(
-              variant: .muted,
-              text: 'Muted text works well for captions or helper copy.',
+            child: CnText.muted(
+              'Muted text works well for captions or helper copy.',
             ),
           ),
         ],
@@ -3505,7 +3465,7 @@ class _AlertDialogPreview extends StatelessWidget {
       onPressed: () {
         showCnDialog(
           context: context,
-          builder: (dialog) => CnAlertDialog(
+          builder: (context) => CnAlertDialog(
             title: const Text('Are you absolutely sure?'),
             content: const Text(
               'This action cannot be undone. This will permanently delete '
@@ -3514,10 +3474,13 @@ class _AlertDialogPreview extends StatelessWidget {
             actions: [
               CnButton(
                 variant: .outline,
-                onPressed: dialog.cancel,
+                onPressed: () => Navigator.pop(context),
                 child: const Text('Cancel'),
               ),
-              CnButton(onPressed: dialog.result, child: const Text('Continue')),
+              CnButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Continue'),
+              ),
             ],
           ),
         );
@@ -3537,9 +3500,13 @@ class _ToastPreview extends StatelessWidget {
       onPressed: () {
         CnToast.show(
           context,
-          message: 'Invitation sent to design@studio.com',
-          actionLabel: 'Undo',
-          onAction: () {},
+          title: Text('Invitation sent to design@studio.com'),
+          action: CnButton(
+            variant: .outline,
+            size: .xs,
+            onPressed: () {},
+            child: const Text('Undo'),
+          ),
         );
       },
       child: const Text('Show toast'),
@@ -3554,23 +3521,31 @@ class _AccordionPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 420,
-      child: CnAccordion(
-        allowMultiple: true,
-        initialOpenIndices: const {0},
-        items: const [
-          CnAccordionItem(
-            title: Text('Product'),
-            content: Text('Manage pricing, inventory, and channels.'),
-          ),
-          CnAccordionItem(
-            title: Text('Marketing'),
-            content: Text('Plan campaigns and social launches.'),
-          ),
-          CnAccordionItem(
-            title: Text('Support'),
-            content: Text('Handle tickets, SLAs, and knowledge base.'),
-          ),
-        ],
+      child: _Stateful<Set<int>>(
+        initial: const {0},
+        builder: (context, value, onChanged) => CnAccordion<int>(
+          value: value,
+          onChanged: onChanged,
+          multiple: true,
+
+          items: const [
+            CnAccordionItem(
+              value: 0,
+              title: Text('Product'),
+              content: Text('Manage pricing, inventory, and channels.'),
+            ),
+            CnAccordionItem(
+              value: 1,
+              title: Text('Marketing'),
+              content: Text('Plan campaigns and social launches.'),
+            ),
+            CnAccordionItem(
+              value: 2,
+              title: Text('Support'),
+              content: Text('Handle tickets, SLAs, and knowledge base.'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -3583,13 +3558,18 @@ class _CollapsiblePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 420,
-      child: CnCollapsible(
-        title: const Text('Team notes'),
-        subtitle: const Text('Shipping weekly on Wednesdays.'),
-        child: Text(
-          'Shipping weekly on Wednesdays. Stay aligned on priorities and '
-          'capture decisions in the doc hub.',
-          style: CnTheme.textThemeOf(context).bodyMedium,
+      child: _Stateful<bool>(
+        initial: false,
+        builder: (context, value, onChanged) => CnCollapsible(
+          value: value,
+          onChanged: onChanged,
+          title: const Text('Team notes'),
+          description: const Text('Shipping weekly on Wednesdays.'),
+          content: Text(
+            'Shipping weekly on Wednesdays. Stay aligned on priorities and '
+            'capture decisions in the doc hub.',
+            style: CnTheme.of(context).text.sm,
+          ),
         ),
       ),
     );
@@ -3601,22 +3581,20 @@ class _AspectRatioPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     return SizedBox(
       width: 360,
       child: CnAspectRatio(
         aspectRatio: 16 / 9,
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [scheme.primaryContainer, scheme.secondaryContainer],
-            ),
+            gradient: LinearGradient(colors: [colors.accent, colors.secondary]),
           ),
           child: Center(
             child: Text(
               '16:9',
-              style: CnTheme.textThemeOf(context).titleMedium
-                  ?.copyWith(color: scheme.onSurface),
+              style: CnTheme.of(context).text.base.semibold
+                  .copyWith(color: colors.foreground),
             ),
           ),
         ),
@@ -3630,7 +3608,7 @@ class _ScrollAreaPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     return SizedBox(
       width: 320,
       child: CnScrollArea(
@@ -3643,19 +3621,19 @@ class _ScrollAreaPreview extends StatelessWidget {
                 padding: const .symmetric(horizontal: 12, vertical: 10),
                 margin: const .only(bottom: 8),
                 decoration: BoxDecoration(
-                  color: scheme.surfaceContainerHighest,
+                  color: colors.muted,
                   borderRadius: .circular(CnTheme.of(context).radius - 6),
-                  border: Border.all(color: scheme.outlineVariant),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Row(
                   spacing: 10,
                   children: [
                     CircleAvatar(
                       radius: 12,
-                      backgroundColor: scheme.primaryContainer,
+                      backgroundColor: colors.accent,
                       child: Text(
                         '${index + 1}',
-                        style: CnTheme.textThemeOf(context).labelSmall,
+                        style: CnTheme.of(context).text.xs.medium,
                       ),
                     ),
                     Text('Update #${index + 1}'),
@@ -3674,19 +3652,18 @@ class _ResizablePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     return SizedBox(
       width: 520,
       height: 200,
-      child: CnResizable(
-        initialRatio: 0.55,
-        primary: _ResizablePanel(
-          title: 'Details',
-          color: scheme.surfaceContainer,
-        ),
-        secondary: _ResizablePanel(
-          title: 'Notes',
-          color: scheme.surfaceContainerHighest,
+      child: _Stateful<double>(
+        initial: 0.55,
+        builder: (context, value, onChanged) => CnResizable(
+          value: value,
+          onChanged: onChanged,
+
+          primary: _ResizablePanel(title: 'Details', color: colors.muted),
+          secondary: _ResizablePanel(title: 'Notes', color: colors.muted),
         ),
       ),
     );
@@ -3703,7 +3680,7 @@ class _ResizablePanel extends StatelessWidget {
     return Container(
       padding: const .all(16),
       color: color,
-      child: Text(title, style: CnTheme.textThemeOf(context).titleSmall),
+      child: Text(title, style: CnTheme.of(context).text.sm.semibold),
     );
   }
 }
@@ -3742,7 +3719,7 @@ class _CommandPreview extends StatelessWidget {
       child: CnCommand(
         groups: [
           CnCommandGroup(
-            label: 'Suggestions',
+            label: Text('Suggestions'),
             items: [
               CnCommandItem(
                 label: 'New project',
@@ -3760,7 +3737,7 @@ class _CommandPreview extends StatelessWidget {
             ],
           ),
           CnCommandGroup(
-            label: 'Settings',
+            label: Text('Settings'),
             items: [
               CnCommandItem(
                 label: 'Account',
@@ -3787,16 +3764,16 @@ class _ContextMenuPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     return SizedBox(
       width: 320,
       child: CnContextMenu(
         entries: [
-          CnDropdownMenuAction(label: 'Rename', onSelected: () {}),
-          CnDropdownMenuAction(label: 'Duplicate', onSelected: () {}),
-          const CnDropdownMenuSeparator(),
-          CnDropdownMenuAction(
-            label: 'Delete',
+          CnMenuAction(label: Text('Rename'), onSelected: () {}),
+          CnMenuAction(label: Text('Duplicate'), onSelected: () {}),
+          const CnMenuSeparator(),
+          CnMenuAction(
+            label: Text('Delete'),
             role: .destructive,
             onSelected: () {},
           ),
@@ -3804,9 +3781,9 @@ class _ContextMenuPreview extends StatelessWidget {
         child: Container(
           padding: const .all(16),
           decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest,
+            color: colors.muted,
             borderRadius: .circular(CnTheme.of(context).radius),
-            border: Border.all(color: scheme.outlineVariant),
+            border: Border.all(color: colors.border),
           ),
           child: const Text('Right click or long press for actions'),
         ),
@@ -3827,7 +3804,6 @@ class _DrawerPreview extends StatelessWidget {
           context: context,
           side: .start,
           builder: (_) => CnDrawer(
-            side: .start,
             title: const Text('Share access'),
             description: const Text('Invite teammates to collaborate.'),
             content: Column(
@@ -3871,11 +3847,8 @@ class _HoverCardPreview extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 4,
         children: [
-          Text('Nova Patel', style: CnTheme.textThemeOf(context).titleSmall),
-          Text(
-            'Product design lead',
-            style: CnTheme.textThemeOf(context).bodySmall,
-          ),
+          Text('Nova Patel', style: CnTheme.of(context).text.sm.semibold),
+          Text('Product design lead', style: CnTheme.of(context).text.xs),
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Row(
@@ -3888,7 +3861,7 @@ class _HoverCardPreview extends StatelessWidget {
           ),
         ],
       ),
-      child: const CnAvatar(initials: 'NP'),
+      child: const CnAvatar(child: Text('NP')),
     );
   }
 }
@@ -3915,8 +3888,8 @@ class _SheetPreview extends StatelessWidget {
                 CnInput(placeholder: 'Workspace name'),
                 CnSelect<String>(
                   items: [
-                    DropdownMenuItem(value: 'starter', child: Text('Starter')),
-                    DropdownMenuItem(value: 'pro', child: Text('Pro')),
+                    CnSelectItem(value: 'starter', child: Text('Starter')),
+                    CnSelectItem(value: 'pro', child: Text('Pro')),
                   ],
                   placeholder: 'Plan',
                 ),
@@ -3987,39 +3960,33 @@ class _DropdownMenuPreviewState extends State<_DropdownMenuPreview> {
 
   @override
   Widget build(BuildContext context) {
-    return CnDropdownMenu(
-      triggerBuilder: (context, controller) => CnButton(
+    return CnDropdownMenu.builder(
+      builder: (context, toggle) => CnButton(
         variant: .outline,
-        onPressed: () {
-          if (controller.isOpen) {
-            controller.close();
-          } else {
-            controller.open();
-          }
-        },
+        onPressed: toggle,
         child: const Text('Open menu'),
       ),
       entries: [
-        CnDropdownMenuAction(label: 'New tab', onSelected: () {}),
-        CnDropdownMenuAction(label: 'Duplicate', onSelected: () {}),
-        const CnDropdownMenuSeparator(),
-        CnDropdownMenuCheckboxItem(
-          label: 'Pin to top',
-          checked: pinned,
+        CnMenuAction(label: Text('New tab'), onSelected: () {}),
+        CnMenuAction(label: Text('Duplicate'), onSelected: () {}),
+        const CnMenuSeparator(),
+        CnMenuCheckboxItem(
+          label: Text('Pin to top'),
+          value: pinned,
           onChanged: (value) => setState(() => pinned = value),
         ),
-        const CnDropdownMenuSeparator(),
-        CnDropdownMenuRadioItem(
-          label: 'Compact',
+        const CnMenuSeparator(),
+        CnMenuRadioItem(
+          label: Text('Compact'),
           value: 'compact',
           groupValue: mode,
-          onSelected: (value) => setState(() => mode = value as String),
+          onChanged: (value) => setState(() => mode = value),
         ),
-        CnDropdownMenuRadioItem(
-          label: 'Comfortable',
+        CnMenuRadioItem(
+          label: Text('Comfortable'),
           value: 'comfortable',
           groupValue: mode,
-          onSelected: (value) => setState(() => mode = value as String),
+          onChanged: (value) => setState(() => mode = value),
         ),
       ],
     );
@@ -4031,26 +3998,20 @@ class _PopoverPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CnPopover(
-      triggerBuilder: (context, controller) => CnButton(
+    return CnPopover.builder(
+      builder: (context, toggle) => CnButton(
         variant: .outline,
-        onPressed: () {
-          if (controller.isOpen) {
-            controller.close();
-          } else {
-            controller.open();
-          }
-        },
+        onPressed: toggle,
         child: const Text('Open popover'),
       ),
       content: Column(
         crossAxisAlignment: .start,
         spacing: 8,
         children: [
-          Text('Quick actions', style: CnTheme.textThemeOf(context).titleSmall),
+          Text('Quick actions', style: CnTheme.of(context).text.sm.semibold),
           Text(
             'Add a teammate or create a new project.',
-            style: CnTheme.textThemeOf(context).bodyMedium,
+            style: CnTheme.of(context).text.sm,
           ),
           Padding(
             padding: const EdgeInsets.only(top: 4),
@@ -4084,23 +4045,31 @@ class _AccordionSinglePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 420,
-      child: CnAccordion(
-        allowMultiple: false,
-        initialOpenIndices: const {1},
-        items: const [
-          CnAccordionItem(
-            title: Text('Overview'),
-            content: Text('Plan milestones, owners, and timelines.'),
-          ),
-          CnAccordionItem(
-            title: Text('Risks'),
-            content: Text('Identify blockers and mitigation plans.'),
-          ),
-          CnAccordionItem(
-            title: Text('Next steps'),
-            content: Text('Assign tasks to each workstream.'),
-          ),
-        ],
+      child: _Stateful<Set<int>>(
+        initial: const {1},
+        builder: (context, value, onChanged) => CnAccordion<int>(
+          value: value,
+          onChanged: onChanged,
+          multiple: false,
+
+          items: const [
+            CnAccordionItem(
+              value: 0,
+              title: Text('Overview'),
+              content: Text('Plan milestones, owners, and timelines.'),
+            ),
+            CnAccordionItem(
+              value: 1,
+              title: Text('Risks'),
+              content: Text('Identify blockers and mitigation plans.'),
+            ),
+            CnAccordionItem(
+              value: 2,
+              title: Text('Next steps'),
+              content: Text('Assign tasks to each workstream.'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -4113,14 +4082,19 @@ class _CollapsibleIconPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 420,
-      child: CnCollapsible(
-        title: const Text('Weekly report'),
-        subtitle: const Text('Last updated 2 hours ago'),
-        leading: const Icon(Icons.description_outlined),
-        trailing: const CnBadge(variant: .outline, child: Text('Draft')),
-        child: Text(
-          'Share updates with the team and keep everyone aligned.',
-          style: CnTheme.textThemeOf(context).bodyMedium,
+      child: _Stateful<bool>(
+        initial: false,
+        builder: (context, value, onChanged) => CnCollapsible(
+          value: value,
+          onChanged: onChanged,
+          title: const Text('Weekly report'),
+          description: const Text('Last updated 2 hours ago'),
+          leading: const Icon(Icons.description_outlined),
+          trailing: const CnBadge(variant: .outline, child: Text('Draft')),
+          content: Text(
+            'Share updates with the team and keep everyone aligned.',
+            style: CnTheme.of(context).text.sm,
+          ),
         ),
       ),
     );
@@ -4132,7 +4106,7 @@ class _ScrollAreaHorizontalPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final radius = CnTheme.of(context).radius;
     return SizedBox(
       width: 420,
@@ -4148,9 +4122,9 @@ class _ScrollAreaHorizontalPreview extends StatelessWidget {
                 width: 140,
                 padding: const .all(12),
                 decoration: BoxDecoration(
-                  color: scheme.surfaceContainerHighest,
+                  color: colors.muted,
                   borderRadius: .circular(radius - 6),
-                  border: Border.all(color: scheme.outlineVariant),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   crossAxisAlignment: .start,
@@ -4158,12 +4132,9 @@ class _ScrollAreaHorizontalPreview extends StatelessWidget {
                   children: [
                     Text(
                       'Card ${index + 1}',
-                      style: CnTheme.textThemeOf(context).titleSmall,
+                      style: CnTheme.of(context).text.sm.semibold,
                     ),
-                    Text(
-                      'Summary',
-                      style: CnTheme.textThemeOf(context).bodySmall,
-                    ),
+                    Text('Summary', style: CnTheme.of(context).text.xs),
                   ],
                 ),
               ),
@@ -4179,20 +4150,19 @@ class _ResizableVerticalPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     return SizedBox(
       width: 420,
       height: 240,
-      child: CnResizable(
-        direction: .vertical,
-        initialRatio: 0.6,
-        primary: _ResizablePanel(
-          title: 'Summary',
-          color: scheme.surfaceContainer,
-        ),
-        secondary: _ResizablePanel(
-          title: 'Timeline',
-          color: scheme.surfaceContainerHighest,
+      child: _Stateful<double>(
+        initial: 0.6,
+        builder: (context, value, onChanged) => CnResizable(
+          value: value,
+          onChanged: onChanged,
+          direction: .vertical,
+
+          primary: _ResizablePanel(title: 'Summary', color: colors.muted),
+          secondary: _ResizablePanel(title: 'Timeline', color: colors.muted),
         ),
       ),
     );
@@ -4230,20 +4200,20 @@ class _FormInlinePreview extends StatelessWidget {
           crossAxisAlignment: .start,
           spacing: 12,
           children: [
-            const CnFormField(
-              labelText: 'Workspace',
-              descriptionText: 'Shown on invoices and receipts.',
+            const CnField(
+              label: Text('Workspace'),
+              description: Text('Shown on invoices and receipts.'),
               child: CnInput(placeholder: 'Acme Studio'),
             ),
-            CnFormField(
-              labelText: 'Plan',
+            CnField(
+              label: Text('Plan'),
               required: true,
               errorText: 'Required',
               child: CnSelect<String>(
                 placeholder: 'Select plan',
                 items: const [
-                  DropdownMenuItem(value: 'starter', child: Text('Starter')),
-                  DropdownMenuItem(value: 'pro', child: Text('Pro')),
+                  CnSelectItem(value: 'starter', child: Text('Starter')),
+                  CnSelectItem(value: 'pro', child: Text('Pro')),
                 ],
                 onChanged: (_) {},
               ),
@@ -4322,12 +4292,12 @@ class _DatePickerPresetPreviewState extends State<_DatePickerPresetPreview> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 280,
-      child: CnDatePickerField(
+      child: CnDatePicker(
         placeholder: 'Delivery date',
         value: selected,
-        allowClear: false,
+        clearable: false,
         onChanged: (value) => setState(() => selected = value),
-        initialDate: selected,
+        focusedDate: selected,
       ),
     );
   }
@@ -4382,15 +4352,15 @@ class _ToggleGroupSeparatedPreview extends StatefulWidget {
 
 class _ToggleGroupSeparatedPreviewState
     extends State<_ToggleGroupSeparatedPreview> {
-  Set<Object?> selected = {'bold', 'italic'};
+  Set<String> selected = {'bold', 'italic'};
 
   @override
   Widget build(BuildContext context) {
     return CnToggleGroup(
-      allowMultiple: true,
-      selectedValues: selected,
+      multiple: true,
+      value: selected,
       onChanged: (value) => setState(() => selected = value),
-      variant: .ghost,
+      variant: .standard,
       size: .sm,
       items: const [
         CnToggleGroupItem(value: 'bold', child: Icon(Icons.format_bold)),
@@ -4415,7 +4385,7 @@ class _RadioInlinePreviewState extends State<_RadioInlinePreview> {
   @override
   Widget build(BuildContext context) {
     return CnRadioGroup<String>(
-      groupValue: billing,
+      value: billing,
       onChanged: (value) => setState(() => billing = value ?? billing),
       child: Row(
         spacing: 16,
@@ -4445,10 +4415,10 @@ class _SelectCompactPreviewState extends State<_SelectCompactPreview> {
       child: CnSelect<String>(
         value: plan,
         placeholder: 'Plan',
-        isExpanded: false,
+        expand: false,
         items: const [
-          DropdownMenuItem(value: 'starter', child: Text('Starter')),
-          DropdownMenuItem(value: 'pro', child: Text('Pro')),
+          CnSelectItem(value: 'starter', child: Text('Starter')),
+          CnSelectItem(value: 'pro', child: Text('Pro')),
         ],
         onChanged: (value) => setState(() => plan = value),
       ),
@@ -4461,51 +4431,58 @@ class _TabsScrollablePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CnTabs(
-      isScrollable: true,
-      contentHeight: 120,
-      tabs: [
-        CnTab(
-          label: 'Overview',
-          child: Padding(
-            padding: const .only(top: 8),
-            child: Text(
-              'Track KPIs and team updates.',
-              style: CnTheme.textThemeOf(context).bodyMedium,
+    return _Stateful<int>(
+      initial: 0,
+      builder: (context, value, onChanged) => CnTabs<int>(
+        value: value,
+        onChanged: onChanged,
+        tabs: [
+          CnTab<int>(
+            value: 0,
+            label: Text('Overview'),
+            content: Padding(
+              padding: const .only(top: 8),
+              child: Text(
+                'Track KPIs and team updates.',
+                style: CnTheme.of(context).text.sm,
+              ),
             ),
           ),
-        ),
-        CnTab(
-          label: 'Analytics',
-          child: Padding(
-            padding: const .only(top: 8),
-            child: Text(
-              'Monitor adoption and funnel metrics.',
-              style: CnTheme.textThemeOf(context).bodyMedium,
+          CnTab<int>(
+            value: 1,
+            label: Text('Analytics'),
+            content: Padding(
+              padding: const .only(top: 8),
+              child: Text(
+                'Monitor adoption and funnel metrics.',
+                style: CnTheme.of(context).text.sm,
+              ),
             ),
           ),
-        ),
-        CnTab(
-          label: 'Billing',
-          child: Padding(
-            padding: const .only(top: 8),
-            child: Text(
-              'Manage invoices and payment methods.',
-              style: CnTheme.textThemeOf(context).bodyMedium,
+          CnTab<int>(
+            value: 2,
+            label: Text('Billing'),
+            content: Padding(
+              padding: const .only(top: 8),
+              child: Text(
+                'Manage invoices and payment methods.',
+                style: CnTheme.of(context).text.sm,
+              ),
             ),
           ),
-        ),
-        CnTab(
-          label: 'Settings',
-          child: Padding(
-            padding: const .only(top: 8),
-            child: Text(
-              'Configure notifications and access.',
-              style: CnTheme.textThemeOf(context).bodyMedium,
+          CnTab<int>(
+            value: 3,
+            label: Text('Settings'),
+            content: Padding(
+              padding: const .only(top: 8),
+              child: Text(
+                'Configure notifications and access.',
+                style: CnTheme.of(context).text.sm,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -4552,21 +4529,21 @@ class _MenubarIconPreview extends StatelessWidget {
       child: CnMenubar(
         menus: [
           CnMenu(
-            label: 'Project',
+            label: Text('Project'),
             entries: [
               CnMenuAction(
-                label: 'New',
+                label: Text('New'),
                 leading: const Icon(Icons.add),
                 onSelected: () {},
               ),
               CnMenuAction(
-                label: 'Duplicate',
+                label: Text('Duplicate'),
                 leading: const Icon(Icons.copy),
                 onSelected: () {},
               ),
               const CnMenuSeparator(),
               CnMenuAction(
-                label: 'Delete',
+                label: Text('Delete'),
                 role: .destructive,
                 leading: const Icon(Icons.delete_outline),
                 onSelected: () {},
@@ -4574,15 +4551,15 @@ class _MenubarIconPreview extends StatelessWidget {
             ],
           ),
           CnMenu(
-            label: 'View',
+            label: Text('View'),
             entries: [
               CnMenuAction(
-                label: 'Zoom in',
+                label: Text('Zoom in'),
                 leading: const Icon(Icons.zoom_in),
                 onSelected: () {},
               ),
               CnMenuAction(
-                label: 'Zoom out',
+                label: Text('Zoom out'),
                 leading: const Icon(Icons.zoom_out),
                 onSelected: () {},
               ),
@@ -4602,25 +4579,25 @@ class _NavigationMenuIconPreview extends StatelessWidget {
     return CnNavigationMenu(
       items: [
         CnNavigationMenuItem(
-          label: 'Resources',
+          label: Text('Resources'),
           leading: const Icon(Icons.book_outlined),
           links: [
             CnNavigationMenuLink(
-              title: 'Docs',
-              description: 'API reference and guides.',
+              title: Text('Docs'),
+              description: Text('API reference and guides.'),
               leading: const Icon(Icons.description_outlined),
               onTap: () {},
             ),
             CnNavigationMenuLink(
-              title: 'Tutorials',
-              description: 'Step-by-step walkthroughs.',
+              title: Text('Tutorials'),
+              description: Text('Step-by-step walkthroughs.'),
               leading: const Icon(Icons.school_outlined),
               onTap: () {},
             ),
           ],
         ),
         CnNavigationMenuItem(
-          label: 'Community',
+          label: Text('Community'),
           leading: const Icon(Icons.forum_outlined),
           onTap: () {},
         ),
@@ -4643,11 +4620,11 @@ class _PaginationCompactPreviewState extends State<_PaginationCompactPreview> {
   @override
   Widget build(BuildContext context) {
     return CnPagination(
-      currentPage: page,
-      totalPages: 18,
+      value: page,
+      pageCount: 18,
       showPrevNext: false,
       maxButtons: 7,
-      onPageChanged: (value) => setState(() => page = value),
+      onChanged: (value) => setState(() => page = value),
     );
   }
 }
@@ -4683,7 +4660,7 @@ class _CommandEmptyPreviewState extends State<_CommandEmptyPreview> {
         emptyText: 'No results found.',
         groups: [
           CnCommandGroup(
-            label: 'Suggestions',
+            label: Text('Suggestions'),
             items: [
               CnCommandItem(
                 label: 'New project',
@@ -4713,36 +4690,36 @@ class _ContextMenuSelectionPreviewState
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     return SizedBox(
       width: 320,
       child: CnContextMenu(
         entries: [
-          CnDropdownMenuCheckboxItem(
-            label: 'Pin to top',
-            checked: pinned,
+          CnMenuCheckboxItem(
+            label: Text('Pin to top'),
+            value: pinned,
             onChanged: (value) => setState(() => pinned = value),
           ),
-          const CnDropdownMenuSeparator(),
-          CnDropdownMenuRadioItem(
-            label: 'Compact',
+          const CnMenuSeparator(),
+          CnMenuRadioItem(
+            label: Text('Compact'),
             value: 'compact',
             groupValue: mode,
-            onSelected: (value) => setState(() => mode = value as String),
+            onChanged: (value) => setState(() => mode = value),
           ),
-          CnDropdownMenuRadioItem(
-            label: 'Comfortable',
+          CnMenuRadioItem(
+            label: Text('Comfortable'),
             value: 'comfortable',
             groupValue: mode,
-            onSelected: (value) => setState(() => mode = value as String),
+            onChanged: (value) => setState(() => mode = value),
           ),
         ],
         child: Container(
           padding: const .all(16),
           decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest,
+            color: colors.muted,
             borderRadius: .circular(CnTheme.of(context).radius),
-            border: Border.all(color: scheme.outlineVariant),
+            border: Border.all(color: colors.border),
           ),
           child: const Text('Right click for view options'),
         ),
@@ -4763,7 +4740,6 @@ class _DrawerEndPreview extends StatelessWidget {
           context: context,
           side: .end,
           builder: (_) => CnDrawer(
-            side: .end,
             title: const Text('Filters'),
             description: const Text('Refine results across this view.'),
             content: Column(
@@ -4813,11 +4789,8 @@ class _HoverCardCompactPreview extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 6,
         children: [
-          Text('Latest update', style: CnTheme.textThemeOf(context).titleSmall),
-          Text(
-            'Uploaded 2 hours ago.',
-            style: CnTheme.textThemeOf(context).bodySmall,
-          ),
+          Text('Latest update', style: CnTheme.of(context).text.sm.semibold),
+          Text('Uploaded 2 hours ago.', style: CnTheme.of(context).text.xs),
         ],
       ),
       child: const CnBadge(child: Text('Updates')),
@@ -4838,8 +4811,6 @@ class _SheetCompactPreview extends StatelessWidget {
           builder: (_) => CnSheet(
             title: const Text('Quick add'),
             description: const Text('Create a new task in seconds.'),
-            heightFactor: 0.4,
-            showHandle: false,
             showCloseButton: false,
             content: const CnInput(placeholder: 'Task name'),
             actions: [
@@ -4902,32 +4873,26 @@ class _DropdownMenuSubmenuPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CnDropdownMenu(
-      triggerBuilder: (context, controller) => CnButton(
+    return CnDropdownMenu.builder(
+      builder: (context, toggle) => CnButton(
         variant: .outline,
-        onPressed: () {
-          if (controller.isOpen) {
-            controller.close();
-          } else {
-            controller.open();
-          }
-        },
+        onPressed: toggle,
         child: const Text('Open menu'),
       ),
       entries: [
-        CnDropdownMenuAction(label: 'New tab', onSelected: () {}),
-        const CnDropdownMenuSeparator(),
-        CnDropdownMenuSubmenu(
-          label: 'Export',
+        CnMenuAction(label: Text('New tab'), onSelected: () {}),
+        const CnMenuSeparator(),
+        CnMenuSubmenu(
+          label: Text('Export'),
           entries: [
-            CnDropdownMenuAction(label: 'PDF', onSelected: () {}),
-            CnDropdownMenuAction(label: 'CSV', onSelected: () {}),
-            CnDropdownMenuAction(label: 'PNG', onSelected: () {}),
+            CnMenuAction(label: Text('PDF'), onSelected: () {}),
+            CnMenuAction(label: Text('CSV'), onSelected: () {}),
+            CnMenuAction(label: Text('PNG'), onSelected: () {}),
           ],
         ),
-        const CnDropdownMenuSeparator(),
-        CnDropdownMenuAction(
-          label: 'Delete',
+        const CnMenuSeparator(),
+        CnMenuAction(
+          label: Text('Delete'),
           role: .destructive,
           onSelected: () {},
         ),
@@ -4941,16 +4906,10 @@ class _PopoverFormPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CnPopover(
-      triggerBuilder: (context, controller) => CnButton(
+    return CnPopover.builder(
+      builder: (context, toggle) => CnButton(
         variant: .outline,
-        onPressed: () {
-          if (controller.isOpen) {
-            controller.close();
-          } else {
-            controller.open();
-          }
-        },
+        onPressed: toggle,
         child: const Text('Edit status'),
       ),
       content: SizedBox(
@@ -4959,7 +4918,7 @@ class _PopoverFormPreview extends StatelessWidget {
           crossAxisAlignment: .start,
           spacing: 12,
           children: [
-            Text('Status', style: CnTheme.textThemeOf(context).titleSmall),
+            Text('Status', style: CnTheme.of(context).text.sm.semibold),
             const CnInput(placeholder: 'In review'),
             Row(
               spacing: 8,
@@ -4994,7 +4953,7 @@ class _AlertDialogDestructivePreview extends StatelessWidget {
       onPressed: () {
         showCnDialog(
           context: context,
-          builder: (dialog) => CnAlertDialog(
+          builder: (context) => CnAlertDialog(
             title: const Text('Delete project?'),
             content: const Text(
               'This action cannot be undone. All data will be removed.',
@@ -5002,12 +4961,12 @@ class _AlertDialogDestructivePreview extends StatelessWidget {
             actions: [
               CnButton(
                 variant: .outline,
-                onPressed: dialog.cancel,
+                onPressed: () => Navigator.pop(context),
                 child: const Text('Cancel'),
               ),
               CnButton(
                 variant: .destructive,
-                onPressed: dialog.result,
+                onPressed: () => Navigator.pop(context),
                 child: const Text('Delete'),
               ),
             ],
@@ -5033,10 +4992,9 @@ class _CalendarSinglePreviewState extends State<_CalendarSinglePreview> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 320,
-      child: CnCalendar(
-        selectionMode: .single,
-        selectedDate: selectedDate,
-        onDateSelected: (value) => setState(() => selectedDate = value),
+      child: CnCalendar.single(
+        value: selectedDate,
+        onChanged: (value) => setState(() => selectedDate = value),
       ),
     );
   }
@@ -5050,16 +5008,15 @@ class _CalendarRangePreview extends StatefulWidget {
 }
 
 class _CalendarRangePreviewState extends State<_CalendarRangePreview> {
-  DateTimeRange? selectedRange;
+  CnDateRange? selectedRange;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 360,
-      child: CnCalendar(
-        selectionMode: .range,
-        selectedRange: selectedRange,
-        onRangeSelected: (value) => setState(() => selectedRange = value),
+      child: CnCalendar.range(
+        value: selectedRange,
+        onChanged: (value) => setState(() => selectedRange = value),
       ),
     );
   }
@@ -5092,12 +5049,11 @@ class _CalendarPresetsPreviewState extends State<_CalendarPresetsPreview> {
         crossAxisAlignment: .start,
         spacing: 12,
         children: [
-          CnCalendar(
-            selectionMode: .single,
-            selectedDate: selectedDate,
+          CnCalendar.single(
+            value: selectedDate,
             focusedMonth: _focusedMonth,
             onMonthChanged: (value) => setState(() => _focusedMonth = value),
-            onDateSelected: (value) => setState(() => selectedDate = value),
+            onChanged: (value) => setState(() => selectedDate = value),
           ),
           Wrap(
             spacing: 8,
@@ -5178,22 +5134,21 @@ class _CalendarWithTimePreviewState extends State<_CalendarWithTimePreview> {
         crossAxisAlignment: .start,
         spacing: 12,
         children: [
-          CnCalendar(
-            selectionMode: .single,
-            selectedDate: selectedDate,
-            onDateSelected: (value) => setState(() => selectedDate = value),
+          CnCalendar.single(
+            value: selectedDate,
+            onChanged: (value) => setState(() => selectedDate = value),
           ),
           const CnSeparator(),
           CnFieldGroup(
             spacing: 12,
             children: [
               CnField(
-                labelText: 'Start Time',
+                label: Text('Start Time'),
                 child: CnSelect<TimeOfDay>(
                   value: startTime,
                   items: [
                     for (final time in timeOptions)
-                      DropdownMenuItem(
+                      CnSelectItem(
                         value: time,
                         child: Text(_formatTime(context, time)),
                       ),
@@ -5207,12 +5162,12 @@ class _CalendarWithTimePreviewState extends State<_CalendarWithTimePreview> {
                 ),
               ),
               CnField(
-                labelText: 'End Time',
+                label: Text('End Time'),
                 child: CnSelect<TimeOfDay>(
                   value: endTime,
                   items: [
                     for (final time in timeOptions)
-                      DropdownMenuItem(
+                      CnSelectItem(
                         value: time,
                         child: Text(_formatTime(context, time)),
                       ),
@@ -5258,7 +5213,7 @@ class _CalendarRangeMultiMonthPreview extends StatefulWidget {
 
 class _CalendarRangeMultiMonthPreviewState
     extends State<_CalendarRangeMultiMonthPreview> {
-  DateTimeRange? selectedRange = DateTimeRange(
+  CnDateRange? selectedRange = CnDateRange(
     start: DateTime(2025, 1, 12),
     end: DateTime(2025, 2, 11),
   );
@@ -5267,13 +5222,12 @@ class _CalendarRangeMultiMonthPreviewState
   Widget build(BuildContext context) {
     return SizedBox(
       width: 640,
-      child: CnCalendar(
-        selectionMode: .range,
+      child: CnCalendar.range(
         focusedMonth: DateTime(2025, 1, 1),
         monthsToDisplay: 2,
         daySize: 36,
-        selectedRange: selectedRange,
-        onRangeSelected: (value) => setState(() => selectedRange = value),
+        value: selectedRange,
+        onChanged: (value) => setState(() => selectedRange = value),
       ),
     );
   }
@@ -5294,18 +5248,17 @@ class _CalendarBookedPreviewState extends State<_CalendarBookedPreview> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 320,
-      child: CnCalendar(
-        selectionMode: .single,
+      child: CnCalendar.single(
         focusedMonth: focusedMonth,
-        selectedDate: selectedDate,
-        onDateSelected: (value) => setState(() => selectedDate = value),
-        isDateSelectable: (date) => !_isUnavailable(date),
+        value: selectedDate,
+        onChanged: (value) => setState(() => selectedDate = value),
+        isDateDisabled: (date) => _isUnavailable(date),
         dayBuilder: (context, date, state) {
           final unavailable = _isUnavailable(date);
           final style = state.textStyle?.copyWith(
             decoration: unavailable ? TextDecoration.lineThrough : null,
             color: unavailable
-                ? CnTheme.colorSchemeOf(context).onSurfaceVariant
+                ? CnTheme.of(context).colors.mutedForeground
                       .withValues(alpha: 0.5)
                 : state.textStyle?.color,
           );
@@ -5342,11 +5295,10 @@ class _CalendarMultiplePreviewState extends State<_CalendarMultiplePreview> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 320,
-      child: CnCalendar(
-        selectionMode: .multiple,
+      child: CnCalendar.multiple(
         focusedMonth: DateTime(2025, 12, 1),
-        selectedDates: selectedDates,
-        onDatesSelected: (value) => setState(() => selectedDates = value),
+        value: selectedDates,
+        onChanged: (value) => setState(() => selectedDates = value),
       ),
     );
   }
@@ -5367,14 +5319,13 @@ class _CalendarDropdownPreviewState extends State<_CalendarDropdownPreview> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 360,
-      child: CnCalendar(
-        selectionMode: .single,
+      child: CnCalendar.single(
         focusedMonth: DateTime(2025, 12, 1),
-        selectedDate: selectedDate,
+        value: selectedDate,
         headerVariant: CnCalendarHeaderVariant.dropdowns,
         firstYear: 2020,
         lastYear: 2030,
-        onDateSelected: (value) => setState(() => selectedDate = value),
+        onChanged: (value) => setState(() => selectedDate = value),
       ),
     );
   }
@@ -5457,30 +5408,33 @@ class _DataTableCompactPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 640,
-      child: CnDataTable<_InvoiceRow>(
-        rows: _invoiceRows.take(4).toList(),
-        rowsPerPage: 3,
-        searchable: false,
-        enableSelection: false,
-        enableColumnVisibility: false,
-        columns: [
-          CnDataTableColumn<_InvoiceRow>(
-            id: 'invoice',
-            label: const Text('Invoice'),
-            cellBuilder: (_, row) => Text(row.invoice),
-          ),
-          CnDataTableColumn<_InvoiceRow>(
-            id: 'status',
-            label: const Text('Status'),
-            cellBuilder: (_, row) => Text(row.status),
-          ),
-          CnDataTableColumn<_InvoiceRow>(
-            id: 'amount',
-            label: const Text('Amount'),
-            numeric: true,
-            cellBuilder: (_, row) => Text(_formatCurrency(row.amount)),
-          ),
-        ],
+      child: _Stateful<int>(
+        initial: 1,
+        builder: (context, page, onPageChanged) => CnDataTable<_InvoiceRow>(
+          rows: _invoiceRows.take(4).toList(),
+          rowsPerPage: 3,
+          page: page,
+          onPageChanged: onPageChanged,
+          searchable: false,
+          columns: [
+            CnDataTableColumn<_InvoiceRow>(
+              id: 'invoice',
+              label: const Text('Invoice'),
+              cellBuilder: (_, row) => Text(row.invoice),
+            ),
+            CnDataTableColumn<_InvoiceRow>(
+              id: 'status',
+              label: const Text('Status'),
+              cellBuilder: (_, row) => Text(row.status),
+            ),
+            CnDataTableColumn<_InvoiceRow>(
+              id: 'amount',
+              label: const Text('Amount'),
+              numeric: true,
+              cellBuilder: (_, row) => Text(_formatCurrency(row.amount)),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -5522,8 +5476,7 @@ class _TypographyRichPreview extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 8,
         children: [
-          CnText(
-            variant: .p,
+          SizedBox(
             child: Wrap(
               spacing: 6,
               runSpacing: 6,
@@ -5542,9 +5495,8 @@ class _TypographyRichPreview extends StatelessWidget {
               Text('Use muted text for captions.'),
             ],
           ),
-          const CnText(
-            variant: .muted,
-            text: 'Muted text works well for captions or helper copy.',
+          const CnText.muted(
+            'Muted text works well for captions or helper copy.',
           ),
         ],
       ),
@@ -5555,37 +5507,24 @@ class _TypographyRichPreview extends StatelessWidget {
 class const _ButtonGroupJoinedPreview() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final radius = CnTheme.of(context).radius - 4;
-
     return CnButtonGroup(
       children: [
         CnButton(
-          variant: .ghost,
-          borderRadius: .horizontal(left: .circular(radius)),
+          variant: .outline,
           onPressed: () {},
-          child: Row(
-            mainAxisSize: .min,
-            spacing: 4,
-            children: const [Icon(Icons.chevron_left), Text('Back')],
-          ),
+          leading: const Icon(Icons.chevron_left),
+          child: const Text('Back'),
         ),
-        const CnButtonGroupSeparator(),
         CnButton(
-          variant: .ghost,
-          borderRadius: BorderRadius.zero,
+          variant: .outline,
           onPressed: () {},
           child: const Text('Details'),
         ),
-        const CnButtonGroupSeparator(),
         CnButton(
-          variant: .ghost,
-          borderRadius: .horizontal(right: .circular(radius)),
+          variant: .outline,
           onPressed: () {},
-          child: Row(
-            mainAxisSize: .min,
-            spacing: 4,
-            children: const [Text('Next'), Icon(Icons.chevron_right)],
-          ),
+          trailing: const Icon(Icons.chevron_right),
+          child: const Text('Next'),
         ),
       ],
     );
@@ -5595,23 +5534,17 @@ class const _ButtonGroupJoinedPreview() extends StatelessWidget {
 class const _ButtonGroupStackedPreview() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final radius = CnTheme.of(context).radius - 4;
-
     return CnButtonGroup(
-      orientation: .vertical,
+      direction: .vertical,
       children: [
         CnButton(
-          variant: .ghost,
-          borderRadius: .vertical(top: .circular(radius)),
+          variant: .outline,
           onPressed: () {},
           child: const Text('Personal'),
         ),
-        const CnButtonGroupSeparator(),
         const CnButtonGroupText(child: Text('or')),
-        const CnButtonGroupSeparator(),
         CnButton(
-          variant: .ghost,
-          borderRadius: .vertical(bottom: .circular(radius)),
+          variant: .outline,
           onPressed: () {},
           child: const Text('Team'),
         ),
@@ -5629,13 +5562,11 @@ class _InputGroupPreview extends StatelessWidget {
       width: 360,
       child: CnInputGroup(
         children: [
-          const CnInputGroupText(text: 'https://'),
+          const CnInputGroupAddon(child: Text('https://')),
           const CnInputGroupInput(placeholder: 'studio.io'),
           CnInputGroupButton(
             child: CnButton(
               variant: .ghost,
-              borderRadius: BorderRadius.zero,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               onPressed: () {},
               child: const Text('Go'),
             ),
@@ -5657,7 +5588,7 @@ class _InputGroupAddonPreview extends StatelessWidget {
         children: const [
           CnInputGroupAddon(child: Icon(Icons.search)),
           CnInputGroupInput(placeholder: 'Search'),
-          CnInputGroupText(text: 'USD'),
+          CnInputGroupAddon(child: Text('USD')),
         ],
       ),
     );
@@ -5676,15 +5607,14 @@ class _FieldSetPreview extends StatelessWidget {
           crossAxisAlignment: .start,
           spacing: 16,
           children: [
-            const CnFieldLegend(child: Text('Contact details')),
             CnFieldGroup(
               children: const [
                 CnField(
-                  labelText: 'Name',
+                  label: Text('Name'),
                   child: CnInput(placeholder: 'Ada Lovelace'),
                 ),
                 CnField(
-                  labelText: 'Email',
+                  label: Text('Email'),
                   child: CnInput(placeholder: 'ada@studio.com'),
                 ),
               ],
@@ -5705,8 +5635,8 @@ class _FieldHorizontalPreview extends StatelessWidget {
       width: 420,
       child: CnField(
         layout: .horizontal,
-        labelText: 'Workspace',
-        descriptionText: 'Shown on your public profile.',
+        label: Text('Workspace'),
+        description: Text('Shown on your public profile.'),
         child: CnInput(placeholder: 'Studio HQ'),
       ),
     );
@@ -5730,10 +5660,10 @@ class _NativeSelectPreviewState extends State<_NativeSelectPreview> {
       child: CnNativeSelect<String?>(
         value: team,
         placeholder: 'Select team',
-        entries: const [
-          CnNativeSelectOption(value: 'design', label: 'Design'),
-          CnNativeSelectOption(value: 'product', label: 'Product'),
-          CnNativeSelectOption(value: 'engineering', label: 'Engineering'),
+        items: const [
+          CnSelectItem(value: 'design', child: Text('Design')),
+          CnSelectItem(value: 'product', child: Text('Product')),
+          CnSelectItem(value: 'engineering', child: Text('Engineering')),
         ],
         onChanged: (value) => setState(() => team = value),
       ),
@@ -5758,19 +5688,19 @@ class _NativeSelectGroupPreviewState extends State<_NativeSelectGroupPreview> {
       width: 280,
       child: CnNativeSelect<String?>(
         placeholder: 'Choose a plan',
-        entries: const [
-          CnNativeSelectOptGroup(
-            label: 'Personal',
-            options: [
-              CnNativeSelectOption(value: 'starter', label: 'Starter'),
-              CnNativeSelectOption(value: 'plus', label: 'Plus'),
+        items: const [
+          CnSelectGroup(
+            label: Text('Personal'),
+            items: [
+              CnSelectItem(value: 'starter', child: Text('Starter')),
+              CnSelectItem(value: 'plus', child: Text('Plus')),
             ],
           ),
-          CnNativeSelectOptGroup(
-            label: 'Business',
-            options: [
-              CnNativeSelectOption(value: 'pro', label: 'Pro'),
-              CnNativeSelectOption(value: 'enterprise', label: 'Enterprise'),
+          CnSelectGroup(
+            label: Text('Business'),
+            items: [
+              CnSelectItem(value: 'pro', child: Text('Pro')),
+              CnSelectItem(value: 'enterprise', child: Text('Enterprise')),
             ],
           ),
         ],
@@ -5789,108 +5719,99 @@ class _SidebarPreview extends StatefulWidget {
 }
 
 class _SidebarPreviewState extends State<_SidebarPreview> {
-  late final CnSidebarController controller = CnSidebarController();
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  bool collapsed = false;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return SizedBox(
       height: 320,
-      child: CnSidebarProvider(
-        controller: controller,
-        child: Row(
-          spacing: 16,
-          children: [
-            CnSidebar(
-              child: Column(
-                crossAxisAlignment: .stretch,
-                spacing: 12,
-                children: [
-                  CnSidebarHeader(
-                    child: Row(
-                      mainAxisAlignment: .spaceBetween,
-                      children: const [Text('Workspace'), CnSidebarTrigger()],
-                    ),
+      child: Row(
+        spacing: 16,
+        children: [
+          CnSidebar(
+            collapsed: collapsed,
+            onCollapsedChanged: (value) => setState(() => collapsed = value),
+            child: Column(
+              crossAxisAlignment: .stretch,
+              spacing: 12,
+              children: [
+                CnSidebarHeader(
+                  child: Row(
+                    mainAxisAlignment: .spaceBetween,
+                    children: const [Text('Workspace'), CnSidebarTrigger()],
                   ),
-                  CnSidebarContent(
-                    children: [
-                      CnSidebarGroup(
-                        title: 'Projects',
-                        children: [
-                          const CnSidebarItem(
-                            icon: Icon(Icons.dashboard_outlined),
-                            label: Text('Overview'),
-                            selected: true,
-                          ),
-                          const CnSidebarItem(
-                            icon: Icon(Icons.people_outline),
-                            label: Text('Team'),
-                          ),
-                          CnSidebarItem(
-                            icon: const Icon(Icons.calendar_today_outlined),
-                            label: const Text('Schedule'),
-                            trailing: CnBadge(
-                              variant: .secondary,
-                              child: const Text('4'),
-                            ),
-                          ),
-                        ],
-                      ),
-                      CnSidebarGroup(
-                        title: 'Settings',
-                        children: const [
-                          CnSidebarItem(
-                            icon: Icon(Icons.settings_outlined),
-                            label: Text('Preferences'),
-                          ),
-                          CnSidebarItem(
-                            icon: Icon(Icons.logout),
-                            label: Text('Sign out'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const CnSidebarFooter(child: Text('v2.3.1')),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: scheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(
-                    CnTheme.of(context).radius,
-                  ),
-                  border: Border.all(color: scheme.outlineVariant),
                 ),
-                child: Column(
-                  crossAxisAlignment: .start,
-                  spacing: 8,
+                CnSidebarContent(
                   children: [
-                    Text(
-                      'Content area',
-                      style: CnTheme.textThemeOf(context).titleSmall,
+                    CnSidebarGroup(
+                      title: Text('Projects'),
+                      children: [
+                        const CnSidebarItem(
+                          leading: Icon(Icons.dashboard_outlined),
+                          label: Text('Overview'),
+                          selected: true,
+                        ),
+                        const CnSidebarItem(
+                          leading: Icon(Icons.people_outline),
+                          label: Text('Team'),
+                        ),
+                        CnSidebarItem(
+                          leading: const Icon(Icons.calendar_today_outlined),
+                          label: const Text('Schedule'),
+                          trailing: CnBadge(
+                            variant: .secondary,
+                            child: const Text('4'),
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Select a project in the sidebar to load its details.',
-                      style: CnTheme.textThemeOf(context).bodySmall
-                          ?.copyWith(color: scheme.onSurfaceVariant),
+                    CnSidebarGroup(
+                      title: Text('Settings'),
+                      children: const [
+                        CnSidebarItem(
+                          leading: Icon(Icons.settings_outlined),
+                          label: Text('Preferences'),
+                        ),
+                        CnSidebarItem(
+                          leading: Icon(Icons.logout),
+                          label: Text('Sign out'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
+                const CnSidebarFooter(child: Text('v2.3.1')),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colors.muted,
+                borderRadius: BorderRadius.circular(CnTheme.of(context).radius),
+                border: Border.all(color: colors.border),
+              ),
+              child: Column(
+                crossAxisAlignment: .start,
+                spacing: 8,
+                children: [
+                  Text(
+                    'Content area',
+                    style: CnTheme.of(context).text.sm.semibold,
+                  ),
+                  Text(
+                    'Select a project in the sidebar to load its details.',
+                    style: CnTheme.of(context).text.xs
+                        .copyWith(color: colors.mutedForeground),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -5905,47 +5826,38 @@ class _SidebarCollapsedPreview extends StatefulWidget {
 }
 
 class _SidebarCollapsedPreviewState extends State<_SidebarCollapsedPreview> {
-  late final CnSidebarController controller = CnSidebarController(
-    collapsed: true,
-  );
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  bool collapsed = true;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 260,
-      child: CnSidebarProvider(
-        controller: controller,
-        child: CnSidebar(
-          child: Column(
-            crossAxisAlignment: .stretch,
-            spacing: 12,
-            children: [
-              const CnSidebarHeader(child: CnSidebarTrigger()),
-              CnSidebarContent(
-                children: const [
-                  CnSidebarItem(
-                    icon: Icon(Icons.inbox_outlined),
-                    label: Text('Inbox'),
-                    selected: true,
-                  ),
-                  CnSidebarItem(
-                    icon: Icon(Icons.star_border),
-                    label: Text('Starred'),
-                  ),
-                  CnSidebarItem(
-                    icon: Icon(Icons.settings_outlined),
-                    label: Text('Settings'),
-                  ),
-                ],
-              ),
-            ],
-          ),
+      child: CnSidebar(
+        collapsed: collapsed,
+        onCollapsedChanged: (value) => setState(() => collapsed = value),
+        child: Column(
+          crossAxisAlignment: .stretch,
+          spacing: 12,
+          children: [
+            const CnSidebarHeader(child: CnSidebarTrigger()),
+            CnSidebarContent(
+              children: const [
+                CnSidebarItem(
+                  leading: Icon(Icons.inbox_outlined),
+                  label: Text('Inbox'),
+                  selected: true,
+                ),
+                CnSidebarItem(
+                  leading: Icon(Icons.star_border),
+                  label: Text('Starred'),
+                ),
+                CnSidebarItem(
+                  leading: Icon(Icons.settings_outlined),
+                  label: Text('Settings'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -5960,12 +5872,11 @@ class _SidebarDetailPreview extends StatefulWidget {
 }
 
 class _SidebarDetailPreviewState extends State<_SidebarDetailPreview> {
-  late final CnSidebarController controller = CnSidebarController();
+  bool collapsed = false;
   final TextEditingController searchController = TextEditingController();
 
   @override
   void dispose() {
-    controller.dispose();
     searchController.dispose();
     super.dispose();
   }
@@ -5974,64 +5885,61 @@ class _SidebarDetailPreviewState extends State<_SidebarDetailPreview> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 340,
-      child: CnSidebarProvider(
-        controller: controller,
-        child: CnSidebar(
-          child: Column(
-            crossAxisAlignment: .stretch,
-            spacing: 12,
-            children: [
-              CnSidebarHeader(
-                child: Row(
-                  mainAxisAlignment: .spaceBetween,
-                  children: const [Text('Library'), CnSidebarTrigger()],
+      child: CnSidebar(
+        collapsed: collapsed,
+        onCollapsedChanged: (value) => setState(() => collapsed = value),
+        child: Column(
+          crossAxisAlignment: .stretch,
+          spacing: 12,
+          children: [
+            CnSidebarHeader(
+              child: Row(
+                mainAxisAlignment: .spaceBetween,
+                children: const [Text('Library'), CnSidebarTrigger()],
+              ),
+            ),
+            CnSidebarSearch(
+              controller: searchController,
+              placeholder: 'Search',
+            ),
+            const CnSidebarSeparator(),
+            CnSidebarContent(
+              children: [
+                CnSidebarGroup(
+                  title: Text('Collections'),
+                  children: [
+                    const CnSidebarItem(
+                      leading: Icon(Icons.folder_open_outlined),
+                      label: Text('Design'),
+                      selected: true,
+                    ),
+                    const CnSidebarSubItem(label: Text('Briefs')),
+                    const CnSidebarSubItem(label: Text('Assets')),
+                    const CnSidebarSubItem(label: Text('Research')),
+                  ],
                 ),
-              ),
-              CnSidebarSearch(
-                controller: searchController,
-                placeholder: 'Search',
-              ),
-              const CnSidebarSeparator(),
-              CnSidebarContent(
-                children: [
-                  CnSidebarGroup(
-                    title: 'Collections',
-                    children: [
-                      const CnSidebarItem(
-                        icon: Icon(Icons.folder_open_outlined),
-                        label: Text('Design'),
-                        selected: true,
+                const CnSidebarSeparator(),
+                CnSidebarGroup(
+                  title: Text('Teams'),
+                  children: [
+                    CnSidebarItem(
+                      leading: const Icon(Icons.people_outline),
+                      label: const Text('Core team'),
+                      trailing: const CnBadge(
+                        variant: .secondary,
+                        child: Text('5'),
                       ),
-                      const CnSidebarSubItem(label: Text('Briefs')),
-                      const CnSidebarSubItem(label: Text('Assets')),
-                      const CnSidebarSubItem(label: Text('Research')),
-                    ],
-                  ),
-                  const CnSidebarSeparator(),
-                  CnSidebarGroup(
-                    title: 'Teams',
-                    children: [
-                      CnSidebarItem(
-                        icon: const Icon(Icons.people_outline),
-                        label: const Text('Core team'),
-                        trailing: const CnBadge(
-                          variant: .secondary,
-                          child: Text('5'),
-                        ),
-                      ),
-                      const CnSidebarItem(
-                        icon: Icon(Icons.people_outline),
-                        label: Text('Contractors'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const CnSidebarFooter(
-                child: Text('Signed in as studio@team.com'),
-              ),
-            ],
-          ),
+                    ),
+                    const CnSidebarItem(
+                      leading: Icon(Icons.people_outline),
+                      label: Text('Contractors'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const CnSidebarFooter(child: Text('Signed in as studio@team.com')),
+          ],
         ),
       ),
     );
@@ -6171,10 +6079,8 @@ class _EmptyPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return CnEmpty(
       media: const CnEmptyMedia(child: Icon(Icons.search_off)),
-      title: const CnEmptyTitle(child: Text('No results found')),
-      description: const CnEmptyDescription(
-        child: Text('Try adjusting your filters or search query.'),
-      ),
+      title: Text('No results found'),
+      description: Text('Try adjusting your filters or search query.'),
       actions: Row(
         mainAxisSize: .min,
         spacing: 8,
@@ -6196,23 +6102,19 @@ class _EmptyMediaPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return CnEmpty(
       media: CnEmptyMedia(
         variant: .image,
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [scheme.primaryContainer, scheme.secondaryContainer],
-            ),
+            gradient: LinearGradient(colors: [colors.accent, colors.secondary]),
           ),
         ),
       ),
-      title: const CnEmptyTitle(child: Text('No projects yet')),
-      description: const CnEmptyDescription(
-        child: Text('Create your first workspace to get started.'),
-      ),
+      title: Text('No projects yet'),
+      description: Text('Create your first workspace to get started.'),
     );
   }
 }
@@ -6227,25 +6129,25 @@ class _ItemListPreview extends StatelessWidget {
       child: CnItemGroup(
         children: const [
           CnItem(
-            media: CnItemMedia(
+            leading: CnItemMedia(
               variant: .icon,
               child: Icon(Icons.description_outlined),
             ),
-            title: CnItemTitle(child: Text('Briefing.pdf')),
-            description: CnItemDescription(child: Text('Updated 2h ago')),
+            title: Text('Briefing.pdf'),
+            description: Text('Updated 2h ago'),
           ),
           CnItem(
-            media: CnItemMedia(
+            leading: CnItemMedia(
               variant: .icon,
               child: Icon(Icons.folder_open_outlined),
             ),
-            title: CnItemTitle(child: Text('Launch assets')),
-            description: CnItemDescription(child: Text('12 files • Shared')),
+            title: Text('Launch assets'),
+            description: Text('12 files • Shared'),
           ),
           CnItem(
-            media: CnItemMedia(variant: .icon, child: Icon(Icons.show_chart)),
-            title: CnItemTitle(child: Text('Q3 metrics')),
-            description: CnItemDescription(child: Text('Updated yesterday')),
+            leading: CnItemMedia(variant: .icon, child: Icon(Icons.show_chart)),
+            title: Text('Q3 metrics'),
+            description: Text('Updated yesterday'),
           ),
         ],
       ),
@@ -6261,10 +6163,10 @@ class _ItemActionPreview extends StatelessWidget {
     return SizedBox(
       width: 360,
       child: CnItem(
-        media: const CnItemMedia(child: Icon(Icons.people_outline)),
-        title: const CnItemTitle(child: Text('Design team')),
-        description: const CnItemDescription(child: Text('8 members')),
-        actions: CnButton(
+        leading: const CnItemMedia(child: Icon(Icons.people_outline)),
+        title: Text('Design team'),
+        description: Text('8 members'),
+        trailing: CnButton(
           variant: .outline,
           onPressed: () {},
           child: const Text('View'),
@@ -6313,10 +6215,10 @@ class _SonnerSuccessPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return CnButton(
       onPressed: () {
-        CnSonner.success(
+        CnToast.success(
           context,
-          title: 'Invite sent',
-          description: 'An email went out to design@studio.com',
+          title: Text('Invite sent'),
+          description: Text('An email went out to design@studio.com'),
         );
       },
       child: const Text('Show success'),
@@ -6332,10 +6234,10 @@ class _SonnerLoadingPreview extends StatelessWidget {
     return CnButton(
       variant: .outline,
       onPressed: () {
-        CnSonner.loading(
+        CnToast.loading(
           context,
-          title: 'Syncing workspace',
-          description: 'This can take a minute.',
+          title: Text('Syncing workspace'),
+          description: Text('This can take a minute.'),
         );
       },
       child: const Text('Show loading'),
@@ -6351,7 +6253,7 @@ class _ToastSimplePreview extends StatelessWidget {
     return CnButton(
       variant: .outline,
       onPressed: () {
-        CnToast.show(context, message: 'Saved successfully');
+        CnToast.show(context, title: Text('Saved successfully'));
       },
       child: const Text('Show toast'),
     );
@@ -6365,9 +6267,9 @@ class _AvatarGroupPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return const CnAvatarGroup(
       children: [
-        CnAvatar(initials: 'CN'),
-        CnAvatar(initials: 'MD'),
-        CnAvatar(initials: 'TL'),
+        CnAvatar(child: Text('CN')),
+        CnAvatar(child: Text('MD')),
+        CnAvatar(child: Text('TL')),
       ],
     );
   }
@@ -6381,9 +6283,9 @@ class _AvatarGroupVerticalPreview extends StatelessWidget {
     return const CnAvatarGroup(
       direction: .vertical,
       children: [
-        CnAvatar(initials: 'CN'),
-        CnAvatar(initials: 'MD'),
-        CnAvatar(initials: 'TL'),
+        CnAvatar(child: Text('CN')),
+        CnAvatar(child: Text('MD')),
+        CnAvatar(child: Text('TL')),
       ],
     );
   }

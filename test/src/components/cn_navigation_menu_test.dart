@@ -12,9 +12,9 @@ void main() {
         width: 300,
         child: CnNavigationMenu(
           items: [
-            CnNavigationMenuItem(label: 'Home', onTap: () {}),
-            CnNavigationMenuItem(label: 'About', onTap: () {}),
-            CnNavigationMenuItem(label: 'Contact', onTap: () {}),
+            CnNavigationMenuItem(label: Text('Home'), onTap: () {}),
+            CnNavigationMenuItem(label: Text('About'), onTap: () {}),
+            CnNavigationMenuItem(label: Text('Contact'), onTap: () {}),
           ],
         ),
       ),

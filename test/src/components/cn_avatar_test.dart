@@ -1,5 +1,6 @@
 import 'package:cn_ui/src/components/cn_avatar.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../helpers/golden_test_helper.dart';
 
@@ -9,9 +10,9 @@ void main() {
       tester,
       goldenRow(
         children: const [
-          CnAvatar(size: 32, initials: 'SM'),
-          CnAvatar(size: 40, initials: 'MD'),
-          CnAvatar(size: 56, initials: 'LG'),
+          CnAvatar(size: .md, child: Text('SM')),
+          CnAvatar(size: .lg, child: Text('MD')),
+          CnAvatar(size: .lg, child: Text('LG')),
         ],
         spacing: 16,
       ),

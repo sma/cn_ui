@@ -15,7 +15,7 @@ void main() {
           SizedBox(
             width: 100,
             height: 100,
-            child: CnSkeleton(isCircle: true, animate: false),
+            child: CnSkeleton(circle: true, animate: false),
           ),
         ],
         spacing: 16,

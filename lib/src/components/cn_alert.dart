@@ -4,78 +4,71 @@ import 'package:material_ui/material_ui.dart';
 import '../theme/cn_theme.dart';
 
 /// Visual style variants for [CnAlert].
-enum CnAlertVariant { neutral, info, success, warning, destructive }
+enum CnAlertVariant { standard, info, success, warning, destructive }
 
-/// An alert component for displaying important messages with contextual styling.
-///
-/// Provides visual feedback with title, description, icon, and variant-specific colors.
+/// A persistent message with a title, description and optional action.
 ///
 /// See also:
 ///
 ///  * [CnToast], for temporary notification messages.
-///  * [CnSonner], for toast-style notifications.
-class CnAlert extends StatelessWidget {
-  const CnAlert({
-    super.key,
-    this.variant = .neutral,
-    this.title,
-    this.description,
-    this.leading,
-    this.trailing,
-    this.padding,
-  });
-  final CnAlertVariant variant;
-  final Widget? title;
-  final Widget? description;
-  final Widget? leading;
-  final Widget? trailing;
-  final EdgeInsetsGeometry? padding;
-
+class const CnAlert({
+  super.key,
+  final CnAlertVariant variant = .standard,
+  final Widget? title,
+  final Widget? description,
+  final Widget? leading,
+  final Widget? trailing,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-    final visuals = _resolveVisuals(scheme);
-    final resolvedLeading = leading ?? visuals.icon;
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
+    final (accent, icon) = switch (variant) {
+      .standard => (colors.foreground, null),
+      .info => (colors.info, Icons.info_outline),
+      .success => (colors.success, Icons.check_circle_outline),
+      .warning => (colors.warning, Icons.warning_amber_outlined),
+      .destructive => (colors.destructive, Icons.error_outline),
+    };
+    final resolvedLeading = leading ?? (icon == null ? null : Icon(icon));
 
     return Container(
-      padding: padding ?? const .all(16),
+      padding: const .symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: visuals.background,
-        borderRadius: .circular(cnTheme.radius),
-        border: Border.all(color: visuals.border),
+        color: colors.card,
+        borderRadius: .circular(theme.radius),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         crossAxisAlignment: .start,
         spacing: 12,
         children: [
-          if (resolvedLeading != null) ...[
-            IconTheme(
-              data: IconThemeData(color: visuals.accent, size: 20),
+          if (resolvedLeading != null)
+            IconTheme.merge(
+              data: IconThemeData(color: accent, size: 16),
               child: resolvedLeading,
             ),
-          ],
           Expanded(
             child: Column(
               crossAxisAlignment: .start,
-              spacing: 6,
+              spacing: 4,
               children: [
                 if (title != null)
-                  DefaultTextStyle(
-                    style:
-                        CnTheme.textThemeOf(context).titleSmall?.copyWith(
-                          color: visuals.foreground,
-                          fontWeight: .w600,
-                        ) ??
-                        TextStyle(color: visuals.foreground),
+                  DefaultTextStyle.merge(
+                    style: theme.text.sm.medium.copyWith(
+                      color: variant == .destructive
+                          ? colors.destructive
+                          : colors.cardForeground,
+                    ),
                     child: title!,
                   ),
                 if (description != null)
-                  DefaultTextStyle(
-                    style:
-                        CnTheme.textThemeOf(context).bodySmall
-                            ?.copyWith(color: visuals.foreground) ??
-                        TextStyle(color: visuals.foreground),
+                  DefaultTextStyle.merge(
+                    style: theme.text.sm.copyWith(
+                      color: variant == .destructive
+                          ? colors.destructive
+                          : colors.mutedForeground,
+                    ),
                     child: description!,
                   ),
               ],
@@ -85,46 +78,6 @@ class CnAlert extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  _AlertVisuals _resolveVisuals(ColorScheme scheme) {
-    return switch (variant) {
-      .neutral => _AlertVisuals(
-        background: scheme.surfaceContainerHighest,
-        border: scheme.outlineVariant,
-        foreground: scheme.onSurface,
-        accent: scheme.onSurfaceVariant,
-        icon: const Icon(Icons.info_outline),
-      ),
-      .info => _AlertVisuals(
-        background: scheme.primaryContainer,
-        border: scheme.primary,
-        foreground: scheme.onPrimaryContainer,
-        accent: scheme.primary,
-        icon: const Icon(Icons.auto_awesome),
-      ),
-      .success => _AlertVisuals(
-        background: scheme.secondaryContainer,
-        border: scheme.secondary,
-        foreground: scheme.onSecondaryContainer,
-        accent: scheme.secondary,
-        icon: const Icon(Icons.check_circle_outline),
-      ),
-      .warning => _AlertVisuals(
-        background: scheme.tertiaryContainer,
-        border: scheme.tertiary,
-        foreground: scheme.onTertiaryContainer,
-        accent: scheme.tertiary,
-        icon: const Icon(Icons.warning_amber_outlined),
-      ),
-      .destructive => _AlertVisuals(
-        background: scheme.errorContainer,
-        border: scheme.error,
-        foreground: scheme.onErrorContainer,
-        accent: scheme.error,
-        icon: const Icon(Icons.error_outline),
-      ),
-    };
   }
 
   @Preview(size: Size(260, 450))
@@ -144,19 +97,4 @@ class CnAlert extends StatelessWidget {
       ],
     );
   }
-}
-
-class _AlertVisuals {
-  const _AlertVisuals({
-    required this.background,
-    required this.border,
-    required this.foreground,
-    required this.accent,
-    required this.icon,
-  });
-  final Color background;
-  final Color border;
-  final Color foreground;
-  final Color accent;
-  final Widget? icon;
 }

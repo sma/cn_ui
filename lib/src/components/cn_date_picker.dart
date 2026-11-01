@@ -7,40 +7,38 @@ import 'package:material_ui/material_ui.dart';
 /// See also:
 ///
 ///  * [CnCalendar], for inline calendar selection.
-class CnDatePickerField extends StatefulWidget {
-  CnDatePickerField({
+class CnDatePicker extends StatefulWidget {
+  const CnDatePicker({
     super.key,
     this.value,
     this.onChanged,
-    DateTime? firstDate,
-    DateTime? lastDate,
-    this.initialDate,
+    this.firstDate,
+    this.lastDate,
+    this.focusedDate,
     this.placeholder,
-    this.enabled = true,
-    this.allowClear = true,
-  }) : firstDate = firstDate ?? DateTime(2000),
-       lastDate = lastDate ?? DateTime(2100);
+    this.clearable = true,
+  });
   final DateTime? value;
   final ValueChanged<DateTime?>? onChanged;
-  final DateTime firstDate;
-  final DateTime lastDate;
-  final DateTime? initialDate;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
+
+  /// The month to show while there is no [value].
+  final DateTime? focusedDate;
   final String? placeholder;
-  final bool enabled;
-  final bool allowClear;
+  final bool clearable;
 
   @override
-  State<CnDatePickerField> createState() => _CnDatePickerFieldState();
+  State<CnDatePicker> createState() => _CnDatePickerState();
 }
 
-class _CnDatePickerFieldState extends State<CnDatePickerField> {
+class _CnDatePickerState extends State<CnDatePicker> {
   late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _controller.text = widget.value == null ? '' : '';
   }
 
   @override
@@ -50,7 +48,7 @@ class _CnDatePickerFieldState extends State<CnDatePickerField> {
   }
 
   @override
-  void didUpdateWidget(CnDatePickerField oldWidget) {
+  void didUpdateWidget(CnDatePicker oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
       _syncText();
@@ -73,16 +71,15 @@ class _CnDatePickerFieldState extends State<CnDatePickerField> {
   }
 
   Future<void> _pickDate() async {
-    if (!widget.enabled) {
+    if (widget.onChanged == null) {
       return;
     }
-    final now = DateTime.now();
-    final initial = widget.value ?? widget.initialDate ?? now;
+    final initial = widget.value ?? widget.focusedDate ?? DateTime.now();
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
-      firstDate: widget.firstDate,
-      lastDate: widget.lastDate,
+      firstDate: widget.firstDate ?? DateTime(2000),
+      lastDate: widget.lastDate ?? DateTime(2100),
     );
     if (picked != null) {
       widget.onChanged?.call(picked);
@@ -94,20 +91,20 @@ class _CnDatePickerFieldState extends State<CnDatePickerField> {
     return TextField(
       controller: _controller,
       readOnly: true,
-      enabled: widget.enabled,
+      enabled: widget.onChanged != null,
       decoration: InputDecoration(
         hintText: widget.placeholder,
         suffixIcon: Row(
           mainAxisSize: .min,
           children: [
-            if (widget.allowClear && widget.value != null)
+            if (widget.clearable && widget.value != null)
               IconButton(
-                icon: const Icon(Icons.close),
+                icon: const Icon(Icons.close, size: 16),
                 tooltip: 'Clear',
                 onPressed: () => widget.onChanged?.call(null),
               ),
             IconButton(
-              icon: const Icon(Icons.calendar_today),
+              icon: const Icon(Icons.calendar_today, size: 16),
               tooltip: 'Pick date',
               onPressed: _pickDate,
             ),

@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -16,26 +14,24 @@ class CnInputOtp extends StatefulWidget {
   const CnInputOtp({
     super.key,
     required this.length,
-    this.value,
+    this.value = '',
     this.onChanged,
     this.enabled = true,
     this.autofocus = false,
     this.obscureText = false,
     this.numericOnly = true,
-    this.boxSize = 48,
-    this.textStyle,
+    this.boxSize = 36,
     this.groupSize,
     this.separator,
   }) : assert(length > 0, 'length must be greater than zero');
   final int length;
-  final String? value;
+  final String value;
   final ValueChanged<String>? onChanged;
   final bool enabled;
   final bool autofocus;
   final bool obscureText;
   final bool numericOnly;
   final double boxSize;
-  final TextStyle? textStyle;
   final int? groupSize;
   final Widget? separator;
 
@@ -71,7 +67,7 @@ class _CnInputOtpState extends State<CnInputOtp> {
         },
       )..addListener(() => setState(() {})),
     );
-    _setValue(widget.value ?? '');
+    _setValue(widget.value);
   }
 
   @override
@@ -80,8 +76,8 @@ class _CnInputOtpState extends State<CnInputOtp> {
     if (oldWidget.length != widget.length) {
       throw FlutterError('CnInputOtp length cannot change dynamically.');
     }
-    if (widget.value != null && widget.value != _combinedValue()) {
-      _setValue(widget.value!);
+    if (widget.value != _combinedValue()) {
+      _setValue(widget.value);
     }
   }
 
@@ -159,7 +155,7 @@ class _CnInputOtpState extends State<CnInputOtp> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final cnTheme = CnTheme.of(context);
     final separator = widget.separator ?? const SizedBox(width: 12);
 
@@ -180,10 +176,9 @@ class _CnInputOtpState extends State<CnInputOtp> {
             obscureText: widget.obscureText,
             numericOnly: widget.numericOnly,
             size: widget.boxSize,
-            textStyle: widget.textStyle,
-            radius: math.max(0, cnTheme.radius - 6),
-            borderColor: _borderColorFor(index, scheme),
-            fillColor: scheme.surface,
+            radius: cnTheme.radii.sm,
+            borderColor: _borderColorFor(index, colors),
+            fillColor: colors.background,
             onChanged: (value) => _handleChanged(index, value),
           ),
         ],
@@ -191,14 +186,11 @@ class _CnInputOtpState extends State<CnInputOtp> {
     );
   }
 
-  Color _borderColorFor(int index, ColorScheme scheme) {
+  Color _borderColorFor(int index, CnColors colors) {
     if (_focusNodes[index].hasFocus) {
-      return scheme.primary;
+      return colors.ring;
     }
-    if (_controllers[index].text.isNotEmpty) {
-      return scheme.outline;
-    }
-    return scheme.outlineVariant;
+    return colors.input;
   }
 }
 
@@ -211,7 +203,6 @@ class _OtpSlot extends StatelessWidget {
     required this.obscureText,
     required this.numericOnly,
     required this.size,
-    required this.textStyle,
     required this.radius,
     required this.borderColor,
     required this.fillColor,
@@ -224,7 +215,6 @@ class _OtpSlot extends StatelessWidget {
   final bool obscureText;
   final bool numericOnly;
   final double size;
-  final TextStyle? textStyle;
   final double radius;
   final Color borderColor;
   final Color fillColor;
@@ -248,7 +238,7 @@ class _OtpSlot extends StatelessWidget {
         textAlign: .center,
         keyboardType: numericOnly ? TextInputType.number : TextInputType.text,
         textInputAction: TextInputAction.next,
-        style: textStyle ?? CnTheme.textThemeOf(context).titleMedium,
+        style: CnTheme.of(context).text.sm,
         inputFormatters: inputFormatters,
         maxLines: 1,
         decoration: InputDecoration(

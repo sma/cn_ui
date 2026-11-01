@@ -13,43 +13,27 @@ class CnCarousel extends StatefulWidget {
     super.key,
     required this.items,
     this.controller,
-    this.initialPage = 0,
     this.viewportFraction = 1,
     this.height,
     this.aspectRatio,
-    this.padding = .zero,
     this.showIndicators = true,
     this.showArrows = true,
     this.loop = false,
     this.autoPlay = false,
     this.autoPlayInterval = const Duration(seconds: 5),
-    this.autoPlayAnimation = const Duration(milliseconds: 450),
-    this.autoPlayCurve = Curves.easeOutCubic,
-    this.onPageChanged,
-    this.indicatorSize = 8,
-    this.indicatorSpacing = 6,
-    this.indicatorActiveWidth = 20,
-    this.indicatorPadding = 12,
+    this.onChanged,
   }) : assert(items.length > 0, 'CnCarousel requires at least one item.');
   final List<Widget> items;
   final PageController? controller;
-  final int initialPage;
   final double viewportFraction;
   final double? height;
   final double? aspectRatio;
-  final EdgeInsetsGeometry padding;
   final bool showIndicators;
   final bool showArrows;
   final bool loop;
   final bool autoPlay;
   final Duration autoPlayInterval;
-  final Duration autoPlayAnimation;
-  final Curve autoPlayCurve;
-  final ValueChanged<int>? onPageChanged;
-  final double indicatorSize;
-  final double indicatorSpacing;
-  final double indicatorActiveWidth;
-  final double indicatorPadding;
+  final ValueChanged<int>? onChanged;
 
   @override
   State<CnCarousel> createState() => _CnCarouselState();
@@ -64,7 +48,7 @@ class _CnCarouselState extends State<CnCarousel> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialPage.clamp(0, widget.items.length - 1);
+    _currentIndex = widget.controller?.initialPage ?? 0;
     _controller = _resolveController();
     _restartAutoPlay();
   }
@@ -123,7 +107,7 @@ class _CnCarouselState extends State<CnCarousel> {
   @override
   Widget build(BuildContext context) {
     final cnTheme = CnTheme.of(context);
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     Widget pageView = PageView.builder(
       controller: _controller,
@@ -138,7 +122,7 @@ class _CnCarouselState extends State<CnCarousel> {
       pageView = AspectRatio(aspectRatio: widget.aspectRatio!, child: pageView);
     }
 
-    final stack = Stack(
+    return Stack(
       alignment: Alignment.center,
       children: [
         ClipRRect(borderRadius: .circular(cnTheme.radius), child: pageView),
@@ -164,28 +148,24 @@ class _CnCarouselState extends State<CnCarousel> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: widget.indicatorPadding,
+            bottom: 12,
             child: Row(
               mainAxisAlignment: .center,
               children: [
                 for (var i = 0; i < widget.items.length; i++)
                   Padding(
-                    padding: .symmetric(
-                      horizontal: widget.indicatorSpacing / 2,
-                    ),
+                    padding: const .symmetric(horizontal: 3),
                     child: GestureDetector(
                       onTap: () => _animateToPage(i),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        height: widget.indicatorSize,
-                        width: _currentIndex == i
-                            ? widget.indicatorActiveWidth
-                            : widget.indicatorSize,
+                        height: 8,
+                        width: _currentIndex == i ? 20 : 8,
                         decoration: BoxDecoration(
                           color: _currentIndex == i
-                              ? scheme.primary
-                              : scheme.outlineVariant,
-                          borderRadius: .circular(widget.indicatorSize),
+                              ? colors.primary
+                              : colors.border,
+                          borderRadius: .circular(cnTheme.radii.full),
                         ),
                       ),
                     ),
@@ -195,8 +175,6 @@ class _CnCarouselState extends State<CnCarousel> {
           ),
       ],
     );
-
-    return Padding(padding: widget.padding, child: stack);
   }
 
   Widget _buildArrow({
@@ -204,11 +182,10 @@ class _CnCarouselState extends State<CnCarousel> {
     required bool enabled,
     required VoidCallback onPressed,
   }) {
-    return CnButton(
+    return CnButton.icon(
       variant: .outline,
-      size: .icon,
       onPressed: enabled ? onPressed : null,
-      child: Icon(icon),
+      icon: Icon(icon),
     );
   }
 
@@ -239,14 +216,14 @@ class _CnCarouselState extends State<CnCarousel> {
     }
     _controller.animateToPage(
       index,
-      duration: widget.autoPlayAnimation,
-      curve: widget.autoPlayCurve,
+      duration: const Duration(milliseconds: 450),
+      curve: Curves.easeOutCubic,
     );
   }
 
   void _handlePageChanged(int index) {
     setState(() => _currentIndex = index);
-    widget.onPageChanged?.call(index);
+    widget.onChanged?.call(index);
   }
 
   void _restartAutoPlay() {

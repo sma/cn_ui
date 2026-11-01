@@ -13,14 +13,16 @@ class _DashboardPageState extends State<DashboardPage> {
   String _range = '3m';
   String _section = 'outline';
   int _rowsPerPage = 10;
+  int _page = 1;
+  Set<String> _selection = {};
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final cnTheme = CnTheme.of(context);
 
     return Container(
-      color: scheme.surface,
+      color: colors.background,
       child: Row(
         crossAxisAlignment: .start,
         children: [
@@ -29,9 +31,6 @@ class _DashboardPageState extends State<DashboardPage> {
             child: CnSidebar(
               expandedWidth: 240,
               collapsedWidth: 240,
-              padding: const EdgeInsets.all(16),
-              backgroundColor: scheme.surface,
-              borderColor: scheme.outlineVariant,
               child: Column(
                 crossAxisAlignment: .stretch,
                 spacing: 12,
@@ -47,32 +46,32 @@ class _DashboardPageState extends State<DashboardPage> {
                               width: 28,
                               height: 28,
                               decoration: BoxDecoration(
-                                color: scheme.onSurface,
+                                color: colors.foreground,
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 Icons.circle,
                                 size: 12,
-                                color: scheme.surface,
+                                color: colors.background,
                               ),
                             ),
                             Text(
                               'Acme Inc.',
-                              style: CnTheme.textThemeOf(context).titleSmall,
+                              style: CnTheme.of(context).text.sm.semibold,
                             ),
                           ],
                         ),
                         Icon(
                           Icons.mail_outline,
                           size: 18,
-                          color: scheme.onSurfaceVariant,
+                          color: colors.mutedForeground,
                         ),
                       ],
                     ),
                   ),
                   CnButton(
                     variant: .secondary,
-                    fullWidth: true,
+                    expand: true,
                     size: .sm,
                     onPressed: () {},
                     leading: const Icon(Icons.add, size: 16),
@@ -83,50 +82,50 @@ class _DashboardPageState extends State<DashboardPage> {
                       CnSidebarGroup(
                         children: const [
                           CnSidebarItem(
-                            icon: Icon(Icons.dashboard_outlined),
+                            leading: Icon(Icons.dashboard_outlined),
                             label: Text('Dashboard'),
                             selected: true,
                           ),
                           CnSidebarItem(
-                            icon: Icon(Icons.timer_outlined),
+                            leading: Icon(Icons.timer_outlined),
                             label: Text('Lifecycle'),
                           ),
                           CnSidebarItem(
-                            icon: Icon(Icons.insights_outlined),
+                            leading: Icon(Icons.insights_outlined),
                             label: Text('Analytics'),
                           ),
                           CnSidebarItem(
-                            icon: Icon(Icons.folder_outlined),
+                            leading: Icon(Icons.folder_outlined),
                             label: Text('Projects'),
                           ),
                           CnSidebarItem(
-                            icon: Icon(Icons.people_outline),
+                            leading: Icon(Icons.people_outline),
                             label: Text('Team'),
                           ),
                         ],
                       ),
                       const CnSidebarSeparator(),
                       CnSidebarGroup(
-                        title: 'Documents',
+                        title: Text('Documents'),
                         children: [
                           Column(
                             crossAxisAlignment: .stretch,
                             spacing: 4,
                             children: const [
                               CnSidebarItem(
-                                icon: Icon(Icons.layers_outlined),
+                                leading: Icon(Icons.layers_outlined),
                                 label: Text('Data Library'),
                               ),
                               CnSidebarItem(
-                                icon: Icon(Icons.insert_chart_outlined),
+                                leading: Icon(Icons.insert_chart_outlined),
                                 label: Text('Reports'),
                               ),
                               CnSidebarItem(
-                                icon: Icon(Icons.auto_awesome_outlined),
+                                leading: Icon(Icons.auto_awesome_outlined),
                                 label: Text('Word Assistant'),
                               ),
                               CnSidebarItem(
-                                icon: Icon(Icons.more_horiz),
+                                leading: Icon(Icons.more_horiz),
                                 label: Text('More'),
                               ),
                             ],
@@ -137,15 +136,15 @@ class _DashboardPageState extends State<DashboardPage> {
                       CnSidebarGroup(
                         children: const [
                           CnSidebarItem(
-                            icon: Icon(Icons.settings_outlined),
+                            leading: Icon(Icons.settings_outlined),
                             label: Text('Settings'),
                           ),
                           CnSidebarItem(
-                            icon: Icon(Icons.help_outline),
+                            leading: Icon(Icons.help_outline),
                             label: Text('Get Help'),
                           ),
                           CnSidebarItem(
-                            icon: Icon(Icons.search),
+                            leading: Icon(Icons.search),
                             label: Text('Search'),
                           ),
                         ],
@@ -155,21 +154,15 @@ class _DashboardPageState extends State<DashboardPage> {
                   CnSidebarFooter(
                     child: CnContextMenu(
                       entries: [
-                        CnDropdownMenuAction(
-                          label: 'Account',
+                        CnMenuAction(label: Text('Account'), onSelected: () {}),
+                        CnMenuAction(label: Text('Billing'), onSelected: () {}),
+                        CnMenuAction(
+                          label: Text('Notifications'),
                           onSelected: () {},
                         ),
-                        CnDropdownMenuAction(
-                          label: 'Billing',
-                          onSelected: () {},
-                        ),
-                        CnDropdownMenuAction(
-                          label: 'Notifications',
-                          onSelected: () {},
-                        ),
-                        const CnDropdownMenuSeparator(),
-                        CnDropdownMenuAction(
-                          label: 'Log out',
+                        const CnMenuSeparator(),
+                        CnMenuAction(
+                          label: Text('Log out'),
                           role: .destructive,
                           onSelected: () {},
                         ),
@@ -180,14 +173,14 @@ class _DashboardPageState extends State<DashboardPage> {
                           vertical: 10,
                         ),
                         decoration: BoxDecoration(
-                          color: scheme.surface,
+                          color: colors.background,
                           borderRadius: BorderRadius.circular(cnTheme.radius),
-                          border: Border.all(color: scheme.outlineVariant),
+                          border: Border.all(color: colors.border),
                         ),
                         child: Row(
                           spacing: 10,
                           children: [
-                            const CnAvatar(initials: 'SD', size: 32),
+                            const CnAvatar(size: .md, child: Text('SD')),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: .start,
@@ -195,44 +188,41 @@ class _DashboardPageState extends State<DashboardPage> {
                                 children: [
                                   Text(
                                     'shadcn',
-                                    style: CnTheme.textThemeOf(context)
-                                        .titleSmall,
+                                    style: CnTheme.of(context).text.sm.semibold,
                                   ),
                                   Text(
                                     'me@acme.com',
-                                    style: CnTheme.textThemeOf(context)
-                                        .bodySmall
-                                        ?.copyWith(
-                                          color: scheme.onSurfaceVariant,
-                                        ),
+                                    style: CnTheme.of(context).text.xs.copyWith(
+                                      color: colors.mutedForeground,
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
                             CnContextMenu(
                               entries: [
-                                CnDropdownMenuAction(
-                                  label: 'Account',
+                                CnMenuAction(
+                                  label: Text('Account'),
                                   onSelected: () {},
                                 ),
-                                CnDropdownMenuAction(
-                                  label: 'Billing',
+                                CnMenuAction(
+                                  label: Text('Billing'),
                                   onSelected: () {},
                                 ),
-                                CnDropdownMenuAction(
-                                  label: 'Notifications',
+                                CnMenuAction(
+                                  label: Text('Notifications'),
                                   onSelected: () {},
                                 ),
-                                const CnDropdownMenuSeparator(),
-                                CnDropdownMenuAction(
-                                  label: 'Log out',
+                                const CnMenuSeparator(),
+                                CnMenuAction(
+                                  label: Text('Log out'),
                                   role: .destructive,
                                   onSelected: () {},
                                 ),
                               ],
                               child: Icon(
                                 Icons.more_vert,
-                                color: scheme.onSurfaceVariant,
+                                color: colors.mutedForeground,
                               ),
                             ),
                           ],
@@ -260,12 +250,12 @@ class _DashboardPageState extends State<DashboardPage> {
                           Icon(
                             Icons.folder_open_outlined,
                             size: 18,
-                            color: scheme.onSurfaceVariant,
+                            color: colors.mutedForeground,
                           ),
                           const CnSeparator(direction: .vertical, length: 16),
                           Text(
                             'Documents',
-                            style: CnTheme.textThemeOf(context).titleMedium,
+                            style: CnTheme.of(context).text.base.semibold,
                           ),
                         ],
                       ),
@@ -286,6 +276,12 @@ class _DashboardPageState extends State<DashboardPage> {
                     selectedTab: _section,
                     onTabChanged: (value) => setState(() => _section = value),
                     rowsPerPage: _rowsPerPage,
+                    selection: _selection,
+                    onSelectionChanged: (value) {
+                      setState(() => _selection = value);
+                    },
+                    page: _page,
+                    onPageChanged: (value) => setState(() => _page = value),
                     onRowsPerPageChanged: (value) {
                       setState(() => _rowsPerPage = value);
                     },
@@ -305,7 +301,7 @@ class _SummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return IntrinsicHeight(
       child: Row(
@@ -316,7 +312,7 @@ class _SummaryRow extends StatelessWidget {
               title: 'Total Revenue',
               value: r'$1,250.00',
               delta: '+12.5%',
-              deltaColor: scheme.primary,
+              deltaColor: colors.primary,
               headline: 'Trending up this month',
               subtext: 'Visitors for the last 6 months',
             ),
@@ -326,7 +322,7 @@ class _SummaryRow extends StatelessWidget {
               title: 'New Customers',
               value: '1,234',
               delta: '-20%',
-              deltaColor: scheme.error,
+              deltaColor: colors.destructive,
               headline: 'Down 20% this period',
               subtext: 'Acquisition needs attention',
             ),
@@ -336,7 +332,7 @@ class _SummaryRow extends StatelessWidget {
               title: 'Active Accounts',
               value: '45,678',
               delta: '+12.5%',
-              deltaColor: scheme.primary,
+              deltaColor: colors.primary,
               headline: 'Strong user retention',
               subtext: 'Engagement exceeds targets',
             ),
@@ -346,7 +342,7 @@ class _SummaryRow extends StatelessWidget {
               title: 'Growth Rate',
               value: '4.5%',
               delta: '+4.5%',
-              deltaColor: scheme.primary,
+              deltaColor: colors.primary,
               headline: 'Steady performance increase',
               subtext: 'Meets growth projections',
             ),
@@ -375,18 +371,17 @@ class _MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return CnCard(
-      padding: const EdgeInsets.all(16),
-      header: Row(
+      title: Row(
         mainAxisAlignment: .spaceBetween,
         children: [
           Expanded(
             child: Text(
               title,
-              style: CnTheme.textThemeOf(context).bodySmall
-                  ?.copyWith(color: scheme.onSurfaceVariant),
+              style: CnTheme.of(context).text.xs
+                  .copyWith(color: colors.mutedForeground),
             ),
           ),
           CnBadge(
@@ -404,8 +399,8 @@ class _MetricCard extends StatelessWidget {
                 ),
                 Text(
                   delta,
-                  style: CnTheme.textThemeOf(context).labelSmall
-                      ?.copyWith(color: deltaColor),
+                  style: CnTheme.of(context).text.xs.medium
+                      .copyWith(color: deltaColor),
                 ),
               ],
             ),
@@ -416,28 +411,28 @@ class _MetricCard extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 10,
         children: [
-          Text(value, style: CnTheme.textThemeOf(context).headlineSmall),
+          Text(value, style: CnTheme.of(context).text.xl.semibold),
           Row(
             mainAxisAlignment: .spaceBetween,
             children: [
               Flexible(
                 child: Text(
                   headline,
-                  style: CnTheme.textThemeOf(context).bodySmall
-                      ?.copyWith(fontWeight: .w600),
+                  style: CnTheme.of(context).text.xs
+                      .copyWith(fontWeight: .w600),
                 ),
               ),
               Icon(
                 delta.startsWith('-') ? Icons.trending_down : Icons.trending_up,
                 size: 14,
-                color: scheme.onSurfaceVariant,
+                color: colors.mutedForeground,
               ),
             ],
           ),
           Text(
             subtext,
-            style: CnTheme.textThemeOf(context).bodySmall
-                ?.copyWith(color: scheme.onSurfaceVariant),
+            style: CnTheme.of(context).text.xs
+                .copyWith(color: colors.mutedForeground),
           ),
         ],
       ),
@@ -452,11 +447,10 @@ class _VisitorsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return CnCard(
-      padding: const EdgeInsets.all(16),
-      header: Row(
+      title: Row(
         mainAxisAlignment: .spaceBetween,
         children: [
           Column(
@@ -465,20 +459,20 @@ class _VisitorsChart extends StatelessWidget {
             children: [
               Text(
                 'Total Visitors',
-                style: CnTheme.textThemeOf(context).titleMedium,
+                style: CnTheme.of(context).text.base.semibold,
               ),
               Text(
                 'Total for the last 3 months',
-                style: CnTheme.textThemeOf(context).bodySmall,
+                style: CnTheme.of(context).text.xs,
               ),
             ],
           ),
           CnToggleGroup(
-            joined: true,
-            allowEmpty: false,
+            spacing: 0,
+            required: true,
             size: .sm,
             variant: .outline,
-            selectedValues: {range},
+            value: {range},
             onChanged: (value) {
               if (value.isNotEmpty) {
                 onRangeChanged(value.first.toString());
@@ -500,8 +494,8 @@ class _VisitorsChart extends StatelessWidget {
             name: 'Total',
             type: .area,
             showPoints: false,
-            color: scheme.onSurfaceVariant,
-            fillColor: scheme.onSurfaceVariant.withValues(alpha: 0.22),
+            color: colors.mutedForeground,
+            fillColor: colors.mutedForeground.withValues(alpha: 0.22),
             data: const [
               CnChartPoint('Apr 5', 22),
               CnChartPoint('Apr 12', 38),
@@ -522,7 +516,7 @@ class _VisitorsChart extends StatelessWidget {
             name: 'Returning',
             type: .line,
             showPoints: false,
-            color: scheme.onSurface,
+            color: colors.foreground,
             data: const [
               CnChartPoint('Apr 5', 10),
               CnChartPoint('Apr 12', 16),
@@ -550,30 +544,40 @@ class _SectionTable extends StatelessWidget {
     required this.selectedTab,
     required this.onTabChanged,
     required this.rowsPerPage,
+    required this.selection,
+    required this.onSelectionChanged,
+    required this.page,
+    required this.onPageChanged,
     required this.onRowsPerPageChanged,
   });
   final String selectedTab;
   final ValueChanged<String> onTabChanged;
   final int rowsPerPage;
+  final Set<String> selection;
+  final ValueChanged<Set<String>> onSelectionChanged;
+  final int page;
+  final ValueChanged<int> onPageChanged;
   final ValueChanged<int> onRowsPerPageChanged;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     return Column(
       crossAxisAlignment: .start,
       spacing: 12,
       children: [
-        Row(
-          mainAxisAlignment: .spaceBetween,
+        Wrap(
+          alignment: .spaceBetween,
           crossAxisAlignment: .center,
+          spacing: 8,
+          runSpacing: 8,
           children: [
             CnToggleGroup(
-              joined: true,
-              allowEmpty: false,
+              spacing: 0,
+              required: true,
               size: .sm,
               variant: .outline,
-              selectedValues: {selectedTab},
+              value: {selectedTab},
               onChanged: (value) {
                 if (value.isNotEmpty) {
                   onTabChanged(value.first.toString());
@@ -610,6 +614,7 @@ class _SectionTable extends StatelessWidget {
               ],
             ),
             Row(
+              mainAxisSize: .min,
               spacing: 8,
               children: [
                 CnButton(
@@ -640,7 +645,6 @@ class _SectionTable extends StatelessWidget {
           ],
         ),
         CnCard(
-          padding: .zero,
           content: CnDataTable<_DocumentRow>(
             columns: [
               CnDataTableColumn<_DocumentRow>(
@@ -669,7 +673,10 @@ class _SectionTable extends StatelessWidget {
             ],
             rows: _documentRows,
             rowId: (row) => row.id,
-            enableSelection: true,
+            selection: selection,
+            onSelectionChanged: onSelectionChanged,
+            page: page,
+            onPageChanged: onPageChanged,
             rowsPerPage: rowsPerPage,
             rowsPerPageOptions: const [10, 20, 30],
             onRowsPerPageChanged: onRowsPerPageChanged,
@@ -677,12 +684,12 @@ class _SectionTable extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: CnDropdownMenu(
                 entries: [
-                  CnDropdownMenuAction(label: 'Open', onSelected: () {}),
-                  CnDropdownMenuAction(label: 'Rename', onSelected: () {}),
-                  CnDropdownMenuAction(label: 'Duplicate', onSelected: () {}),
-                  const CnDropdownMenuSeparator(),
-                  CnDropdownMenuAction(
-                    label: 'Delete',
+                  CnMenuAction(label: Text('Open'), onSelected: () {}),
+                  CnMenuAction(label: Text('Rename'), onSelected: () {}),
+                  CnMenuAction(label: Text('Duplicate'), onSelected: () {}),
+                  const CnMenuSeparator(),
+                  CnMenuAction(
+                    label: Text('Delete'),
                     role: .destructive,
                     onSelected: () {},
                   ),
@@ -690,7 +697,7 @@ class _SectionTable extends StatelessWidget {
                 trigger: Icon(
                   Icons.more_horiz,
                   size: 18,
-                  color: scheme.onSurfaceVariant,
+                  color: colors.mutedForeground,
                 ),
               ),
             ),

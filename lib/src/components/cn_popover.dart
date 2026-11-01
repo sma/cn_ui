@@ -1,82 +1,71 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
-import '../theme/cn_theme.dart';
+import 'cn_overlay.dart';
+import 'cn_overlay_internal.dart';
 
-/// A popover component that displays content in a floating panel anchored to a trigger.
+/// A floating panel attached to a trigger.
 ///
-/// Provides a positioned overlay for displaying contextual content near a trigger widget.
+/// It closes on a tap outside and on the escape key.
 ///
 /// See also:
 ///
 ///  * [CnTooltip], for simple text tooltips.
-///  * [CnHoverCard], for hover-triggered popovers.
-///  * [CnDropdownMenu], for menu-style popovers.
-class CnPopover extends StatelessWidget {
+///  * [CnHoverCard], for hover-triggered panels.
+///  * [CnDropdownMenu], for menus.
+class CnPopover extends StatefulWidget {
+  /// Creates a popover that opens when [trigger] is tapped.
   const CnPopover({
     super.key,
     required this.content,
-    this.trigger,
-    this.triggerBuilder,
-    this.padding,
-    this.style,
+    required Widget this.trigger,
+    this.side = .bottom,
+    this.align = .center,
     this.width,
-    this.alignmentOffset,
-  }) : assert(
-         trigger != null || triggerBuilder != null,
-         'Provide a trigger or triggerBuilder.',
-       );
+  }) : builder = null;
+
+  /// Creates a popover whose trigger calls `toggle` itself.
+  const CnPopover.builder({
+    super.key,
+    required this.content,
+    required Widget Function(BuildContext context, VoidCallback toggle)
+    this.builder,
+    this.side = .bottom,
+    this.align = .center,
+    this.width,
+  }) : trigger = null;
+
   final Widget content;
   final Widget? trigger;
-  final Widget Function(BuildContext context, MenuController controller)?
-  triggerBuilder;
-  final EdgeInsetsGeometry? padding;
-  final MenuStyle? style;
+  final Widget Function(BuildContext context, VoidCallback toggle)? builder;
+  final CnSide side;
+  final CnAlign align;
   final double? width;
-  final Offset? alignmentOffset;
+
+  @override
+  State<CnPopover> createState() => _CnPopoverState();
+}
+
+class _CnPopoverState extends State<CnPopover> {
+  final _controller = OverlayPortalController();
 
   @override
   Widget build(BuildContext context) {
-    return MenuAnchor(
-      alignmentOffset: alignmentOffset ?? const Offset(0, 8),
-      style: style ?? _defaultStyle(context, width),
-      menuChildren: [
-        Padding(padding: padding ?? const .all(16), child: content),
-      ],
-      builder: (context, controller, child) {
-        if (triggerBuilder != null) {
-          return triggerBuilder!(context, controller);
-        }
-        return GestureDetector(
-          onTap: () {
-            if (controller.isOpen) {
-              controller.close();
-            } else {
-              controller.open();
-            }
-          },
-          child: AbsorbPointer(child: child),
-        );
-      },
-      child: trigger,
-    );
-  }
-
-  MenuStyle _defaultStyle(BuildContext context, double? width) {
-    final cnTheme = CnTheme.of(context);
-    final scheme = CnTheme.colorSchemeOf(context);
-
-    return MenuStyle(
-      backgroundColor: WidgetStateProperty.all(scheme.surface),
-      surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
-      elevation: WidgetStateProperty.all(0),
-      side: WidgetStateProperty.all(BorderSide(color: scheme.outlineVariant)),
-      shape: WidgetStateProperty.all(
-        RoundedRectangleBorder(borderRadius: .circular(cnTheme.radius)),
+    return CnAnchoredOverlay(
+      controller: _controller,
+      side: widget.side,
+      align: widget.align,
+      overlay: CnPopupSurface(width: widget.width, child: widget.content),
+      child: Builder(
+        builder: (context) {
+          if (widget.builder != null) {
+            return widget.builder!(context, _controller.toggle);
+          }
+          return GestureDetector(
+            onTap: _controller.toggle,
+            child: AbsorbPointer(child: widget.trigger),
+          );
+        },
       ),
-      fixedSize: width == null
-          ? null
-          : WidgetStateProperty.all(Size.fromWidth(width)),
-      padding: WidgetStateProperty.all(.zero),
     );
   }
 }

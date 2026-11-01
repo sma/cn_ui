@@ -62,13 +62,10 @@ class _ComponentIndexPageState extends State<ComponentIndexPage> {
         crossAxisAlignment: .start,
         spacing: 8,
         children: [
-          Text(
-            'Components',
-            style: CnTheme.textThemeOf(context).headlineMedium,
-          ),
+          Text('Components', style: CnTheme.of(context).text.xl2.semibold),
           Text(
             'A curated list of chadcn/ui ports implemented in Flutter.',
-            style: CnTheme.textThemeOf(context).bodyLarge,
+            style: CnTheme.of(context).text.base,
           ),
           Padding(
             padding: const EdgeInsets.only(top: 12),
@@ -78,8 +75,8 @@ class _ComponentIndexPageState extends State<ComponentIndexPage> {
                 controller: _searchController,
                 placeholder: 'Search components',
                 onChanged: (value) => setState(() => _query = value),
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: hasQuery
+                leading: const Icon(Icons.search),
+                trailing: hasQuery
                     ? IconButton(
                         tooltip: 'Clear search',
                         onPressed: _clearSearch,
@@ -94,20 +91,16 @@ class _ComponentIndexPageState extends State<ComponentIndexPage> {
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 '${indices.length} result${indices.length == 1 ? '' : 's'}',
-                style: CnTheme.textThemeOf(context).bodySmall,
+                style: CnTheme.of(context).text.xs,
               ),
             ),
           Padding(
             padding: const EdgeInsets.only(top: 16),
             child: indices.isEmpty
                 ? CnEmpty(
-                    title: const CnEmptyTitle(
-                      child: Text('No components found'),
-                    ),
-                    description: const CnEmptyDescription(
-                      child: Text(
-                        'Try a different keyword or clear the search.',
-                      ),
+                    title: Text('No components found'),
+                    description: Text(
+                      'Try a different keyword or clear the search.',
                     ),
                     actions: CnButton(
                       variant: .outline,
@@ -148,21 +141,18 @@ class _ComponentCard extends StatelessWidget {
         borderRadius: .circular(CnTheme.of(context).radius),
         onTap: onTap,
         child: CnCard(
-          header: Row(
+          title: Row(
             children: [
               Expanded(
                 child: Text(
                   entry.name,
-                  style: CnTheme.textThemeOf(context).titleMedium,
+                  style: CnTheme.of(context).text.base.semibold,
                 ),
               ),
               const CnBadge(child: Text('Ported')),
             ],
           ),
-          content: Text(
-            entry.description,
-            style: CnTheme.textThemeOf(context).bodyMedium,
-          ),
+          content: Text(entry.description, style: CnTheme.of(context).text.sm),
         ),
       ),
     );

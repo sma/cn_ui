@@ -31,9 +31,8 @@ class CnCombobox<T> extends StatefulWidget {
     this.value,
     this.onChanged,
     this.placeholder,
-    this.enabled = true,
     this.autofocus = false,
-    this.allowCustom = false,
+    this.custom = false,
     this.menuMaxHeight = 240,
     this.menuWidth,
   });
@@ -41,9 +40,8 @@ class CnCombobox<T> extends StatefulWidget {
   final T? value;
   final ValueChanged<T?>? onChanged;
   final String? placeholder;
-  final bool enabled;
   final bool autofocus;
-  final bool allowCustom;
+  final bool custom;
   final double menuMaxHeight;
   final double? menuWidth;
 
@@ -77,7 +75,7 @@ class _CnComboboxState<T> extends State<CnCombobox<T>> {
   }
 
   void _handleFocusChange() {
-    if (!_focusNode.hasFocus && !widget.allowCustom) {
+    if (!_focusNode.hasFocus && !widget.custom) {
       _syncControllerWithValue();
     }
   }
@@ -140,11 +138,11 @@ class _CnComboboxState<T> extends State<CnCombobox<T>> {
         return TextField(
           controller: controller,
           focusNode: focusNode,
-          enabled: widget.enabled,
+          enabled: widget.onChanged != null,
           autofocus: widget.autofocus,
           decoration: InputDecoration(
             hintText: widget.placeholder,
-            suffixIcon: const Icon(Icons.expand_more),
+            suffixIcon: const Icon(Icons.expand_more, size: 16),
           ),
           onChanged: (value) {
             if (value.isEmpty) {
@@ -155,13 +153,13 @@ class _CnComboboxState<T> extends State<CnCombobox<T>> {
       },
       optionsViewBuilder: (context, onSelected, options) {
         final cnTheme = CnTheme.of(context);
-        final scheme = CnTheme.colorSchemeOf(context);
+        final colors = CnTheme.of(context).colors;
         final entries = options.toList();
 
         return Align(
-          alignment: Alignment.topLeft,
+          alignment: AlignmentDirectional.topStart,
           child: Material(
-            color: Colors.transparent,
+            type: MaterialType.transparency,
             child: Container(
               margin: const .only(top: 8),
               constraints: BoxConstraints(
@@ -170,9 +168,9 @@ class _CnComboboxState<T> extends State<CnCombobox<T>> {
                 maxWidth: widget.menuWidth ?? 320,
               ),
               decoration: BoxDecoration(
-                color: cnTheme.menuColor,
-                borderRadius: .circular(cnTheme.radius),
-                border: Border.all(color: scheme.outlineVariant),
+                color: colors.popover,
+                borderRadius: .circular(cnTheme.radii.md),
+                border: Border.all(color: colors.border),
               ),
               child: ListView.builder(
                 padding: const .symmetric(vertical: 6),
@@ -190,7 +188,7 @@ class _CnComboboxState<T> extends State<CnCombobox<T>> {
                           Expanded(
                             child: Text(
                               option.label,
-                              style: CnTheme.textThemeOf(context).bodyMedium,
+                              style: CnTheme.of(context).text.sm,
                             ),
                           ),
                         ],

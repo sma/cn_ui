@@ -1,5 +1,6 @@
 import 'package:cn_ui/src/components/cn_command.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../helpers/golden_test_helper.dart';
 
@@ -10,7 +11,7 @@ void main() {
       CnCommand(
         groups: [
           CnCommandGroup(
-            label: 'Commands',
+            label: Text('Commands'),
             items: [
               CnCommandItem(label: 'Command 1', onSelected: () {}),
               CnCommandItem(label: 'Command 2', onSelected: () {}),

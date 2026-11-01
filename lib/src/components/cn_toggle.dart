@@ -1,91 +1,80 @@
-import 'dart:math' as math;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
+import 'cn_button_group.dart';
 
 /// Visual style variants for [CnToggle].
-enum CnToggleVariant { outline, ghost }
+enum CnToggleVariant { standard, outline }
 
 /// Size variants for [CnToggle].
 enum CnToggleSize { sm, md, lg }
 
-/// A toggle button component for binary on/off states.
+/// A button with an on and an off state.
 ///
-/// Provides outline and ghost variants with multiple sizes for toggling boolean values.
+/// A `null` [onChanged] disables it. Inside a [CnButtonGroup], it adapts its
+/// corners to its position in the group.
 ///
 /// See also:
 ///
 ///  * [CnToggleGroup], which groups multiple toggle buttons together.
 ///  * [CnSwitch], for a switch-style toggle.
 ///  * [CnCheckbox], for checkbox-style selection.
-class CnToggle extends StatelessWidget {
-  const CnToggle({
-    super.key,
-    required this.value,
-    required this.child,
-    this.onChanged,
-    this.variant = .outline,
-    this.size = .md,
-    this.enabled = true,
-    this.padding,
-    this.borderRadius,
-    this.showBorder = true,
-  });
-  final bool value;
-  final ValueChanged<bool>? onChanged;
-  final Widget child;
-  final CnToggleVariant variant;
-  final CnToggleSize size;
-  final bool enabled;
-  final EdgeInsetsGeometry? padding;
-  final BorderRadius? borderRadius;
-  final bool showBorder;
-
+class const CnToggle({
+  super.key,
+  required final bool value,
+  final ValueChanged<bool>? onChanged,
+  required final Widget child,
+  final Widget? leading,
+  final Widget? trailing,
+  final CnToggleVariant variant = .standard,
+  final CnToggleSize size = .md,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-    final isEnabled = enabled && onChanged != null;
-    final visuals = _resolveVisuals(
-      scheme,
-      value,
-      variant,
-      isEnabled,
-      showBorder,
-    );
-    final resolvedPadding = padding ?? _paddingFor(size);
-    final minHeight = _minHeightFor(size);
-    final resolvedRadius =
-        borderRadius ?? .circular(math.max(0, cnTheme.radius - 4));
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
+    final enabled = onChanged != null;
+    final states = {if (!enabled) WidgetState.disabled};
+    final radius =
+        (CnButtonGroup.of(context)?.borderRadius(theme.radii.md) ??
+                BorderRadius.circular(theme.radii.md))
+            .resolve(Directionality.of(context));
+    final foreground = value ? colors.accentForeground : colors.foreground;
+    final height = switch (size) {
+      .sm => 32.0,
+      .md => 36.0,
+      .lg => 40.0,
+    };
 
-    return Opacity(
-      opacity: isEnabled ? 1 : 0.6,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: resolvedRadius,
-          onTap: isEnabled ? () => onChanged!(!value) : null,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            padding: resolvedPadding,
-            constraints: BoxConstraints(minHeight: minHeight),
-            decoration: BoxDecoration(
-              color: visuals.background,
-              borderRadius: resolvedRadius,
-              border: Border.all(color: visuals.border),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: radius,
+        onTap: enabled ? () => onChanged!(!value) : null,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const .symmetric(horizontal: 8),
+          constraints: BoxConstraints(minHeight: height, minWidth: height),
+          decoration: BoxDecoration(
+            color: value ? colors.accent : null,
+            borderRadius: radius,
+            border: variant == .outline
+                ? Border.all(color: colors.input.resolve(states))
+                : null,
+          ),
+          child: DefaultTextStyle.merge(
+            style: theme.text.sm.medium.copyWith(
+              color: foreground.resolve(states),
             ),
-            child: DefaultTextStyle(
-              style:
-                  CnTheme.textThemeOf(context).labelLarge?.copyWith(
-                    color: visuals.foreground,
-                    fontWeight: .w600,
-                  ) ??
-                  TextStyle(color: visuals.foreground),
-              child: IconTheme(
-                data: IconThemeData(color: visuals.foreground, size: 16),
-                child: Center(child: child),
+            child: IconTheme.merge(
+              data: IconThemeData(color: foreground.resolve(states), size: 16),
+              child: Center(
+                widthFactor: 1,
+                child: Row(
+                  mainAxisSize: .min,
+                  spacing: 8,
+                  children: [?leading, child, ?trailing],
+                ),
               ),
             ),
           ),
@@ -93,62 +82,4 @@ class CnToggle extends StatelessWidget {
       ),
     );
   }
-
-  EdgeInsets _paddingFor(CnToggleSize size) {
-    return switch (size) {
-      .sm => const .symmetric(horizontal: 8, vertical: 2),
-      .md => const .symmetric(horizontal: 8, vertical: 6),
-      .lg => const .symmetric(horizontal: 12, vertical: 12),
-    };
-  }
-
-  double _minHeightFor(CnToggleSize size) {
-    return switch (size) {
-      .sm => 24,
-      .md => 32,
-      .lg => 48,
-    };
-  }
-
-  _ToggleVisuals _resolveVisuals(
-    ColorScheme scheme,
-    bool selected,
-    CnToggleVariant variant,
-    bool enabled,
-    bool showBorder,
-  ) {
-    final baseForeground = selected
-        ? scheme.onSecondaryContainer
-        : scheme.onSurface;
-    final foreground = enabled
-        ? baseForeground
-        : scheme.onSurfaceVariant.withValues(alpha: 0.6);
-
-    if (selected) {
-      return _ToggleVisuals(
-        background: scheme.secondaryContainer,
-        border: showBorder ? scheme.secondary : Colors.transparent,
-        foreground: foreground,
-      );
-    }
-
-    return _ToggleVisuals(
-      background: variant == .outline ? scheme.surface : Colors.transparent,
-      border: showBorder && variant == .outline
-          ? scheme.outlineVariant
-          : Colors.transparent,
-      foreground: foreground,
-    );
-  }
-}
-
-class _ToggleVisuals {
-  const _ToggleVisuals({
-    required this.background,
-    required this.border,
-    required this.foreground,
-  });
-  final Color background;
-  final Color border;
-  final Color foreground;
 }

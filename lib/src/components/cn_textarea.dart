@@ -1,41 +1,48 @@
 import 'package:material_ui/material_ui.dart';
 
-/// A multi-line text input component.
+import '../theme/cn_theme.dart';
+import 'cn_field.dart';
+
+/// A multi-line text input.
 ///
-/// Wraps Flutter's [TextField] configured for multi-line text entry.
+/// With a [validator], it takes part in the validation of an enclosing
+/// [CnForm]. Inside a [CnField] with an error, it shows its error state.
 ///
 /// See also:
 ///
 ///  * [CnInput], for single-line text input.
-///  * [TextField], the underlying Material widget.
-class CnTextarea extends StatelessWidget {
-  const CnTextarea({
-    super.key,
-    this.controller,
-    this.placeholder,
-    this.enabled = true,
-    this.minLines = 4,
-    this.maxLines = 8,
-    this.onChanged,
-  });
-  final TextEditingController? controller;
-  final String? placeholder;
-  final bool enabled;
-  final int minLines;
-  final int maxLines;
-  final ValueChanged<String>? onChanged;
-
+class const CnTextarea({
+  super.key,
+  final TextEditingController? controller,
+  final FocusNode? focusNode,
+  final String? placeholder,
+  final bool enabled = true,
+  final bool readOnly = false,
+  final int minLines = 4,
+  final int maxLines = 8,
+  final ValueChanged<String>? onChanged,
+  final FormFieldValidator<String>? validator,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    final hasError = CnField.hasError(context);
+
+    return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       enabled: enabled,
+      readOnly: readOnly,
       minLines: minLines,
       maxLines: maxLines,
       onChanged: onChanged,
+      validator: validator,
+      forceErrorText: hasError ? '' : null,
+      style: CnTheme.of(context).text.sm,
       decoration: InputDecoration(
         hintText: placeholder,
         alignLabelWithHint: true,
+        // The field shows the message, so only the border changes here.
+        errorStyle: hasError ? const TextStyle(fontSize: 0, height: 0) : null,
       ),
     );
   }

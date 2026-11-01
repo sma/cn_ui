@@ -83,13 +83,13 @@ class _SidebarList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cnTheme = CnTheme.of(context);
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return Container(
       width: 260,
       decoration: BoxDecoration(
-        color: cnTheme.menuColor,
-        border: Border(right: BorderSide(color: scheme.outlineVariant)),
+        color: colors.sidebar,
+        border: BorderDirectional(end: BorderSide(color: colors.sidebarBorder)),
       ),
       child: Column(
         crossAxisAlignment: .start,
@@ -100,10 +100,10 @@ class _SidebarList extends StatelessWidget {
               crossAxisAlignment: .start,
               spacing: 4,
               children: [
-                Text('CN UI', style: CnTheme.textThemeOf(context).titleLarge),
+                Text('CN UI', style: CnTheme.of(context).text.lg.semibold),
                 Text(
                   'Flutter port of chadcn/ui',
-                  style: CnTheme.textThemeOf(context).bodySmall,
+                  style: CnTheme.of(context).text.xs,
                 ),
               ],
             ),
@@ -119,21 +119,16 @@ class _SidebarList extends StatelessWidget {
                 return Padding(
                   padding: const .symmetric(horizontal: 12, vertical: 4),
                   child: InkWell(
-                    borderRadius: .circular(cnTheme.radius),
+                    borderRadius: .circular(cnTheme.radii.md),
                     onTap: () => onSelected(index),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const .symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? cnTheme.menuAccent.withValues(alpha: 0.12)
-                            : Colors.transparent,
-                        borderRadius: .circular(cnTheme.radius),
-                        border: Border.all(
-                          color: isSelected
-                              ? cnTheme.menuAccent.withValues(alpha: 0.3)
-                              : Colors.transparent,
-                        ),
+                            ? colors.sidebarAccent
+                            : colors.sidebar,
+                        borderRadius: .circular(cnTheme.radii.md),
                       ),
                       child: Row(
                         spacing: 10,
@@ -142,19 +137,18 @@ class _SidebarList extends StatelessWidget {
                             destination.icon,
                             size: 18,
                             color: isSelected
-                                ? cnTheme.menuAccent
-                                : scheme.onSurfaceVariant,
+                                ? colors.sidebarAccentForeground
+                                : colors.mutedForeground,
                           ),
                           Expanded(
                             child: Text(
                               destination.label,
-                              style: CnTheme.textThemeOf(context).bodyMedium
-                                  ?.copyWith(
-                                    color: isSelected
-                                        ? cnTheme.menuAccent
-                                        : scheme.onSurface,
-                                    fontWeight: isSelected ? .w600 : null,
-                                  ),
+                              style: CnTheme.of(context).text.sm.copyWith(
+                                color: isSelected
+                                    ? colors.sidebarAccentForeground
+                                    : colors.sidebarForeground,
+                                fontWeight: isSelected ? .w600 : null,
+                              ),
                             ),
                           ),
                         ],

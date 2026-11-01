@@ -1,41 +1,29 @@
-import 'dart:math' as math;
-
 import 'package:flutter/widget_previews.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_context_menu.dart';
-import 'cn_dropdown_menu.dart';
+import 'cn_menu_entry.dart';
 
-/// A breadcrumb navigation component for displaying hierarchical page paths.
+/// The path to the current page, with a link for each level.
 ///
-/// Provides a series of linked items separated by visual dividers to show navigation hierarchy.
+/// With [collapse], the middle of a long path moves into a menu.
 ///
 /// See also:
 ///
 ///  * [CnPagination], for page-based navigation.
 ///  * [CnTabs], for tab navigation.
-class CnBreadcrumb extends StatelessWidget {
-  const CnBreadcrumb({
-    super.key,
-    required this.items,
-    this.separator,
-    this.spacing = 4,
-    this.runSpacing = 6,
-    this.collapse = false,
-  });
-
-  final List<CnBreadcrumbItem> items;
-  final Widget? separator;
-  final double spacing;
-  final double runSpacing;
-  final bool collapse;
-
+class const CnBreadcrumb({
+  super.key,
+  required final List<CnBreadcrumbItem> items,
+  final Widget? separator,
+  final double spacing = 6,
+  final bool collapse = false,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final effectiveSeparator = separator ?? const Icon(Icons.chevron_right);
     final length = items.length;
-    final effectiveItems = collapse && length > 4
+    final entries = collapse && length > 4
         ? [
             _BreadcrumbItem(items[0]),
             _BreadcrumbItemMenu(items.sublist(1, length - 2)),
@@ -46,16 +34,18 @@ class CnBreadcrumb extends StatelessWidget {
             for (var index = 0; index < length; index++)
               _BreadcrumbItem(items[index], isCurrent: index == length - 1),
           ];
+    final colors = CnTheme.of(context).colors;
+
     return IconTheme.merge(
-      data: IconThemeData(size: 16),
+      data: IconThemeData(size: 16, color: colors.mutedForeground),
       child: Wrap(
         spacing: spacing,
-        runSpacing: runSpacing,
+        runSpacing: spacing,
         crossAxisAlignment: .center,
         children: [
-          for (var index = 0; index < effectiveItems.length; index++) ...[
-            if (index > 0) effectiveSeparator,
-            effectiveItems[index],
+          for (var index = 0; index < entries.length; index++) ...[
+            if (index > 0) separator ?? const Icon(Icons.chevron_right),
+            entries[index],
           ],
         ],
       ),
@@ -91,19 +81,12 @@ class CnBreadcrumb extends StatelessWidget {
   }
 }
 
-/// An item in a [CnBreadcrumb].
-class CnBreadcrumbItem {
-  const CnBreadcrumbItem({
-    required this.label,
-    this.onTap,
-    this.enabled = true,
-    this.leading,
-  });
-  final Widget label;
-  final VoidCallback? onTap;
-  final bool enabled;
-  final Widget? leading;
-}
+/// An item in a [CnBreadcrumb]. Without [onTap], it is not a link.
+class const CnBreadcrumbItem({
+  required final Widget label,
+  final VoidCallback? onTap,
+  final Widget? leading,
+});
 
 class _BreadcrumbItem extends StatelessWidget {
   const _BreadcrumbItem(this.item, {this.isCurrent = false});
@@ -113,41 +96,33 @@ class _BreadcrumbItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-    final isInteractive = item.onTap != null && item.enabled;
-
-    final baseStyle = CnTheme.textThemeOf(context).bodyMedium;
-    final color = isCurrent ? scheme.onSurface : scheme.onSurfaceVariant;
-    final resolvedColor = item.enabled ? color : color.withValues(alpha: 0.5);
-
-    final labelStyle = baseStyle?.copyWith(
-      color: resolvedColor,
-      fontWeight: isCurrent ? .w600 : .w500,
-      decoration: isInteractive ? TextDecoration.underline : null,
-    );
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
 
     final content = Row(
       mainAxisSize: .min,
       spacing: 6,
       children: [
-        if (item.leading != null) item.leading!,
-        DefaultTextStyle(
-          style: labelStyle ?? TextStyle(color: resolvedColor),
+        ?item.leading,
+        DefaultTextStyle.merge(
+          style: theme.text.sm.copyWith(
+            color: isCurrent ? colors.foreground : colors.mutedForeground,
+          ),
           child: item.label,
         ),
       ],
     );
 
-    if (!isInteractive) {
+    if (item.onTap == null) {
       return content;
     }
 
-    return InkWell(
-      borderRadius: .circular(math.max(0, cnTheme.radius - 6)),
-      onTap: item.onTap,
-      child: Padding(
-        padding: const .symmetric(horizontal: 2, vertical: 2),
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        borderRadius: .circular(theme.radii.sm),
+        hoverColor: Colors.transparent,
+        onTap: item.onTap,
         child: content,
       ),
     );
@@ -165,13 +140,13 @@ class _BreadcrumbItemMenu extends StatelessWidget {
       openOnTap: true,
       entries: [
         for (final item in items)
-          CnDropdownMenuAction(
-            child: item.label,
+          CnMenuAction(
+            label: item.label,
             leading: item.leading,
-            onSelected: item.enabled ? item.onTap : null,
+            onSelected: item.onTap,
           ),
       ],
-      child: Icon(Icons.more_horiz),
+      child: const Icon(Icons.more_horiz),
     );
   }
 }

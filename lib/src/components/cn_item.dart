@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
@@ -7,142 +5,108 @@ import '../theme/cn_theme.dart';
 /// Media display variants for [CnItemMedia].
 enum CnItemMediaVariant { standard, icon, image }
 
-/// A container for grouping multiple [CnItem] components with optional dividers.
-class CnItemGroup extends StatelessWidget {
-  const CnItemGroup({
-    super.key,
-    required this.children,
-    this.showDividers = true,
-    this.spacing = 0,
-    this.divider,
-  });
-  final List<Widget> children;
-  final bool showDividers;
-  final double spacing;
-  final Widget? divider;
-
+/// A vertical list of [CnItem]s with optional dividers.
+class const CnItemGroup({
+  super.key,
+  required final List<Widget> children,
+  final bool showDividers = true,
+  final double spacing = 0,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final separator = divider ?? const CnItemSeparator();
-    final items = <Widget>[];
-    for (var index = 0; index < children.length; index++) {
-      items.add(children[index]);
-      if (showDividers && index != children.length - 1) {
-        items.add(separator);
-      }
-    }
-
     return Column(
       crossAxisAlignment: .stretch,
       spacing: spacing,
-      children: items,
+      children: [
+        for (var index = 0; index < children.length; index++) ...[
+          children[index],
+          if (showDividers && index != children.length - 1)
+            const Divider(height: 1),
+        ],
+      ],
     );
   }
 }
 
-/// A divider component for separating items in a [CnItemGroup].
-class CnItemSeparator extends StatelessWidget {
-  const CnItemSeparator({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      color: CnTheme.colorSchemeOf(context).outlineVariant,
-    );
-  }
-}
-
-/// A list item component for displaying structured content with media, text, and actions.
-///
-/// Provides a flexible layout for list items with optional media, title, description, and action buttons.
+/// A list item with a leading widget, title, description and trailing widget.
 ///
 /// See also:
 ///
 ///  * [CnItemGroup], for grouping multiple items.
-///  * [CnItemMedia], for item media (icons or images).
-class CnItem extends StatelessWidget {
-  const CnItem({
-    super.key,
-    this.media,
-    this.title,
-    this.description,
-    this.actions,
-    this.child,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    this.onTap,
-    this.selected = false,
-  });
-  final Widget? media;
-  final Widget? title;
-  final Widget? description;
-  final Widget? actions;
-  final Widget? child;
-  final EdgeInsetsGeometry padding;
-  final VoidCallback? onTap;
-  final bool selected;
-
+///  * [CnItemMedia], for a framed leading icon or image.
+class const CnItem({
+  super.key,
+  final Widget? leading,
+  final Widget? title,
+  final Widget? description,
+  final Widget? trailing,
+  final VoidCallback? onTap,
+  final bool selected = false,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-
-    final content =
-        child ??
-        Row(
-          crossAxisAlignment: .start,
-          spacing: 12,
-          children: [
-            ?media,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: .start,
-                spacing: 6,
-                children: [?title, ?description],
-              ),
-            ),
-            ?actions,
-          ],
-        );
-
-    final body = Padding(padding: padding, child: content);
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
+    final radius = BorderRadius.circular(theme.radii.md);
 
     return Material(
-      color: selected
-          ? scheme.secondaryContainer.withValues(alpha: 0.5)
-          : Colors.transparent,
-      borderRadius: BorderRadius.circular(math.max(0, cnTheme.radius - 4)),
+      color: selected ? colors.accent : Colors.transparent,
+      borderRadius: radius,
       child: InkWell(
-        borderRadius: BorderRadius.circular(math.max(0, cnTheme.radius - 4)),
+        borderRadius: radius,
         onTap: onTap,
-        child: body,
+        child: Padding(
+          padding: const .symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            spacing: 16,
+            children: [
+              ?leading,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: .start,
+                  spacing: 4,
+                  children: [
+                    if (title != null)
+                      DefaultTextStyle.merge(
+                        style: theme.text.sm.medium,
+                        child: title!,
+                      ),
+                    if (description != null)
+                      DefaultTextStyle.merge(
+                        style: theme.text.sm.copyWith(
+                          color: colors.mutedForeground,
+                        ),
+                        child: description!,
+                      ),
+                  ],
+                ),
+              ),
+              ?trailing,
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-/// A media component for [CnItem] displaying icons or images.
-class CnItemMedia extends StatelessWidget {
-  const CnItemMedia({
-    super.key,
-    required this.child,
-    this.variant = .standard,
-    this.size = 44,
-  });
-  final Widget child;
-  final CnItemMediaVariant variant;
-  final double size;
-
+/// A framed icon or image for the leading slot of a [CnItem].
+class const CnItemMedia({
+  super.key,
+  required final Widget child,
+  final CnItemMediaVariant variant = .standard,
+  final double size = 40,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
+    final radius = BorderRadius.circular(theme.radii.md);
 
     if (variant == .image) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(math.max(0, cnTheme.radius - 4)),
-        child: SizedBox(width: size, height: size, child: child),
+        borderRadius: radius,
+        child: SizedBox.square(dimension: size, child: child),
       );
     }
 
@@ -150,96 +114,13 @@ class CnItemMedia extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        shape: variant == .icon ? BoxShape.circle : BoxShape.rectangle,
-        borderRadius: variant == .icon
-            ? null
-            : BorderRadius.circular(math.max(0, cnTheme.radius - 6)),
-        border: Border.all(color: scheme.outlineVariant),
+        color: variant == .icon ? colors.muted : null,
+        borderRadius: variant == .icon ? radius : null,
       ),
-      child: IconTheme(
-        data: IconThemeData(color: scheme.onSurfaceVariant, size: 20),
+      child: IconTheme.merge(
+        data: IconThemeData(color: colors.foreground, size: 16),
         child: Center(child: child),
       ),
     );
-  }
-}
-
-/// A content wrapper for [CnItem].
-class CnItemContent extends StatelessWidget {
-  const CnItemContent({super.key, required this.children});
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: .start, spacing: 6, children: children);
-  }
-}
-
-/// A title component for [CnItem].
-class CnItemTitle extends StatelessWidget {
-  const CnItemTitle({super.key, required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style:
-          CnTheme.textThemeOf(context).titleSmall
-              ?.copyWith(fontWeight: .w600) ??
-          const TextStyle(fontWeight: FontWeight.w600),
-      child: child,
-    );
-  }
-}
-
-/// A description component for [CnItem].
-class CnItemDescription extends StatelessWidget {
-  const CnItemDescription({super.key, required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    return DefaultTextStyle(
-      style:
-          CnTheme.textThemeOf(context).bodySmall
-              ?.copyWith(color: scheme.onSurfaceVariant) ??
-          TextStyle(color: scheme.onSurfaceVariant),
-      child: child,
-    );
-  }
-}
-
-/// An actions wrapper for [CnItem].
-class CnItemActions extends StatelessWidget {
-  const CnItemActions({super.key, required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return child;
-  }
-}
-
-/// A header section for [CnItem].
-class CnItemHeader extends StatelessWidget {
-  const CnItemHeader({super.key, required this.children});
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: .start, spacing: 4, children: children);
-  }
-}
-
-/// A footer section for [CnItem].
-class CnItemFooter extends StatelessWidget {
-  const CnItemFooter({super.key, required this.children});
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(mainAxisSize: .min, spacing: 8, children: children);
   }
 }

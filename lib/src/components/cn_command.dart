@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
@@ -21,7 +19,6 @@ class CnCommand extends StatefulWidget {
     this.controller,
     this.onQueryChanged,
     this.maxHeight = 280,
-    this.padding,
   });
   final List<CnCommandGroup> groups;
   final String placeholder;
@@ -29,7 +26,6 @@ class CnCommand extends StatefulWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onQueryChanged;
   final double maxHeight;
-  final EdgeInsetsGeometry? padding;
 
   @override
   State<CnCommand> createState() => _CnCommandState();
@@ -78,7 +74,7 @@ class _CnCommandState extends State<CnCommand> {
   @override
   Widget build(BuildContext context) {
     final cnTheme = CnTheme.of(context);
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final query = _controller.text.trim().toLowerCase();
 
     final filteredGroups = widget.groups
@@ -89,11 +85,11 @@ class _CnCommandState extends State<CnCommand> {
     final hasResults = filteredGroups.isNotEmpty;
 
     return Container(
-      padding: widget.padding ?? const .all(12),
+      padding: const .all(8),
       decoration: BoxDecoration(
-        color: scheme.surface,
+        color: colors.background,
         borderRadius: .circular(cnTheme.radius),
-        border: Border.all(color: scheme.outlineVariant),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         mainAxisSize: .min,
@@ -103,7 +99,7 @@ class _CnCommandState extends State<CnCommand> {
           CnInput(
             controller: _controller,
             placeholder: widget.placeholder,
-            prefixIcon: const Icon(Icons.search),
+            leading: const Icon(Icons.search, size: 16),
           ),
           SizedBox(
             height: widget.maxHeight,
@@ -121,8 +117,8 @@ class _CnCommandState extends State<CnCommand> {
                 : Center(
                     child: Text(
                       widget.emptyText,
-                      style: CnTheme.textThemeOf(context).bodySmall
-                          ?.copyWith(color: scheme.onSurfaceVariant),
+                      style: CnTheme.of(context).text.xs
+                          .copyWith(color: colors.mutedForeground),
                     ),
                   ),
           ),
@@ -135,7 +131,7 @@ class _CnCommandState extends State<CnCommand> {
 /// A group of command items in [CnCommand].
 class CnCommandGroup {
   const CnCommandGroup({this.label, required this.items});
-  final String? label;
+  final Widget? label;
   final List<CnCommandItem> items;
 
   CnCommandGroup filter(String query) {
@@ -156,7 +152,6 @@ class CnCommandItem {
     this.onSelected,
     this.leading,
     this.trailing,
-    this.disabled = false,
   });
   final String label;
   final String? description;
@@ -164,7 +159,6 @@ class CnCommandItem {
   final VoidCallback? onSelected;
   final Widget? leading;
   final Widget? trailing;
-  final bool disabled;
 
   bool matches(String query) {
     final searchSpace = [
@@ -182,7 +176,7 @@ class _CommandGroupList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return Column(
       crossAxisAlignment: .start,
@@ -190,10 +184,10 @@ class _CommandGroupList extends StatelessWidget {
         if (group.label != null)
           Padding(
             padding: const .fromLTRB(6, 6, 6, 4),
-            child: Text(
-              group.label!,
-              style: CnTheme.textThemeOf(context).labelMedium
-                  ?.copyWith(color: scheme.onSurfaceVariant),
+            child: DefaultTextStyle.merge(
+              style: CnTheme.of(context).text.xs.medium
+                  .copyWith(color: colors.mutedForeground),
+              child: group.label!,
             ),
           ),
         for (final item in group.items) _CommandItemTile(item: item),
@@ -208,12 +202,12 @@ class _CommandItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final cnTheme = CnTheme.of(context);
-    final enabled = item.onSelected != null && !item.disabled;
+    final enabled = item.onSelected != null;
 
     return InkWell(
-      borderRadius: .circular(math.max(0, cnTheme.radius - 4)),
+      borderRadius: .circular(cnTheme.radii.sm),
       onTap: enabled ? item.onSelected : null,
       child: Padding(
         padding: const .symmetric(horizontal: 8, vertical: 10),
@@ -225,8 +219,8 @@ class _CommandItemTile extends StatelessWidget {
               IconTheme(
                 data: IconThemeData(
                   color: enabled
-                      ? scheme.onSurfaceVariant
-                      : scheme.onSurfaceVariant.withValues(alpha: 0.4),
+                      ? colors.mutedForeground
+                      : colors.mutedForeground.resolve(const {.disabled}),
                   size: 18,
                 ),
                 child: item.leading!,
@@ -239,20 +233,19 @@ class _CommandItemTile extends StatelessWidget {
                 children: [
                   Text(
                     item.label,
-                    style: CnTheme.textThemeOf(context).bodyMedium?.copyWith(
+                    style: CnTheme.of(context).text.sm.copyWith(
                       color: enabled
-                          ? scheme.onSurface
-                          : scheme.onSurfaceVariant.withValues(alpha: 0.5),
-                      fontWeight: .w600,
+                          ? colors.foreground
+                          : colors.foreground.resolve(const {.disabled}),
                     ),
                   ),
                   if (item.description != null)
                     Text(
                       item.description!,
-                      style: CnTheme.textThemeOf(context).bodySmall?.copyWith(
+                      style: CnTheme.of(context).text.xs.copyWith(
                         color: enabled
-                            ? scheme.onSurfaceVariant
-                            : scheme.onSurfaceVariant.withValues(alpha: 0.4),
+                            ? colors.mutedForeground
+                            : colors.mutedForeground.resolve(const {.disabled}),
                       ),
                     ),
                 ],

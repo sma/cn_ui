@@ -7,7 +7,7 @@ void main() {
   testWidgets('CnPagination - default', (tester) async {
     await goldenTest(
       tester,
-      CnPagination(currentPage: 3, totalPages: 10, onPageChanged: (_) {}),
+      CnPagination(value: 3, pageCount: 10, onChanged: (_) {}),
       'goldens/pagination/default.png',
       height: 150,
     );

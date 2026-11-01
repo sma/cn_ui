@@ -10,25 +10,29 @@ void main() {
       tester,
       const SizedBox(
         width: 400,
-        child: CnTabs(
+        child: CnTabs<int>(
+          value: 0,
           tabs: [
-            CnTab(
-              label: 'Tab 1',
-              child: Padding(
+            CnTab<int>(
+              value: 0,
+              label: Text('Tab 1'),
+              content: Padding(
                 padding: EdgeInsets.all(16),
                 child: Text('Content 1'),
               ),
             ),
-            CnTab(
-              label: 'Tab 2',
-              child: Padding(
+            CnTab<int>(
+              value: 1,
+              label: Text('Tab 2'),
+              content: Padding(
                 padding: EdgeInsets.all(16),
                 child: Text('Content 2'),
               ),
             ),
-            CnTab(
-              label: 'Tab 3',
-              child: Padding(
+            CnTab<int>(
+              value: 2,
+              label: Text('Tab 3'),
+              content: Padding(
                 padding: EdgeInsets.all(16),
                 child: Text('Content 3'),
               ),

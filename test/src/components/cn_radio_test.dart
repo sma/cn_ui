@@ -11,7 +11,7 @@ void main() {
       goldenColumn(
         children: [
           CnRadioGroup<int>(
-            groupValue: 1,
+            value: 1,
             onChanged: (_) {},
             child: const Column(
               children: [
@@ -21,7 +21,7 @@ void main() {
             ),
           ),
           CnRadioGroup<int>(
-            groupValue: null,
+            value: null,
             onChanged: (_) {},
             child: const Column(
               children: [

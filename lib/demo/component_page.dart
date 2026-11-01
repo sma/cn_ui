@@ -17,11 +17,8 @@ class ComponentPage extends StatelessWidget {
         crossAxisAlignment: .start,
         spacing: 8,
         children: [
-          Text(entry.name, style: CnTheme.textThemeOf(context).headlineMedium),
-          Text(
-            entry.description,
-            style: CnTheme.textThemeOf(context).bodyLarge,
-          ),
+          Text(entry.name, style: CnTheme.of(context).text.xl2.semibold),
+          Text(entry.description, style: CnTheme.of(context).text.base),
           for (var index = 0; index < entry.examples.length; index++)
             Padding(
               padding: EdgeInsets.only(top: index == 0 ? 16 : 24),
@@ -39,7 +36,7 @@ class _ExampleBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final cnTheme = CnTheme.of(context);
 
     return Column(
@@ -50,15 +47,12 @@ class _ExampleBlock extends StatelessWidget {
           crossAxisAlignment: .start,
           spacing: 4,
           children: [
-            Text(
-              example.title,
-              style: CnTheme.textThemeOf(context).titleMedium,
-            ),
+            Text(example.title, style: CnTheme.of(context).text.base.semibold),
             if (example.description != null)
               Text(
                 example.description!,
-                style: CnTheme.textThemeOf(context).bodySmall
-                    ?.copyWith(color: scheme.onSurfaceVariant),
+                style: CnTheme.of(context).text.xs
+                    .copyWith(color: colors.mutedForeground),
               ),
           ],
         ),
@@ -68,9 +62,9 @@ class _ExampleBlock extends StatelessWidget {
             width: double.infinity,
             padding: const .all(20),
             decoration: BoxDecoration(
-              color: scheme.surface,
+              color: colors.background,
               borderRadius: .circular(cnTheme.radius),
-              border: Border.all(color: scheme.outlineVariant),
+              border: Border.all(color: colors.border),
             ),
             child: Center(child: example.preview(context)),
           ),
@@ -95,7 +89,7 @@ class _Section extends StatelessWidget {
       crossAxisAlignment: .start,
       spacing: 12,
       children: [
-        Text(title, style: CnTheme.textThemeOf(context).titleMedium),
+        Text(title, style: CnTheme.of(context).text.base.semibold),
         child,
       ],
     );
@@ -131,7 +125,7 @@ class _CnCodeBlockState extends State<CnCodeBlock> {
     final lines = widget.code.split('\n');
     final pad = lines.length.toString().length;
     var lineNo = 1;
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final radius = CnTheme.of(context).radius;
 
     return Stack(
@@ -140,9 +134,9 @@ class _CnCodeBlockState extends State<CnCodeBlock> {
           width: double.infinity,
           padding: const .all(16),
           decoration: BoxDecoration(
-            color: scheme.surfaceContainer,
+            color: colors.muted,
             borderRadius: .circular(radius),
-            border: Border.all(color: scheme.outlineVariant),
+            border: Border.all(color: colors.border),
           ),
           child: SelectableText.rich(
             TextSpan(
@@ -151,7 +145,7 @@ class _CnCodeBlockState extends State<CnCodeBlock> {
                   (line) => [
                     TextSpan(
                       text: '$lineNo'.padLeft(pad),
-                      style: TextStyle(color: scheme.outline),
+                      style: TextStyle(color: colors.input),
                     ),
                     TextSpan(text: '  $line'),
                     if (lineNo++ != lines.length) TextSpan(text: '\n'),
@@ -175,7 +169,7 @@ class _CnCodeBlockState extends State<CnCodeBlock> {
               constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
               icon: Icon(
                 _copied ? Icons.check_rounded : Icons.copy_rounded,
-                color: _copied ? scheme.primary : scheme.onSurfaceVariant,
+                color: _copied ? colors.primary : colors.mutedForeground,
               ),
             ),
           ),

@@ -1,26 +1,18 @@
 import 'package:material_ui/material_ui.dart';
 
-/// A tooltip component for displaying brief help text on hover or long press.
-///
-/// Wraps Flutter's Tooltip widget with a consistent interface.
+/// Brief help text shown on hover or long press.
 ///
 /// See also:
 ///
 ///  * [CnPopover], for more complex popover content.
 ///  * [CnHoverCard], for rich hover content.
-class CnTooltip extends StatelessWidget {
-  const CnTooltip({
-    super.key,
-    required this.message,
-    required this.child,
-    this.padding,
-  });
-  final String message;
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-
+class const CnTooltip({
+  super.key,
+  required final String message,
+  required final Widget child,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Tooltip(message: message, padding: padding, child: child);
+    return Tooltip(message: message, child: child);
   }
 }

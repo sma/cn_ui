@@ -9,6 +9,7 @@ Tracked against https://ui.shadcn.com/docs/components. Update as the docs evolve
 - [x] Resizable
 - [x] Scroll Area
 - [x] Separator
+- [ ] Direction
 
 ### Navigation
 - [x] Breadcrumb
@@ -25,7 +26,7 @@ Tracked against https://ui.shadcn.com/docs/components. Update as the docs evolve
 - [x] Combobox
 - [x] Date Picker
 - [x] Field
-- [x] Form
+- [x] Form (shadcn only has a guide for form libraries now)
 - [x] Input
 - [x] Input Group
 - [x] Input OTP
@@ -33,6 +34,7 @@ Tracked against https://ui.shadcn.com/docs/components. Update as the docs evolve
 - [x] Radio Group
 - [x] Select
 - [x] Native Select
+- [ ] Questionnaire
 - [x] Slider
 - [x] Switch
 - [x] Textarea
@@ -46,6 +48,7 @@ Tracked against https://ui.shadcn.com/docs/components. Update as the docs evolve
 - [x] Card
 - [x] Carousel
 - [x] Chart
+- [x] Code Block (`CnCodeBlock`, currently only in `lib/demo`, not exported)
 - [x] Data Table
 - [x] Empty
 - [x] Item
@@ -54,6 +57,7 @@ Tracked against https://ui.shadcn.com/docs/components. Update as the docs evolve
 - [x] Skeleton
 - [x] Table
 - [x] Tooltip
+- [ ] Trace
 - [x] Typography
 
 ### Overlays and feedback
@@ -68,5 +72,7 @@ Tracked against https://ui.shadcn.com/docs/components. Update as the docs evolve
 - [x] Popover
 - [x] Sheet
 - [x] Spinner
-- [x] Sonner
 - [x] Toast
+
+### Intentionally left out
+Chat components: Attachment, Bubble, Marker, Message, Message Scroller.

@@ -38,30 +38,25 @@ class CnChart extends StatelessWidget {
     super.key,
     required this.series,
     this.height = 220,
-    this.padding = const EdgeInsets.all(16),
     this.showLegend = true,
     this.showGrid = true,
     this.gridLines = 4,
-    this.labelStyle,
   });
   final List<CnChartSeries> series;
   final double height;
-  final EdgeInsetsGeometry padding;
   final bool showLegend;
   final bool showGrid;
   final int gridLines;
-  final TextStyle? labelStyle;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final labels = _resolveLabels(series);
     final resolvedSeries = _resolveSeries(context, labels, series);
     final legendItems = [
       for (final entry in resolvedSeries)
         CnChartLegendItem(label: entry.name, color: entry.color),
     ];
-    final resolvedPadding = padding.resolve(Directionality.of(context));
 
     final chart = SizedBox(
       height: height,
@@ -69,10 +64,10 @@ class CnChart extends StatelessWidget {
         painter: _CnChartPainter(
           labels: labels,
           series: resolvedSeries,
-          padding: resolvedPadding,
+          padding: const EdgeInsets.all(16),
           showGrid: showGrid,
           gridLines: gridLines,
-          gridColor: scheme.outlineVariant.withValues(alpha: 0.4),
+          gridColor: colors.border.withValues(alpha: 0.4),
         ),
       ),
     );
@@ -86,12 +81,9 @@ class CnChart extends StatelessWidget {
                   child: Text(
                     label,
                     textAlign: .center,
-                    style:
-                        labelStyle ??
-                        CnTheme.textThemeOf(context).bodySmall?.copyWith(
-                          color: CnTheme.colorSchemeOf(context)
-                              .onSurfaceVariant,
-                        ),
+                    style: CnTheme.of(context).text.xs.copyWith(
+                      color: CnTheme.of(context).colors.mutedForeground,
+                    ),
                   ),
                 ),
             ],
@@ -126,13 +118,8 @@ class CnChart extends StatelessWidget {
     List<String> labels,
     List<CnChartSeries> series,
   ) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final palette = [
-      scheme.primary,
-      scheme.secondary,
-      scheme.tertiary,
-      scheme.error,
-    ];
+    final colors = CnTheme.of(context).colors;
+    final palette = colors.charts;
 
     return [
       for (var index = 0; index < series.length; index++)
@@ -170,8 +157,8 @@ class CnChartLegend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = CnTheme.textThemeOf(context).bodySmall
-        ?.copyWith(color: CnTheme.colorSchemeOf(context).onSurfaceVariant);
+    final textStyle = CnTheme.of(context).text.xs
+        .copyWith(color: CnTheme.of(context).colors.mutedForeground);
 
     return Wrap(
       spacing: spacing,

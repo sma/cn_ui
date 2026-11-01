@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final cnTheme = CnTheme.of(context);
 
     return SingleChildScrollView(
@@ -25,15 +25,15 @@ class HomePage extends StatelessWidget {
               borderRadius: .circular(cnTheme.radius + 8),
               gradient: LinearGradient(
                 colors: [
-                  scheme.surface,
-                  scheme.secondaryContainer,
-                  scheme.primaryContainer,
-                  scheme.surface,
+                  colors.background,
+                  colors.secondary,
+                  colors.accent,
+                  colors.background,
                 ],
                 begin: .topStart,
                 end: .bottomEnd,
               ),
-              border: .all(color: scheme.outlineVariant),
+              border: .all(color: colors.border),
             ),
             child: _HeroCopy(
               onBrowseComponents: onBrowseComponents,
@@ -43,18 +43,11 @@ class HomePage extends StatelessWidget {
           _Section(
             title: 'Quick Start',
             child: const CnCodeBlock(
-              code: '''final cnTheme = CnTheme(
-  style: .classic,
-  baseColor: Color(0xFFF7F4EF),
-  themeColor: Color(0xFF1D4ED8),
-  fontFamily: 'Space Grotesk',
-  radius: 12,
-  menuColor: Color(0xFFFDFBF7),
-  menuAccent: Color(0xFF1D4ED8),
-);
+              code: '''final colors = CnColors.light.copyWith(primary: Color(0xFF1D4ED8));
 
 MaterialApp(
-  theme: cnTheme.toThemeData(),
+  theme: CnTheme(colors: colors, fontFamily: 'Geist', radius: 10).toThemeData(),
+  darkTheme: CnTheme(colors: CnColors.dark).toThemeData(),
   home: const CnDemoApp(),
 );''',
             ),
@@ -68,7 +61,8 @@ MaterialApp(
                   _FeatureCard(
                     icon: Icons.palette_outlined,
                     title: 'Theme tokens',
-                    description: 'Swap base, accent, and menu colors from a single CnTheme.',
+                    description:
+                        'Swap colors, font and radius from a single CnTheme.',
                   ),
                   _FeatureCard(
                     icon: Icons.widgets_outlined,
@@ -121,13 +115,10 @@ class _HeroCopy extends StatelessWidget {
       crossAxisAlignment: .start,
       spacing: 12,
       children: [
-        Text(
-          'CN UI for Flutter',
-          style: CnTheme.textThemeOf(context).displaySmall,
-        ),
+        Text('CN UI for Flutter', style: CnTheme.of(context).text.xl3.semibold),
         Text(
           'A chadcn/ui-inspired component library with themeable tokens, Flutter-native widgets, and live code samples.',
-          style: CnTheme.textThemeOf(context).titleMedium,
+          style: CnTheme.of(context).text.base.semibold,
         ),
         Wrap(
           spacing: 8,
@@ -172,7 +163,7 @@ class _Section extends StatelessWidget {
       crossAxisAlignment: .start,
       spacing: 12,
       children: [
-        Text(title, style: CnTheme.textThemeOf(context).titleLarge),
+        Text(title, style: CnTheme.of(context).text.lg.semibold),
         child,
       ],
     );
@@ -191,36 +182,30 @@ class _FeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
 
     return SizedBox(
       width: 280,
       child: CnCard(
-        header: Row(
+        title: Row(
           spacing: 10,
           children: [
             Container(
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: scheme.surfaceContainerHighest,
+                color: colors.muted,
                 borderRadius: .circular(CnTheme.of(context).radius),
-                border: Border.all(color: scheme.outlineVariant),
+                border: Border.all(color: colors.border),
               ),
-              child: Icon(icon, size: 18, color: scheme.onSurfaceVariant),
+              child: Icon(icon, size: 18, color: colors.mutedForeground),
             ),
             Expanded(
-              child: Text(
-                title,
-                style: CnTheme.textThemeOf(context).titleMedium,
-              ),
+              child: Text(title, style: CnTheme.of(context).text.base.semibold),
             ),
           ],
         ),
-        content: Text(
-          description,
-          style: CnTheme.textThemeOf(context).bodyMedium,
-        ),
+        content: Text(description, style: CnTheme.of(context).text.sm),
       ),
     );
   }

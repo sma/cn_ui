@@ -27,7 +27,7 @@ class ComponentStateGenerator {
   }) {
     return [
       for (final size in CnButtonSize.values)
-        if (size == CnButtonSize.icon)
+        if (size == CnButtonSize.md)
           CnButton(
             variant: variant,
             size: size,
@@ -78,7 +78,7 @@ class ComponentStateGenerator {
 
   static String _alertTitle(CnAlertVariant variant) {
     return switch (variant) {
-      .neutral => 'Info',
+      .standard => 'Info',
       .info => 'Heads up!',
       .success => 'Success',
       .warning => 'Warning',
@@ -88,7 +88,7 @@ class ComponentStateGenerator {
 
   static String _alertDescription(CnAlertVariant variant) {
     return switch (variant) {
-      .neutral => 'This is a neutral message',
+      .standard => 'This is a neutral message',
       .info => 'Important information to consider',
       .success => 'Operation completed successfully',
       .warning => 'Please review this carefully',

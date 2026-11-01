@@ -8,10 +8,9 @@ void main() {
     await goldenTest(
       tester,
       withDimensions(
-        CnCalendar(
+        CnCalendar.single(
           focusedMonth: DateTime(2024, 1, 1),
-          selectionMode: CnCalendarSelectionMode.single,
-          selectedDate: DateTime(2024, 1, 15),
+          value: DateTime(2024, 1, 15),
         ),
         width: 350,
       ),

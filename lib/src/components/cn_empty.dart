@@ -1,161 +1,93 @@
-import 'dart:math' as math;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
 /// Media display variants for [CnEmptyMedia].
-enum CnEmptyMediaVariant { icon, image, defaultStyle }
+enum CnEmptyMediaVariant { standard, icon, image }
 
-/// An empty state component for displaying messages when no content is available.
-///
-/// Provides a structured layout for media, title, description, and action buttons in empty states.
+/// An empty state, shown when there is no content yet.
 ///
 /// See also:
 ///
-///  * [CnEmptyMedia], for empty state media (icons or images).
-///  * [CnEmptyTitle], for empty state titles.
-///  * [CnEmptyDescription], for empty state descriptions.
-class CnEmpty extends StatelessWidget {
-  const CnEmpty({
-    super.key,
-    this.media,
-    this.title,
-    this.description,
-    this.content,
-    this.actions,
-    this.padding = const EdgeInsets.all(24),
-    this.crossAxisAlignment = .center,
-    this.mainAxisAlignment = .start,
-    this.child,
-  });
-  final Widget? media;
-  final Widget? title;
-  final Widget? description;
-  final Widget? content;
-  final Widget? actions;
-  final EdgeInsetsGeometry padding;
-  final CrossAxisAlignment crossAxisAlignment;
-  final MainAxisAlignment mainAxisAlignment;
-  final Widget? child;
-
+///  * [CnEmptyMedia], for a framed icon or image.
+class const CnEmpty({
+  super.key,
+  final Widget? media,
+  final Widget? title,
+  final Widget? description,
+  final Widget? content,
+  final Widget? actions,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final body =
-        child ??
-        Column(
-          crossAxisAlignment: crossAxisAlignment,
-          mainAxisAlignment: mainAxisAlignment,
-          spacing: 12,
-          children: [?media, ?title, ?description, ?content, ?actions],
-        );
+    final theme = CnTheme.of(context);
 
-    return Padding(padding: padding, child: body);
+    return Padding(
+      padding: const .all(24),
+      child: Column(
+        mainAxisSize: .min,
+        spacing: 16,
+        children: [
+          ?media,
+          if (title != null || description != null)
+            Column(
+              spacing: 8,
+              children: [
+                if (title != null)
+                  DefaultTextStyle.merge(
+                    style: theme.text.lg.medium,
+                    textAlign: TextAlign.center,
+                    child: title!,
+                  ),
+                if (description != null)
+                  DefaultTextStyle.merge(
+                    style: theme.text.sm.copyWith(
+                      color: theme.colors.mutedForeground,
+                    ),
+                    textAlign: TextAlign.center,
+                    child: description!,
+                  ),
+              ],
+            ),
+          ?content,
+          ?actions,
+        ],
+      ),
+    );
   }
 }
 
-/// A header section for [CnEmpty] combining title and description.
-class CnEmptyHeader extends StatelessWidget {
-  const CnEmptyHeader({super.key, required this.children});
-  final List<Widget> children;
-
+/// A framed icon or image for the media slot of a [CnEmpty].
+class const CnEmptyMedia({
+  super.key,
+  required final Widget child,
+  final CnEmptyMediaVariant variant = .icon,
+  final double size = 40,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: .center, spacing: 8, children: children);
-  }
-}
-
-/// A media component for [CnEmpty] displaying icons or images.
-class CnEmptyMedia extends StatelessWidget {
-  const CnEmptyMedia({
-    super.key,
-    required this.child,
-    this.variant = .icon,
-    this.size = 64,
-    this.padding,
-  });
-  final Widget child;
-  final CnEmptyMediaVariant variant;
-  final double size;
-  final EdgeInsetsGeometry? padding;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
+    final radius = BorderRadius.circular(theme.radii.md);
 
     if (variant == .image) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(math.max(0, cnTheme.radius - 2)),
-        child: SizedBox(width: size, height: size, child: child),
+        borderRadius: radius,
+        child: SizedBox.square(dimension: size, child: child),
       );
     }
-
-    final background = scheme.surfaceContainerHighest;
-    final resolvedPadding =
-        padding ?? EdgeInsets.all(variant == .icon ? 16 : 12);
 
     return Container(
       width: size,
       height: size,
-      padding: resolvedPadding,
       decoration: BoxDecoration(
-        color: background,
-        shape: BoxShape.circle,
-        border: Border.all(color: scheme.outlineVariant),
+        color: variant == .icon ? colors.muted : null,
+        borderRadius: variant == .icon ? radius : null,
       ),
-      child: IconTheme(
-        data: IconThemeData(color: scheme.onSurfaceVariant, size: 22),
+      child: IconTheme.merge(
+        data: IconThemeData(color: colors.foreground, size: 24),
         child: Center(child: child),
       ),
     );
-  }
-}
-
-/// A title component for [CnEmpty].
-class CnEmptyTitle extends StatelessWidget {
-  const CnEmptyTitle({super.key, required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style:
-          CnTheme.textThemeOf(context).titleMedium
-              ?.copyWith(fontWeight: .w600) ??
-          const TextStyle(fontWeight: FontWeight.w600),
-      textAlign: TextAlign.center,
-      child: child,
-    );
-  }
-}
-
-/// A description component for [CnEmpty].
-class CnEmptyDescription extends StatelessWidget {
-  const CnEmptyDescription({super.key, required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    return DefaultTextStyle(
-      style:
-          CnTheme.textThemeOf(context).bodySmall
-              ?.copyWith(color: scheme.onSurfaceVariant) ??
-          TextStyle(color: scheme.onSurfaceVariant),
-      textAlign: TextAlign.center,
-      child: child,
-    );
-  }
-}
-
-/// A content wrapper for [CnEmpty].
-class CnEmptyContent extends StatelessWidget {
-  const CnEmptyContent({super.key, required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return child;
   }
 }

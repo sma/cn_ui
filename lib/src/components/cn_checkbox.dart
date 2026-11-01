@@ -1,30 +1,38 @@
 import 'package:flutter/widget_previews.dart';
 import 'package:material_ui/material_ui.dart';
 
-class CnCheckbox extends StatelessWidget {
-  const CnCheckbox({
-    super.key,
-    required this.value,
-    this.onChanged,
-    this.label,
-  });
-  final bool value;
-  final ValueChanged<bool?>? onChanged;
-  final Widget? label;
+import '../theme/cn_theme.dart';
 
+/// A checkbox with an optional label. A `null` [onChanged] disables it.
+class const CnCheckbox({
+  super.key,
+  required final bool value,
+  final ValueChanged<bool>? onChanged,
+  final Widget? label,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = CnTheme.of(context);
+    final states = {if (onChanged == null) WidgetState.disabled};
+
     return Row(
       mainAxisSize: .min,
       spacing: 8,
       children: [
-        Checkbox(value: value, onChanged: onChanged),
+        Checkbox(
+          value: value,
+          onChanged: onChanged == null
+              ? null
+              : (next) => onChanged!(next ?? false),
+        ),
         if (label != null)
-          DefaultTextStyle.merge(
-            style: TextStyle(
-              color: onChanged != null ? null : Theme.of(context).disabledColor,
+          Flexible(
+            child: DefaultTextStyle.merge(
+              style: theme.text.sm.medium.copyWith(
+                color: theme.colors.foreground.resolve(states),
+              ),
+              child: label!,
             ),
-            child: Flexible(child: label!),
           ),
       ],
     );

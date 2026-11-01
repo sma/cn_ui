@@ -3,224 +3,118 @@ import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
-/// An expandable/collapsible container with animated height transitions.
+/// A panel whose [content] expands and collapses below a header.
 ///
-/// Provides a header that toggles the visibility of content with smooth animations.
+/// [value] says whether it is open. A `null` [onChanged] disables it.
 ///
 /// See also:
 ///
 ///  * [CnAccordion], for a group of collapsible panels.
-class CnCollapsible extends StatefulWidget {
-  const CnCollapsible({
-    super.key,
-    this.headerBuilder,
-    this.title,
-    this.subtitle,
-    this.leading,
-    this.trailing,
-    required this.child,
-    this.initiallyExpanded = false,
-    this.onChanged,
-    this.duration = const Duration(milliseconds: 220),
-    this.curve = Curves.easeOut,
-    this.headerPadding,
-    this.contentPadding,
-    this.enabled = true,
-    this.showBorder = true,
-    this.showDivider = true,
-    this.backgroundColor,
-    this.radius,
-  }) : assert(
-         headerBuilder != null || title != null,
-         'Provide a headerBuilder or a title.',
-       );
-  final Widget Function(BuildContext context, bool isOpen)? headerBuilder;
-  final Widget? title;
-  final Widget? subtitle;
-  final Widget? leading;
-  final Widget? trailing;
-  final Widget child;
-  final bool initiallyExpanded;
-  final ValueChanged<bool>? onChanged;
-  final Duration duration;
-  final Curve curve;
-  final EdgeInsetsGeometry? headerPadding;
-  final EdgeInsetsGeometry? contentPadding;
-  final bool enabled;
-  final bool showBorder;
-  final bool showDivider;
-  final Color? backgroundColor;
-  final double? radius;
+class const CnCollapsible({
+  super.key,
+  required final bool value,
+  final ValueChanged<bool>? onChanged,
+  required final Widget title,
+  final Widget? description,
+  final Widget? leading,
+  final Widget? trailing,
+  required final Widget content,
+}) extends StatelessWidget {
+  static const _duration = Duration(milliseconds: 220);
 
   @override
-  State<CnCollapsible> createState() => _CnCollapsibleState();
+  Widget build(BuildContext context) {
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
+    final enabled = onChanged != null;
+    const disabled = {WidgetState.disabled};
+
+    return Material(
+      type: MaterialType.transparency,
+      child: Column(
+        crossAxisAlignment: .stretch,
+        children: [
+          InkWell(
+            borderRadius: .circular(theme.radii.md),
+            onTap: enabled ? () => onChanged!(!value) : null,
+            child: Padding(
+              padding: const .symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                spacing: 12,
+                children: [
+                  ?leading,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: .start,
+                      spacing: 4,
+                      children: [
+                        DefaultTextStyle.merge(
+                          style: theme.text.sm.medium.copyWith(
+                            color: enabled
+                                ? colors.foreground
+                                : colors.foreground.resolve(disabled),
+                          ),
+                          child: title,
+                        ),
+                        if (description != null)
+                          DefaultTextStyle.merge(
+                            style: theme.text.xs.copyWith(
+                              color: enabled
+                                  ? colors.mutedForeground
+                                  : colors.mutedForeground.resolve(disabled),
+                            ),
+                            child: description!,
+                          ),
+                      ],
+                    ),
+                  ),
+                  trailing ??
+                      AnimatedRotation(
+                        turns: value ? 0.5 : 0,
+                        duration: _duration,
+                        child: Icon(
+                          Icons.expand_more,
+                          size: 16,
+                          color: colors.mutedForeground,
+                        ),
+                      ),
+                ],
+              ),
+            ),
+          ),
+          ClipRect(
+            child: AnimatedAlign(
+              duration: _duration,
+              curve: Curves.easeOut,
+              alignment: .topStart,
+              heightFactor: value ? 1 : 0,
+              child: Padding(
+                padding: const .symmetric(horizontal: 12, vertical: 8),
+                child: DefaultTextStyle.merge(
+                  style: theme.text.sm,
+                  child: content,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @Preview(size: Size(260, 260))
   static Widget preview() {
     return Column(
       spacing: 16,
       children: [
-        for (final e in [false, true])
+        for (final open in [false, true])
           CnCollapsible(
+            value: open,
+            onChanged: (_) {},
             title: Text('Title'),
-            subtitle: Text('Subtitle'),
-            initiallyExpanded: e,
-            child: Padding(padding: .only(top: 16), child: Text('Content')),
+            description: Text('Description'),
+            content: Text('Content'),
           ),
-      ],
-    );
-  }
-}
-
-class _CnCollapsibleState extends State<CnCollapsible>
-    with SingleTickerProviderStateMixin {
-  late bool _isOpen;
-
-  @override
-  void initState() {
-    super.initState();
-    _isOpen = widget.initiallyExpanded;
-  }
-
-  void _toggle() {
-    if (!widget.enabled) {
-      return;
-    }
-    setState(() => _isOpen = !_isOpen);
-    widget.onChanged?.call(_isOpen);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final cnTheme = CnTheme.of(context);
-    final radius = widget.radius ?? cnTheme.radius;
-    final headerPadding =
-        widget.headerPadding ?? const .symmetric(horizontal: 16, vertical: 12);
-    final contentPadding =
-        widget.contentPadding ?? const .fromLTRB(16, 0, 16, 16);
-    final background =
-        widget.backgroundColor ?? (widget.showBorder ? scheme.surface : null);
-
-    Widget header =
-        widget.headerBuilder?.call(context, _isOpen) ??
-        _DefaultCollapsibleHeader(
-          title: widget.title!,
-          subtitle: widget.subtitle,
-          leading: widget.leading,
-          trailing: widget.trailing,
-          isOpen: _isOpen,
-          enabled: widget.enabled,
-          duration: widget.duration,
-        );
-
-    header = Padding(padding: headerPadding, child: header);
-
-    final body = Column(
-      crossAxisAlignment: .start,
-      children: [
-        InkWell(
-          borderRadius: .circular(radius),
-          onTap: widget.enabled ? _toggle : null,
-          child: header,
-        ),
-        if (widget.showDivider)
-          Divider(height: 1, color: scheme.outlineVariant),
-        AnimatedAlign(
-          duration: widget.duration,
-          curve: widget.curve,
-          alignment: .topStart,
-          heightFactor: _isOpen ? 1 : 0,
-          child: Padding(padding: contentPadding, child: widget.child),
-        ),
-      ],
-    );
-
-    final decorated = background == null && !widget.showBorder
-        ? body
-        : DecoratedBox(
-            decoration: BoxDecoration(
-              color: background,
-              borderRadius: .circular(radius),
-              border: widget.showBorder
-                  ? Border.all(color: scheme.outlineVariant)
-                  : null,
-            ),
-            child: body,
-          );
-
-    return ClipRRect(
-      borderRadius: .circular(radius),
-      child: AnimatedOpacity(
-        opacity: widget.enabled ? 1 : 0.6,
-        duration: widget.duration,
-        child: decorated,
-      ),
-    );
-  }
-}
-
-class _DefaultCollapsibleHeader extends StatelessWidget {
-  const _DefaultCollapsibleHeader({
-    required this.title,
-    this.subtitle,
-    this.leading,
-    this.trailing,
-    required this.isOpen,
-    required this.enabled,
-    required this.duration,
-  });
-  final Widget title;
-  final Widget? subtitle;
-  final Widget? leading;
-  final Widget? trailing;
-  final bool isOpen;
-  final bool enabled;
-  final Duration duration;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    final titleStyle = CnTheme.textThemeOf(context).titleSmall?.copyWith(
-      color: enabled
-          ? scheme.onSurface
-          : scheme.onSurfaceVariant.withValues(alpha: 0.6),
-      fontWeight: .w600,
-    );
-    final subtitleStyle = CnTheme.textThemeOf(context).bodySmall?.copyWith(
-      color: enabled
-          ? scheme.onSurfaceVariant
-          : scheme.onSurfaceVariant.withValues(alpha: 0.5),
-    );
-
-    return Row(
-      spacing: 8,
-      children: [
-        if (leading != null)
-          Padding(padding: const EdgeInsets.only(right: 4), child: leading!),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: .start,
-            spacing: 4,
-            children: [
-              DefaultTextStyle(
-                style: titleStyle ?? const TextStyle(),
-                child: title,
-              ),
-              if (subtitle != null)
-                DefaultTextStyle(
-                  style: subtitleStyle ?? const TextStyle(),
-                  child: subtitle!,
-                ),
-            ],
-          ),
-        ),
-        trailing ??
-            AnimatedRotation(
-              turns: isOpen ? 0.5 : 0,
-              duration: duration,
-              child: Icon(Icons.expand_more, color: scheme.onSurfaceVariant),
-            ),
       ],
     );
   }

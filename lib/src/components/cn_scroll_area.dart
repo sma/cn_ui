@@ -1,57 +1,55 @@
 import 'package:material_ui/material_ui.dart';
 
-/// A scrollable container with customizable scrollbar visibility.
-///
-/// Provides a consistent interface for scrollable content with optional scrollbar controls.
-///
-/// See also:
-///
-///  * [SingleChildScrollView], the underlying scroll widget.
-///  * [Scrollbar], for scrollbar customization.
-class CnScrollArea extends StatelessWidget {
+/// A scrollable area with a scrollbar.
+class CnScrollArea extends StatefulWidget {
   const CnScrollArea({
     super.key,
     required this.child,
     this.direction = .vertical,
     this.height,
     this.width,
-    this.padding,
     this.controller,
     this.thumbVisibility = false,
     this.trackVisibility = false,
-    this.interactive,
-    this.scrollbarOrientation,
   });
   final Widget child;
   final Axis direction;
   final double? height;
   final double? width;
-  final EdgeInsetsGeometry? padding;
   final ScrollController? controller;
   final bool thumbVisibility;
   final bool trackVisibility;
-  final bool? interactive;
-  final ScrollbarOrientation? scrollbarOrientation;
+
+  @override
+  State<CnScrollArea> createState() => _CnScrollAreaState();
+}
+
+class _CnScrollAreaState extends State<CnScrollArea> {
+  // The scrollbar and the scroll view have to share a controller.
+  final _ownController = ScrollController();
+
+  @override
+  void dispose() {
+    _ownController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final content = SingleChildScrollView(
-      controller: controller,
-      scrollDirection: direction,
-      padding: padding,
-      child: child,
-    );
+    final controller = widget.controller ?? _ownController;
 
     return SizedBox(
-      height: height,
-      width: width,
+      height: widget.height,
+      width: widget.width,
       child: Scrollbar(
         controller: controller,
-        thumbVisibility: thumbVisibility,
-        trackVisibility: trackVisibility,
-        interactive: interactive,
-        scrollbarOrientation: scrollbarOrientation,
-        child: content,
+        thumbVisibility: widget.thumbVisibility,
+        trackVisibility: widget.trackVisibility,
+        child: SingleChildScrollView(
+          controller: controller,
+          scrollDirection: widget.direction,
+          child: widget.child,
+        ),
       ),
     );
   }

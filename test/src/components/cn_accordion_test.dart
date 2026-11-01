@@ -10,13 +10,16 @@ void main() {
       tester,
       const SizedBox(
         width: 400,
-        child: CnAccordion(
+        child: CnAccordion<int>(
+          value: {},
           items: [
-            CnAccordionItem(
+            CnAccordionItem<int>(
+              value: 0,
               title: Text('Section 1'),
               content: Text('Content 1'),
             ),
-            CnAccordionItem(
+            CnAccordionItem<int>(
+              value: 1,
               title: Text('Section 2'),
               content: Text('Content 2'),
             ),
@@ -33,17 +36,19 @@ void main() {
       tester,
       const SizedBox(
         width: 400,
-        child: CnAccordion(
-          initialOpenIndices: {0},
+        child: CnAccordion<int>(
+          value: {0},
           items: [
-            CnAccordionItem(
+            CnAccordionItem<int>(
+              value: 2,
               title: Text('Section 1'),
               content: Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Text('Expanded content for section 1'),
               ),
             ),
-            CnAccordionItem(
+            CnAccordionItem<int>(
+              value: 3,
               title: Text('Section 2'),
               content: Text('Content 2'),
             ),

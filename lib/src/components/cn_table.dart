@@ -4,30 +4,26 @@ import '../theme/cn_theme.dart';
 import 'cn_button.dart';
 import 'cn_dropdown_menu.dart';
 import 'cn_input.dart';
+import 'cn_menu_entry.dart';
 import 'cn_select.dart';
 
 /// A column definition for [CnTable].
 class CnTableColumn {
   const CnTableColumn({
     required this.label,
-    this.alignment = Alignment.centerLeft,
+    this.alignment = AlignmentDirectional.centerStart,
     this.width,
   });
   final Widget label;
-  final Alignment alignment;
+  final AlignmentGeometry alignment;
   final TableColumnWidth? width;
 }
 
 /// A row definition for [CnTable].
 class CnTableRow {
-  const CnTableRow({
-    required this.cells,
-    this.selected = false,
-    this.decoration,
-  });
+  const CnTableRow({required this.cells, this.selected = false});
   final List<Widget> cells;
   final bool selected;
-  final Decoration? decoration;
 }
 
 /// A simple table component for displaying tabular data.
@@ -46,11 +42,7 @@ class CnTable extends StatelessWidget {
     this.striped = false,
     this.showRowDividers = true,
     this.showColumnDividers = false,
-    this.cellPadding = const .symmetric(horizontal: 16, vertical: 12),
     this.defaultColumnWidth,
-    this.headerColor,
-    this.headerTextStyle,
-    this.cellTextStyle,
   }) : assert(columns.length > 0, 'CnTable requires at least one column.');
   final List<CnTableColumn> columns;
   final List<CnTableRow> rows;
@@ -58,11 +50,7 @@ class CnTable extends StatelessWidget {
   final bool striped;
   final bool showRowDividers;
   final bool showColumnDividers;
-  final EdgeInsets cellPadding;
   final TableColumnWidth? defaultColumnWidth;
-  final Color? headerColor;
-  final TextStyle? headerTextStyle;
-  final TextStyle? cellTextStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -70,18 +58,13 @@ class CnTable extends StatelessWidget {
       rows.every((row) => row.cells.length == columns.length),
       'Each row must provide a cell for every column.',
     );
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     final cnTheme = CnTheme.of(context);
-    final resolvedHeaderColor = headerColor ?? scheme.surfaceContainerHighest;
-    final resolvedHeaderTextStyle =
-        headerTextStyle ??
-        CnTheme.textThemeOf(context).labelLarge
-            ?.copyWith(color: scheme.onSurfaceVariant, fontWeight: .w600);
-    final resolvedCellTextStyle =
-        cellTextStyle ??
-        CnTheme.textThemeOf(context).bodyMedium
-            ?.copyWith(color: scheme.onSurface);
-    final borderColor = scheme.outlineVariant;
+    final headerTextStyle = cnTheme.text.sm.medium.copyWith(
+      color: colors.foreground,
+    );
+    final cellTextStyle = cnTheme.text.sm.copyWith(color: colors.foreground);
+    final borderColor = colors.border;
     final tableBorder = TableBorder(
       horizontalInside: showRowDividers
           ? BorderSide(color: borderColor)
@@ -94,27 +77,26 @@ class CnTable extends StatelessWidget {
     final tableRows = <TableRow>[
       if (showHeader)
         TableRow(
-          decoration: BoxDecoration(color: resolvedHeaderColor),
           children: [
             for (final column in columns)
               _buildCell(
                 context,
                 child: column.label,
                 alignment: column.alignment,
-                style: resolvedHeaderTextStyle,
+                style: headerTextStyle,
               ),
           ],
         ),
       for (var i = 0; i < rows.length; i++)
         TableRow(
-          decoration: _rowDecoration(rows[i], scheme, striped, i),
+          decoration: _rowDecoration(rows[i], colors, striped, i),
           children: [
             for (var j = 0; j < rows[i].cells.length; j++)
               _buildCell(
                 context,
                 child: rows[i].cells[j],
                 alignment: columns[j].alignment,
-                style: resolvedCellTextStyle,
+                style: cellTextStyle,
               ),
           ],
         ),
@@ -145,37 +127,29 @@ class CnTable extends StatelessWidget {
   Widget _buildCell(
     BuildContext context, {
     required Widget child,
-    required Alignment alignment,
-    TextStyle? style,
+    required AlignmentGeometry alignment,
+    required TextStyle style,
   }) {
     return Padding(
-      padding: cellPadding,
+      padding: const .symmetric(horizontal: 8, vertical: 10),
       child: Align(
         alignment: alignment,
-        child: DefaultTextStyle(
-          style: style ?? DefaultTextStyle.of(context).style,
-          child: child,
-        ),
+        child: DefaultTextStyle.merge(style: style, child: child),
       ),
     );
   }
 
   Decoration? _rowDecoration(
     CnTableRow row,
-    ColorScheme scheme,
+    CnColors colors,
     bool striped,
     int index,
   ) {
-    if (row.decoration != null) {
-      return row.decoration;
-    }
     if (row.selected) {
-      return BoxDecoration(color: scheme.primary.withValues(alpha: 0.08));
+      return BoxDecoration(color: colors.muted);
     }
     if (striped && index.isOdd) {
-      return BoxDecoration(
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
-      );
+      return BoxDecoration(color: colors.muted.withValues(alpha: 0.5));
     }
     return null;
   }
@@ -203,12 +177,14 @@ class CnDataTableColumn<T> {
   final int Function(T a, T b)? sortComparator;
   final Comparable Function(T row)? sortValue;
   final bool numeric;
-  final Alignment? alignment;
+  final AlignmentGeometry? alignment;
   final TableColumnWidth? width;
 
-  Alignment get resolvedAlignment {
+  AlignmentGeometry get resolvedAlignment {
     return alignment ??
-        (numeric ? Alignment.centerRight : Alignment.centerLeft);
+        (numeric
+            ? AlignmentDirectional.centerEnd
+            : AlignmentDirectional.centerStart);
   }
 
   bool get canSort => sortable && (sortComparator != null || sortValue != null);
@@ -234,21 +210,19 @@ class CnDataTable<T> extends StatefulWidget {
     this.searchController,
     this.searchPlaceholder = 'Search...',
     this.searchValue,
-    this.enableSelection = false,
-    this.selectedRowIds,
+    this.selection,
     this.onSelectionChanged,
     this.rowsPerPage,
     this.rowsPerPageOptions,
     this.onRowsPerPageChanged,
     this.rowsPerPageLabel = 'Rows per page',
     this.showPageInfo = true,
-    this.initialPage = 1,
+    this.page = 1,
     this.onPageChanged,
     this.rowActionsBuilder,
     this.actionsColumnWidth,
-    this.enableColumnVisibility = false,
-    this.columnVisibility,
-    this.onColumnVisibilityChanged,
+    this.hiddenColumns,
+    this.onHiddenColumnsChanged,
     this.columnVisibilityLabel = 'Columns',
     this.columnVisibilityTrigger,
     this.striped = false,
@@ -259,7 +233,7 @@ class CnDataTable<T> extends StatefulWidget {
     this.emptyState,
   }) : assert(columns.length > 0, 'CnDataTable requires at least one column.'),
        assert(
-         !enableSelection || rowId != null,
+         selection == null || rowId != null,
          'Provide rowId when selection is enabled.',
        );
   final List<CnDataTableColumn<T>> columns;
@@ -271,21 +245,23 @@ class CnDataTable<T> extends StatefulWidget {
   final TextEditingController? searchController;
   final String searchPlaceholder;
   final String Function(T row)? searchValue;
-  final bool enableSelection;
-  final Set<String>? selectedRowIds;
+
+  /// The ids of the selected rows. Without it, the table has no checkboxes.
+  final Set<String>? selection;
   final ValueChanged<Set<String>>? onSelectionChanged;
   final int? rowsPerPage;
   final List<int>? rowsPerPageOptions;
   final ValueChanged<int>? onRowsPerPageChanged;
   final String rowsPerPageLabel;
   final bool showPageInfo;
-  final int initialPage;
+  final int page;
   final ValueChanged<int>? onPageChanged;
   final Widget Function(BuildContext context, T row)? rowActionsBuilder;
   final TableColumnWidth? actionsColumnWidth;
-  final bool enableColumnVisibility;
-  final Map<String, bool>? columnVisibility;
-  final ValueChanged<Map<String, bool>>? onColumnVisibilityChanged;
+
+  /// The ids of the hidden columns. Without it, the table has no column menu.
+  final Set<String>? hiddenColumns;
+  final ValueChanged<Set<String>>? onHiddenColumnsChanged;
   final String columnVisibilityLabel;
   final Widget? columnVisibilityTrigger;
   final bool striped;
@@ -302,11 +278,8 @@ class CnDataTable<T> extends StatefulWidget {
 class _CnDataTableState<T> extends State<CnDataTable<T>> {
   late TextEditingController _searchController;
   bool _ownsSearchController = false;
-  late Set<String> _selectedRowIds;
-  late Map<String, bool> _columnVisibility;
   String? _sortColumnId;
   bool _sortAscending = true;
-  late int _page;
 
   @override
   void initState() {
@@ -314,9 +287,6 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     _searchController = widget.searchController ?? TextEditingController();
     _ownsSearchController = widget.searchController == null;
     _searchController.addListener(_handleSearchChanged);
-    _selectedRowIds = widget.selectedRowIds ?? <String>{};
-    _columnVisibility = _resolveVisibility(widget.columnVisibility);
-    _page = widget.initialPage;
   }
 
   @override
@@ -330,15 +300,6 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
       _searchController = widget.searchController ?? TextEditingController();
       _ownsSearchController = widget.searchController == null;
       _searchController.addListener(_handleSearchChanged);
-    }
-    if (widget.selectedRowIds != null &&
-        widget.selectedRowIds != oldWidget.selectedRowIds) {
-      _selectedRowIds = widget.selectedRowIds ?? <String>{};
-    }
-    if (widget.columnVisibility != oldWidget.columnVisibility) {
-      _columnVisibility = _resolveVisibility(widget.columnVisibility);
-    } else if (widget.columns != oldWidget.columns) {
-      _columnVisibility = _resolveVisibility(_columnVisibility);
     }
   }
 
@@ -357,14 +318,13 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     final sortedRows = _applySort(filteredRows);
     final pagedRows = _applyPagination(sortedRows);
     final pageCount = _pageCount(filteredRows.length);
-    final effectivePage = _page.clamp(1, pageCount);
-    final selectionEnabled = widget.enableSelection;
-    final selected = widget.selectedRowIds ?? _selectedRowIds;
+    final effectivePage = widget.page.clamp(1, pageCount);
+    final selectionEnabled = widget.selection != null;
+    final selected = widget.selection ?? const <String>{};
     final totalSelected = filteredRows
         .where((row) => selected.contains(widget.rowId?.call(row)))
         .length;
-    final visibility = _normalizedVisibility(_currentVisibility);
-    final visibleColumns = _visibleColumns(visibility);
+    final visibleColumns = _visibleColumns();
     final rowsPerPage = widget.rowsPerPage;
     final rowsPerPageOptions = _resolveRowsPerPageOptions();
     final showRowsPerPage =
@@ -372,13 +332,13 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     final showPageInfo = widget.showPageInfo && rowsPerPage != null;
     final showPager = rowsPerPage != null;
     final showFooter =
-        widget.enableSelection || rowsPerPage != null || showRowsPerPage;
+        selectionEnabled || rowsPerPage != null || showRowsPerPage;
 
     final tableColumns = <CnTableColumn>[
       if (selectionEnabled)
         CnTableColumn(
           label: _buildSelectAllCheckbox(pagedRows, selected),
-          alignment: Alignment.center,
+          alignment: AlignmentDirectional.center,
           width: const FixedColumnWidth(48),
         ),
       for (final column in visibleColumns)
@@ -390,7 +350,7 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
       if (widget.rowActionsBuilder != null)
         CnTableColumn(
           label: const SizedBox.shrink(),
-          alignment: Alignment.center,
+          alignment: AlignmentDirectional.center,
           width: widget.actionsColumnWidth ?? const FixedColumnWidth(56),
         ),
     ];
@@ -428,20 +388,15 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
         if (widget.title != null)
           Padding(
             padding: const .only(bottom: 12),
-            child: DefaultTextStyle(
-              style:
-                  CnTheme.textThemeOf(context).titleMedium ??
-                  const TextStyle(fontSize: 16),
+            child: DefaultTextStyle.merge(
+              style: CnTheme.of(context).text.base.semibold,
               child: widget.title!,
             ),
           ),
         if (widget.searchable ||
             widget.actions != null ||
-            widget.enableColumnVisibility)
-          Padding(
-            padding: const .only(bottom: 12),
-            child: _buildToolbar(visibility),
-          ),
+            widget.hiddenColumns != null)
+          Padding(padding: const .only(bottom: 12), child: _buildToolbar()),
         table,
         if (showFooter)
           Padding(
@@ -451,10 +406,10 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
               children: [
                 Expanded(
                   child: Text(
-                    widget.enableSelection
+                    selectionEnabled
                         ? '$totalSelected of ${filteredRows.length} row(s) selected'
                         : '${filteredRows.length} row(s)',
-                    style: CnTheme.textThemeOf(context).bodySmall,
+                    style: CnTheme.of(context).text.xs,
                   ),
                 ),
                 Row(
@@ -466,7 +421,7 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
                     if (showPageInfo)
                       Text(
                         'Page $effectivePage of $pageCount',
-                        style: CnTheme.textThemeOf(context).bodySmall,
+                        style: CnTheme.of(context).text.xs,
                       ),
                     if (showPager) _buildPager(effectivePage, pageCount),
                   ],
@@ -478,10 +433,10 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     );
   }
 
-  Widget _buildToolbar(Map<String, bool> visibility) {
+  Widget _buildToolbar() {
     final trailingItems = <Widget>[];
-    if (widget.enableColumnVisibility) {
-      trailingItems.add(_buildColumnVisibilityMenu(visibility));
+    if (widget.hiddenColumns != null) {
+      trailingItems.add(_buildColumnVisibilityMenu());
     }
     if (widget.actions != null) {
       trailingItems.add(widget.actions!);
@@ -498,14 +453,15 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     );
   }
 
-  Widget _buildColumnVisibilityMenu(Map<String, bool> visibility) {
-    final visibleCount = visibility.values.where((value) => value).length;
+  Widget _buildColumnVisibilityMenu() {
+    final hidden = widget.hiddenColumns!;
+    final isLastVisible = hidden.length >= widget.columns.length - 1;
     final entries = [
       for (final column in widget.columns)
-        CnDropdownMenuCheckboxItem(
-          label: _columnToggleLabel(column),
-          checked: visibility[column.id] ?? true,
-          onChanged: _canToggleColumn(visibility, column.id, visibleCount)
+        CnMenuCheckboxItem(
+          label: Text(column.toggleLabel ?? column.id),
+          value: !hidden.contains(column.id),
+          onChanged: hidden.contains(column.id) || !isLastVisible
               ? (value) => _toggleColumnVisibility(column.id, value)
               : null,
         ),
@@ -514,23 +470,17 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     if (widget.columnVisibilityTrigger != null) {
       return CnDropdownMenu(
         entries: entries,
-        trigger: widget.columnVisibilityTrigger,
+        trigger: widget.columnVisibilityTrigger!,
       );
     }
 
-    return CnDropdownMenu(
+    return CnDropdownMenu.builder(
       entries: entries,
-      triggerBuilder: (context, controller) => CnButton(
+      builder: (context, toggle) => CnButton(
         variant: .outline,
         size: .sm,
-        leading: const Icon(Icons.view_column_outlined, size: 18),
-        onPressed: () {
-          if (controller.isOpen) {
-            controller.close();
-          } else {
-            controller.open();
-          }
-        },
+        leading: const Icon(Icons.view_column_outlined),
+        onPressed: toggle,
         child: Text(widget.columnVisibilityLabel),
       ),
     );
@@ -541,11 +491,11 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     return CnInput(
       controller: _searchController,
       placeholder: widget.searchPlaceholder,
-      prefixIcon: const Icon(Icons.search),
-      suffixIcon: query.isEmpty
+      leading: const Icon(Icons.search, size: 16),
+      trailing: query.isEmpty
           ? null
           : IconButton(
-              icon: const Icon(Icons.close),
+              icon: const Icon(Icons.close, size: 16),
               onPressed: () {
                 _searchController.clear();
               },
@@ -558,17 +508,14 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
       mainAxisSize: .min,
       spacing: 8,
       children: [
-        Text(
-          widget.rowsPerPageLabel,
-          style: CnTheme.textThemeOf(context).bodySmall,
-        ),
+        Text(widget.rowsPerPageLabel, style: CnTheme.of(context).text.xs),
         SizedBox(
           width: 92,
           child: CnSelect<int>(
             value: rowsPerPage,
             items: [
               for (final option in options)
-                DropdownMenuItem<int>(
+                CnSelectItem<int>(
                   value: option,
                   child: Text(option.toString()),
                 ),
@@ -596,22 +543,22 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
         _buildPagerButton(
           icon: Icons.first_page,
           enabled: canGoBack,
-          onPressed: () => _handlePageChanged(1),
+          onPressed: () => widget.onPageChanged?.call(1),
         ),
         _buildPagerButton(
           icon: Icons.chevron_left,
           enabled: canGoBack,
-          onPressed: () => _handlePageChanged(page - 1),
+          onPressed: () => widget.onPageChanged?.call(page - 1),
         ),
         _buildPagerButton(
           icon: Icons.chevron_right,
           enabled: canGoForward,
-          onPressed: () => _handlePageChanged(page + 1),
+          onPressed: () => widget.onPageChanged?.call(page + 1),
         ),
         _buildPagerButton(
           icon: Icons.last_page,
           enabled: canGoForward,
-          onPressed: () => _handlePageChanged(pageCount),
+          onPressed: () => widget.onPageChanged?.call(pageCount),
         ),
       ],
     );
@@ -622,12 +569,11 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     required bool enabled,
     required VoidCallback onPressed,
   }) {
-    return CnButton(
+    return CnButton.icon(
       variant: .outline,
       size: .sm,
-      padding: const EdgeInsets.all(8),
       onPressed: enabled ? onPressed : null,
-      child: Icon(icon, size: 16),
+      icon: Icon(icon),
     );
   }
 
@@ -644,78 +590,29 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     return next;
   }
 
-  String _columnToggleLabel(CnDataTableColumn<T> column) {
-    return column.toggleLabel ?? column.id;
-  }
-
-  bool _canToggleColumn(
-    Map<String, bool> visibility,
-    String id,
-    int visibleCount,
-  ) {
-    final isVisible = visibility[id] ?? true;
-    if (!isVisible) {
-      return true;
-    }
-    return visibleCount > 1;
-  }
-
-  void _toggleColumnVisibility(String id, bool value) {
-    final current = _normalizedVisibility(_currentVisibility);
-    final next = Map<String, bool>.from(current);
-    final visibleCount = next.values.where((item) => item).length;
-    if (!value && visibleCount <= 1) {
-      return;
-    }
-    next[id] = value;
-    final clearSort = !value && _sortColumnId == id;
-    widget.onColumnVisibilityChanged?.call(next);
-    if (widget.columnVisibility != null) {
-      setState(() {
-        if (clearSort) {
-          _sortColumnId = null;
-        }
-      });
-      return;
-    }
-    setState(() {
-      if (clearSort) {
-        _sortColumnId = null;
+  void _toggleColumnVisibility(String id, bool visible) {
+    final next = {...?widget.hiddenColumns};
+    if (visible) {
+      next.remove(id);
+    } else {
+      next.add(id);
+      if (_sortColumnId == id) {
+        setState(() => _sortColumnId = null);
       }
-      _columnVisibility = _resolveVisibility(next);
-    });
-  }
-
-  Map<String, bool> get _currentVisibility {
-    return widget.columnVisibility ?? _columnVisibility;
-  }
-
-  Map<String, bool> _resolveVisibility(Map<String, bool>? input) {
-    final resolved = <String, bool>{
-      for (final column in widget.columns) column.id: input?[column.id] ?? true,
-    };
-    return resolved;
-  }
-
-  Map<String, bool> _normalizedVisibility(Map<String, bool> input) {
-    final resolved = _resolveVisibility(input);
-    final hasVisible = resolved.values.any((value) => value);
-    if (hasVisible || widget.columns.isEmpty) {
-      return resolved;
     }
-    resolved[widget.columns.first.id] = true;
-    return resolved;
+    widget.onHiddenColumnsChanged?.call(next);
   }
 
-  List<CnDataTableColumn<T>> _visibleColumns(Map<String, bool> visibility) {
+  List<CnDataTableColumn<T>> _visibleColumns() {
+    final hidden = widget.hiddenColumns ?? const <String>{};
     return [
       for (final column in widget.columns)
-        if (visibility[column.id] ?? true) column,
+        if (!hidden.contains(column.id)) column,
     ];
   }
 
   Widget _buildHeaderCell(CnDataTableColumn<T> column) {
-    final scheme = CnTheme.colorSchemeOf(context);
+    final colors = CnTheme.of(context).colors;
     if (!column.canSort) {
       return column.label;
     }
@@ -723,7 +620,7 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     final icon = isSorted
         ? (_sortAscending ? Icons.arrow_upward : Icons.arrow_downward)
         : Icons.unfold_more;
-    final iconColor = isSorted ? scheme.onSurfaceVariant : scheme.outline;
+    final iconColor = isSorted ? colors.mutedForeground : colors.input;
 
     return InkWell(
       onTap: () => _toggleSort(column),
@@ -731,9 +628,7 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
         width: double.infinity,
         child: Row(
           mainAxisSize: .max,
-          mainAxisAlignment: column.resolvedAlignment == Alignment.centerRight
-              ? .end
-              : .start,
+          mainAxisAlignment: column.numeric ? .end : .start,
           spacing: 6,
           children: [
             Flexible(child: column.label),
@@ -786,10 +681,7 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
                   padding: const .symmetric(vertical: 8),
                   child:
                       widget.emptyState ??
-                      Text(
-                        'No results.',
-                        style: CnTheme.textThemeOf(context).bodyMedium,
-                      ),
+                      Text('No results.', style: CnTheme.of(context).text.sm),
                 )
               else
                 const SizedBox.shrink(),
@@ -887,7 +779,7 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
       return rows;
     }
     final pageCount = _pageCount(rows.length);
-    final effectivePage = _page.clamp(1, pageCount);
+    final effectivePage = widget.page.clamp(1, pageCount);
     final start = (effectivePage - 1) * rowsPerPage;
     var end = start + rowsPerPage;
     if (end > rows.length) {
@@ -924,20 +816,13 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
   }
 
   void _updateSelection(Set<String> next) {
-    if (widget.selectedRowIds != null) {
-      widget.onSelectionChanged?.call(next);
-      return;
-    }
-    setState(() => _selectedRowIds = next);
     widget.onSelectionChanged?.call(next);
   }
 
-  void _handlePageChanged(int page) {
-    setState(() => _page = page);
-    widget.onPageChanged?.call(page);
-  }
-
   void _handleSearchChanged() {
-    setState(() => _page = 1);
+    setState(() {});
+    if (widget.page != 1) {
+      widget.onPageChanged?.call(1);
+    }
   }
 }

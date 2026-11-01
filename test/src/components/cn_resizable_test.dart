@@ -13,6 +13,7 @@ void main() {
         width: 600,
         height: 300,
         child: CnResizable(
+          value: 0.5,
           primary: Container(
             color: Colors.red,
             child: const Center(child: Text('Panel 1')),

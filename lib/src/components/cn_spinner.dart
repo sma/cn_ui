@@ -1,34 +1,22 @@
 import 'package:material_ui/material_ui.dart';
 
-import '../../cn_ui.dart';
-
-/// A circular loading spinner component.
-///
-/// Wraps Flutter's CircularProgressIndicator with customizable size and stroke width.
+/// A loading indicator in the color of the surrounding icons.
 ///
 /// See also:
 ///
 ///  * [CnProgress], for linear progress indicators.
-class CnSpinner extends StatelessWidget {
-  const CnSpinner({
-    super.key,
-    this.size = 20,
-    this.strokeWidth = 2.5,
-    this.color,
-  });
-  final double size;
-  final double strokeWidth;
-  final Color? color;
-
+class const CnSpinner({
+  super.key,
+  final double size = 16,
+  final double strokeWidth = 2,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final scheme = CnTheme.colorSchemeOf(context);
-    return SizedBox(
-      width: size,
-      height: size,
+    return SizedBox.square(
+      dimension: size,
       child: CircularProgressIndicator(
         strokeWidth: strokeWidth,
-        color: color ?? scheme.primary,
+        color: IconTheme.of(context).color,
       ),
     );
   }
