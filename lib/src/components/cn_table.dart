@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_button.dart';
@@ -75,15 +75,12 @@ class CnTable extends StatelessWidget {
     final resolvedHeaderColor = headerColor ?? scheme.surfaceContainerHighest;
     final resolvedHeaderTextStyle =
         headerTextStyle ??
-        CnTheme.textThemeOf(context).labelLarge?.copyWith(
-          color: scheme.onSurfaceVariant,
-          fontWeight: .w600,
-        );
+        CnTheme.textThemeOf(context).labelLarge
+            ?.copyWith(color: scheme.onSurfaceVariant, fontWeight: .w600);
     final resolvedCellTextStyle =
         cellTextStyle ??
-        CnTheme.textThemeOf(
-          context,
-        ).bodyMedium?.copyWith(color: scheme.onSurface);
+        CnTheme.textThemeOf(context).bodyMedium
+            ?.copyWith(color: scheme.onSurface);
     final borderColor = scheme.outlineVariant;
     final tableBorder = TableBorder(
       horizontalInside: showRowDividers

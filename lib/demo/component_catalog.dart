@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../cn_ui.dart';
 
@@ -974,8 +974,7 @@ CnBadge(variant: .outline, child: Text('Outline'))''',
         title: 'Sizes',
         description: 'Small, medium, and large toggles.',
         preview: (context) => const _ToggleSizePreview(),
-        code:
-            '''CnToggle(size: .sm, value: selected, onChanged: (v) {}, child: Text('Sm'))
+        code: '''CnToggle(size: .sm, value: selected, onChanged: (v) {}, child: Text('Sm'))
 CnToggle(size: .md, value: selected, onChanged: (v) {}, child: Text('Md'))
 CnToggle(size: .lg, value: selected, onChanged: (v) {}, child: Text('Lg'))''',
       ),
@@ -2646,9 +2645,8 @@ class _FormPreviewState extends State<_FormPreview> {
             CnButton(
               onPressed: () {
                 if (formKey.currentState?.validate() ?? false) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Saved')));
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(const SnackBar(content: Text('Saved')));
                 }
               },
               child: const Text('Save'),
@@ -3617,9 +3615,8 @@ class _AspectRatioPreview extends StatelessWidget {
           child: Center(
             child: Text(
               '16:9',
-              style: CnTheme.textThemeOf(
-                context,
-              ).titleMedium?.copyWith(color: scheme.onSurface),
+              style: CnTheme.textThemeOf(context).titleMedium
+                  ?.copyWith(color: scheme.onSurface),
             ),
           ),
         ),
@@ -5308,9 +5305,8 @@ class _CalendarBookedPreviewState extends State<_CalendarBookedPreview> {
           final style = state.textStyle?.copyWith(
             decoration: unavailable ? TextDecoration.lineThrough : null,
             color: unavailable
-                ? CnTheme.colorSchemeOf(
-                    context,
-                  ).onSurfaceVariant.withValues(alpha: 0.5)
+                ? CnTheme.colorSchemeOf(context).onSurfaceVariant
+                      .withValues(alpha: 0.5)
                 : state.textStyle?.color,
           );
           return Text('${date.day}', style: style);
@@ -5886,9 +5882,8 @@ class _SidebarPreviewState extends State<_SidebarPreview> {
                     ),
                     Text(
                       'Select a project in the sidebar to load its details.',
-                      style: CnTheme.textThemeOf(
-                        context,
-                      ).bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                      style: CnTheme.textThemeOf(context).bodySmall
+                          ?.copyWith(color: scheme.onSurfaceVariant),
                     ),
                   ],
                 ),

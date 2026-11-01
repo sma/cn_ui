@@ -89,9 +89,8 @@ class CnChart extends StatelessWidget {
                     style:
                         labelStyle ??
                         CnTheme.textThemeOf(context).bodySmall?.copyWith(
-                          color: CnTheme.colorSchemeOf(
-                            context,
-                          ).onSurfaceVariant,
+                          color: CnTheme.colorSchemeOf(context)
+                              .onSurfaceVariant,
                         ),
                   ),
                 ),
@@ -171,9 +170,8 @@ class CnChartLegend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = CnTheme.textThemeOf(context).bodySmall?.copyWith(
-      color: CnTheme.colorSchemeOf(context).onSurfaceVariant,
-    );
+    final textStyle = CnTheme.textThemeOf(context).bodySmall
+        ?.copyWith(color: CnTheme.colorSchemeOf(context).onSurfaceVariant);
 
     return Wrap(
       spacing: spacing,

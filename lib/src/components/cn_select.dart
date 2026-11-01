@@ -1,5 +1,5 @@
 import 'package:cn_ui/cn_ui.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A dropdown select component that wraps Flutter's DropdownButtonFormField.
 ///

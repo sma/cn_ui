@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cn_ui/src/theme/cn_theme.dart';
 
 /// Configuration for a theme variant in golden tests
 class ThemeVariantConfig {
-
   const ThemeVariantConfig({
     required this.name,
     required this.cnTheme,
@@ -24,8 +23,7 @@ class GoldenThemeVariants {
       style: CnStyle.classic,
       baseColor: Color(0xFFF7F4EF),
       themeColor: Color(0xFF1D4ED8),
-      fontFamily:
-          '', // Use default font for testing to avoid Google Fonts HTTP requests
+      fontFamily: '', // Use default font for testing to avoid Google Fonts HTTP requests
       radius: 12,
     ),
     brightness: Brightness.light,

@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_button.dart';
@@ -13,12 +13,11 @@ enum CnCalendarSelectionMode { single, range, multiple }
 enum CnCalendarHeaderVariant { chevrons, dropdowns }
 
 /// A builder function for customizing day rendering in [CnCalendar].
-typedef CnCalendarDayBuilder =
-    Widget Function(
-      BuildContext context,
-      DateTime date,
-      CnCalendarDayState state,
-    );
+typedef CnCalendarDayBuilder = Widget Function(
+  BuildContext context,
+  DateTime date,
+  CnCalendarDayState state,
+);
 
 /// State information for a calendar day in [CnCalendar].
 @immutable

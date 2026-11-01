@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../cn_ui.dart';
 
@@ -195,9 +195,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                 children: [
                                   Text(
                                     'shadcn',
-                                    style: CnTheme.textThemeOf(
-                                      context,
-                                    ).titleSmall,
+                                    style: CnTheme.textThemeOf(context)
+                                        .titleSmall,
                                   ),
                                   Text(
                                     'me@acme.com',
@@ -386,9 +385,8 @@ class _MetricCard extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: CnTheme.textThemeOf(
-                context,
-              ).bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+              style: CnTheme.textThemeOf(context).bodySmall
+                  ?.copyWith(color: scheme.onSurfaceVariant),
             ),
           ),
           CnBadge(
@@ -406,9 +404,8 @@ class _MetricCard extends StatelessWidget {
                 ),
                 Text(
                   delta,
-                  style: CnTheme.textThemeOf(
-                    context,
-                  ).labelSmall?.copyWith(color: deltaColor),
+                  style: CnTheme.textThemeOf(context).labelSmall
+                      ?.copyWith(color: deltaColor),
                 ),
               ],
             ),
@@ -426,9 +423,8 @@ class _MetricCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   headline,
-                  style: CnTheme.textThemeOf(
-                    context,
-                  ).bodySmall?.copyWith(fontWeight: .w600),
+                  style: CnTheme.textThemeOf(context).bodySmall
+                      ?.copyWith(fontWeight: .w600),
                 ),
               ),
               Icon(
@@ -440,9 +436,8 @@ class _MetricCard extends StatelessWidget {
           ),
           Text(
             subtext,
-            style: CnTheme.textThemeOf(
-              context,
-            ).bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+            style: CnTheme.textThemeOf(context).bodySmall
+                ?.copyWith(color: scheme.onSurfaceVariant),
           ),
         ],
       ),

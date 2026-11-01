@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_label.dart';
@@ -61,9 +61,8 @@ class CnFieldLegend extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTextStyle(
       style:
-          CnTheme.textThemeOf(
-            context,
-          ).titleMedium?.copyWith(fontWeight: .w600) ??
+          CnTheme.textThemeOf(context).titleMedium
+              ?.copyWith(fontWeight: .w600) ??
           const TextStyle(fontWeight: FontWeight.w600),
       child: child,
     );
@@ -222,9 +221,8 @@ class CnFieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTextStyle(
       style:
-          CnTheme.textThemeOf(
-            context,
-          ).labelLarge?.copyWith(fontWeight: .w600) ??
+          CnTheme.textThemeOf(context).labelLarge
+              ?.copyWith(fontWeight: .w600) ??
           const TextStyle(fontWeight: FontWeight.w600),
       child: child,
     );
@@ -240,9 +238,8 @@ class CnFieldTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTextStyle(
       style:
-          CnTheme.textThemeOf(
-            context,
-          ).titleSmall?.copyWith(fontWeight: .w600) ??
+          CnTheme.textThemeOf(context).titleSmall
+              ?.copyWith(fontWeight: .w600) ??
           const TextStyle(fontWeight: FontWeight.w600),
       child: child,
     );
@@ -259,9 +256,8 @@ class CnFieldDescription extends StatelessWidget {
     final scheme = CnTheme.colorSchemeOf(context);
     return DefaultTextStyle(
       style:
-          CnTheme.textThemeOf(
-            context,
-          ).bodySmall?.copyWith(color: scheme.onSurfaceVariant) ??
+          CnTheme.textThemeOf(context).bodySmall
+              ?.copyWith(color: scheme.onSurfaceVariant) ??
           TextStyle(color: scheme.onSurfaceVariant),
       child: child,
     );
@@ -288,9 +284,8 @@ class CnFieldError extends StatelessWidget {
     final scheme = CnTheme.colorSchemeOf(context);
     return DefaultTextStyle(
       style:
-          CnTheme.textThemeOf(
-            context,
-          ).bodySmall?.copyWith(color: scheme.error, fontWeight: .w600) ??
+          CnTheme.textThemeOf(context).bodySmall
+              ?.copyWith(color: scheme.error, fontWeight: .w600) ??
           TextStyle(color: scheme.error),
       child: child,
     );

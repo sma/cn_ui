@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
@@ -261,10 +261,8 @@ class CnSidebarGroup extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Text(
               title!,
-              style: CnTheme.textThemeOf(context).labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant,
-                fontWeight: .w600,
-              ),
+              style: CnTheme.textThemeOf(context).labelSmall
+                  ?.copyWith(color: scheme.onSurfaceVariant, fontWeight: .w600),
             ),
           ),
         ...children,

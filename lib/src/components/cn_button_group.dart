@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
@@ -108,10 +108,8 @@ class const CnButtonGroupText({
     final scheme = CnTheme.colorSchemeOf(context);
     final resolvedStyle =
         style ??
-        CnTheme.textThemeOf(context).bodySmall?.copyWith(
-          color: scheme.onSurfaceVariant,
-          fontWeight: .w600,
-        );
+        CnTheme.textThemeOf(context).bodySmall
+            ?.copyWith(color: scheme.onSurfaceVariant, fontWeight: .w600);
 
     return Padding(
       padding:

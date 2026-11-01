@@ -3,6 +3,12 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     sort_constructors_first: true
+    unnecessary_breaks: true
+
+analyzer:
+  exclude:
+    - build/**
+    - web/**
 
 formatter:
   page_width: 80

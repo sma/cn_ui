@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
@@ -56,9 +56,8 @@ class CnDialog extends StatelessWidget {
               if (description != null)
                 DefaultTextStyle(
                   style:
-                      CnTheme.textThemeOf(
-                        context,
-                      ).bodyMedium?.copyWith(color: scheme.onSurfaceVariant) ??
+                      CnTheme.textThemeOf(context).bodyMedium
+                          ?.copyWith(color: scheme.onSurfaceVariant) ??
                       TextStyle(color: scheme.onSurfaceVariant),
                   child: description!,
                 ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../cn_ui.dart';
 
@@ -42,9 +42,8 @@ class CnAvatar extends StatelessWidget {
                 ? child
                 : Text(
                     initials ?? '',
-                    style: CnTheme.textThemeOf(
-                      context,
-                    ).labelLarge?.copyWith(color: resolvedForeground),
+                    style: CnTheme.textThemeOf(context).labelLarge
+                        ?.copyWith(color: resolvedForeground),
                   )
           : child,
     );

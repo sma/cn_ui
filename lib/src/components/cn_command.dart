@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_input.dart';
@@ -121,9 +121,8 @@ class _CnCommandState extends State<CnCommand> {
                 : Center(
                     child: Text(
                       widget.emptyText,
-                      style: CnTheme.textThemeOf(
-                        context,
-                      ).bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                      style: CnTheme.textThemeOf(context).bodySmall
+                          ?.copyWith(color: scheme.onSurfaceVariant),
                     ),
                   ),
           ),
@@ -193,9 +192,8 @@ class _CommandGroupList extends StatelessWidget {
             padding: const .fromLTRB(6, 6, 6, 4),
             child: Text(
               group.label!,
-              style: CnTheme.textThemeOf(
-                context,
-              ).labelMedium?.copyWith(color: scheme.onSurfaceVariant),
+              style: CnTheme.textThemeOf(context).labelMedium
+                  ?.copyWith(color: scheme.onSurfaceVariant),
             ),
           ),
         for (final item in group.items) _CommandItemTile(item: item),

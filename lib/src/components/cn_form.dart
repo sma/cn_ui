@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_label.dart';
@@ -93,19 +93,16 @@ class CnFormField extends StatelessWidget {
           if (resolvedDescription != null)
             DefaultTextStyle(
               style:
-                  CnTheme.textThemeOf(
-                    context,
-                  ).bodySmall?.copyWith(color: scheme.onSurfaceVariant) ??
+                  CnTheme.textThemeOf(context).bodySmall
+                      ?.copyWith(color: scheme.onSurfaceVariant) ??
                   TextStyle(color: scheme.onSurfaceVariant),
               child: resolvedDescription,
             ),
           if (errorText != null)
             DefaultTextStyle(
               style:
-                  CnTheme.textThemeOf(context).bodySmall?.copyWith(
-                    color: scheme.error,
-                    fontWeight: .w600,
-                  ) ??
+                  CnTheme.textThemeOf(context).bodySmall
+                      ?.copyWith(color: scheme.error, fontWeight: .w600) ??
                   TextStyle(color: scheme.error),
               child: Text(errorText!),
             ),

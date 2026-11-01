@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../cn_ui.dart';
 
@@ -302,9 +302,8 @@ class _TokenSurfacePreview extends StatelessWidget {
           Text('Design System', style: CnTheme.textThemeOf(context).titleLarge),
           Text(
             'Blend typography, color, and tone from a single theme.',
-            style: CnTheme.textThemeOf(
-              context,
-            ).bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+            style: CnTheme.textThemeOf(context).bodySmall
+                ?.copyWith(color: scheme.onSurfaceVariant),
           ),
           Wrap(
             spacing: 8,
@@ -473,9 +472,8 @@ class _TokenDataPreview extends StatelessWidget {
             title: const Text('Heads up'),
             description: Text(
               'Your theme tokens now apply to alerts and data tables.',
-              style: CnTheme.textThemeOf(
-                context,
-              ).bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+              style: CnTheme.textThemeOf(context).bodySmall
+                  ?.copyWith(color: scheme.onSurfaceVariant),
             ),
           ),
           Container(
@@ -575,9 +573,8 @@ class _TokenTableRow extends StatelessWidget {
           ),
           DefaultTextStyle(
             style:
-                CnTheme.textThemeOf(
-                  context,
-                ).bodySmall?.copyWith(color: scheme.onSurfaceVariant) ??
+                CnTheme.textThemeOf(context).bodySmall
+                    ?.copyWith(color: scheme.onSurfaceVariant) ??
                 TextStyle(color: scheme.onSurfaceVariant),
             child: trailing,
           ),

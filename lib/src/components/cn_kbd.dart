@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
@@ -39,9 +39,8 @@ class CnKbd extends StatelessWidget {
       ),
       child: DefaultTextStyle(
         style:
-            CnTheme.textThemeOf(
-              context,
-            ).labelSmall?.copyWith(fontWeight: .w600) ??
+            CnTheme.textThemeOf(context).labelSmall
+                ?.copyWith(fontWeight: .w600) ??
             const TextStyle(fontWeight: FontWeight.w600),
         child: child,
       ),

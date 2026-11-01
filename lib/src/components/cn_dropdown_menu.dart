@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_menu_styles.dart';
@@ -110,9 +110,8 @@ Widget _buildCnDropdownMenuEntry(
       closeOnActivate: entry.closeOnActivate,
       onPressed: entry.onSelected,
       style: entry.role == .destructive
-          ? ButtonStyle(
-              foregroundColor: WidgetStateProperty.all(scheme.error),
-            ).merge(menuItemStyle)
+          ? ButtonStyle(foregroundColor: WidgetStateProperty.all(scheme.error))
+                .merge(menuItemStyle)
           : menuItemStyle,
       child: entry.label != null ? Text(entry.label!) : entry.child,
     ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -57,9 +57,8 @@ class _ExampleBlock extends StatelessWidget {
             if (example.description != null)
               Text(
                 example.description!,
-                style: CnTheme.textThemeOf(
-                  context,
-                ).bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                style: CnTheme.textThemeOf(context).bodySmall
+                    ?.copyWith(color: scheme.onSurfaceVariant),
               ),
           ],
         ),

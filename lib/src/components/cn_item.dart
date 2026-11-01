@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
@@ -185,9 +185,8 @@ class CnItemTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTextStyle(
       style:
-          CnTheme.textThemeOf(
-            context,
-          ).titleSmall?.copyWith(fontWeight: .w600) ??
+          CnTheme.textThemeOf(context).titleSmall
+              ?.copyWith(fontWeight: .w600) ??
           const TextStyle(fontWeight: FontWeight.w600),
       child: child,
     );
@@ -204,9 +203,8 @@ class CnItemDescription extends StatelessWidget {
     final scheme = CnTheme.colorSchemeOf(context);
     return DefaultTextStyle(
       style:
-          CnTheme.textThemeOf(
-            context,
-          ).bodySmall?.copyWith(color: scheme.onSurfaceVariant) ??
+          CnTheme.textThemeOf(context).bodySmall
+              ?.copyWith(color: scheme.onSurfaceVariant) ??
           TextStyle(color: scheme.onSurfaceVariant),
       child: child,
     );

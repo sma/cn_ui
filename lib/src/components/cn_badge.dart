@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:cn_ui/previews.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
@@ -37,9 +37,8 @@ class const CnBadge({
         data: IconThemeData(color: visuals.foreground, size: 16),
         child: DefaultTextStyle(
           style:
-              CnTheme.textThemeOf(
-                context,
-              ).labelSmall?.copyWith(color: visuals.foreground) ??
+              CnTheme.textThemeOf(context).labelSmall
+                  ?.copyWith(color: visuals.foreground) ??
               TextStyle(color: visuals.foreground),
           child: child,
         ),

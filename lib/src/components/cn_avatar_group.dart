@@ -1,6 +1,6 @@
 import 'package:cn_ui/cn_ui.dart';
 // import 'package:cn_ui/previews.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A component for displaying multiple overlapping avatars.
 ///

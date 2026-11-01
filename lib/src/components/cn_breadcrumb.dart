@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:cn_ui/previews.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_context_menu.dart';

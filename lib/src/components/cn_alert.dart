@@ -1,5 +1,5 @@
 import 'package:cn_ui/previews.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 
@@ -73,9 +73,8 @@ class CnAlert extends StatelessWidget {
                 if (description != null)
                   DefaultTextStyle(
                     style:
-                        CnTheme.textThemeOf(
-                          context,
-                        ).bodySmall?.copyWith(color: visuals.foreground) ??
+                        CnTheme.textThemeOf(context).bodySmall
+                            ?.copyWith(color: visuals.foreground) ??
                         TextStyle(color: visuals.foreground),
                     child: description!,
                   ),

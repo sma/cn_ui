@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../cn_ui.dart';
 import 'component_page.dart';
@@ -68,14 +68,12 @@ MaterialApp(
                   _FeatureCard(
                     icon: Icons.palette_outlined,
                     title: 'Theme tokens',
-                    description:
-                        'Swap base, accent, and menu colors from a single CnTheme.',
+                    description: 'Swap base, accent, and menu colors from a single CnTheme.',
                   ),
                   _FeatureCard(
                     icon: Icons.widgets_outlined,
                     title: 'Material-native',
-                    description:
-                        'Pure Flutter widgets with Material 3 defaults and shadcn flavor.',
+                    description: 'Pure Flutter widgets with Material 3 defaults and shadcn flavor.',
                   ),
                   _FeatureCard(
                     icon: Icons.code_rounded,

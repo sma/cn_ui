@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
 import 'cn_button.dart';
@@ -137,12 +137,10 @@ class _NavigationMenuItem extends StatelessWidget {
 
   Widget _buildMenuLink(BuildContext context, CnNavigationMenuLink link) {
     final scheme = CnTheme.colorSchemeOf(context);
-    final titleStyle = CnTheme.textThemeOf(
-      context,
-    ).bodyMedium?.copyWith(fontWeight: .w600, color: scheme.onSurface);
-    final descriptionStyle = CnTheme.textThemeOf(
-      context,
-    ).bodySmall?.copyWith(color: scheme.onSurfaceVariant);
+    final titleStyle = CnTheme.textThemeOf(context).bodyMedium
+        ?.copyWith(fontWeight: .w600, color: scheme.onSurface);
+    final descriptionStyle = CnTheme.textThemeOf(context).bodySmall
+        ?.copyWith(color: scheme.onSurfaceVariant);
 
     return MenuItemButton(
       onPressed: link.onTap,
