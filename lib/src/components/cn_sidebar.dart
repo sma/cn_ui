@@ -3,6 +3,9 @@ import 'package:material_ui/material_ui.dart';
 import '../theme/cn_theme.dart';
 import 'cn_input.dart';
 
+/// Visual style variants for [CnSidebar].
+enum CnSidebarVariant { standard, inset }
+
 /// A vertical navigation panel that can collapse to its icons.
 ///
 /// The surrounding code owns the [collapsed] state. A [CnSidebarTrigger] inside
@@ -13,8 +16,10 @@ import 'cn_input.dart';
 ///  * [CnSidebarItem], for individual sidebar items.
 ///  * [CnSidebarGroup], for grouping sidebar items.
 ///  * [CnNavigationMenu], for horizontal navigation.
+///  * [CnSidebarInset], for the page next to an inset sidebar.
 class const CnSidebar({
   super.key,
+  final CnSidebarVariant variant = .standard,
   final bool collapsed = false,
   final ValueChanged<bool>? onCollapsedChanged,
   required final Widget child,
@@ -30,11 +35,13 @@ class const CnSidebar({
       collapsed: collapsed,
       onCollapsedChanged: onCollapsedChanged,
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colors.sidebar,
-          borderRadius: .circular(theme.radii.md),
-          border: Border.all(color: colors.sidebarBorder),
-        ),
+        decoration: variant == .inset
+            ? const BoxDecoration()
+            : BoxDecoration(
+                color: colors.sidebar,
+                borderRadius: .circular(theme.radii.md),
+                border: Border.all(color: colors.sidebarBorder),
+              ),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOut,
@@ -47,6 +54,27 @@ class const CnSidebar({
             child: child,
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The page next to an inset [CnSidebar]. Both sit on the sidebar color.
+class const CnSidebarInset({super.key, required final Widget child})
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = CnTheme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 8, 8),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: theme.colors.background,
+          borderRadius: .circular(theme.radii.xl),
+          border: Border.all(color: theme.colors.sidebarBorder),
+        ),
+        child: child,
       ),
     );
   }
@@ -82,7 +110,7 @@ class const CnSidebarHeader({super.key, required final Widget child})
   }
 }
 
-/// A scrollable content section for [CnSidebar].
+/// A scrollable content section for [CnSidebar] that takes the free height.
 class const CnSidebarContent({
   super.key,
   required final List<Widget> children,
@@ -90,7 +118,7 @@ class const CnSidebarContent({
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Flexible(
+    return Expanded(
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: .stretch,

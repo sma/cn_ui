@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import '../../cn_ui.dart';
 
 /// Chart type variants for [CnChartSeries].
@@ -41,12 +43,20 @@ class CnChart extends StatelessWidget {
     this.showLegend = true,
     this.showGrid = true,
     this.gridLines = 4,
+    this.stacked = false,
+    this.curved = false,
   });
   final List<CnChartSeries> series;
   final double height;
   final bool showLegend;
   final bool showGrid;
   final int gridLines;
+
+  /// Puts each series on top of the ones before it.
+  final bool stacked;
+
+  /// Draws lines and areas as smooth curves.
+  final bool curved;
 
   @override
   Widget build(BuildContext context) {
@@ -68,25 +78,50 @@ class CnChart extends StatelessWidget {
           showGrid: showGrid,
           gridLines: gridLines,
           gridColor: colors.border.withValues(alpha: 0.4),
+          stacked: stacked,
+          curved: curved,
         ),
       ),
     );
 
+    final hasBars = series.any((entry) => entry.type == .bar);
     final labelRow = labels.isEmpty
         ? null
-        : Row(
-            children: [
-              for (final label in labels)
-                Expanded(
-                  child: Text(
-                    label,
-                    textAlign: .center,
-                    style: CnTheme.of(context).text.xs.copyWith(
-                      color: CnTheme.of(context).colors.mutedForeground,
-                    ),
-                  ),
-                ),
-            ],
+        : Padding(
+            padding: const .symmetric(horizontal: 16),
+            child: SizedBox(
+              height: 16,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Shows only as many labels as fit next to each other.
+                  final stride = math.max(
+                    1,
+                    (labels.length * 64 / constraints.maxWidth).ceil(),
+                  );
+                  final last = math.max(1, labels.length - 1);
+                  return Stack(
+                    children: [
+                      for (var i = 0; i < labels.length; i += stride)
+                        Align(
+                          alignment: Alignment(
+                            hasBars
+                                ? (i + 0.5) / labels.length * 2 - 1
+                                : i / last * 2 - 1,
+                            0,
+                          ),
+                          child: Text(
+                            labels[i],
+                            maxLines: 1,
+                            softWrap: false,
+                            style: CnTheme.of(context).text.xs
+                                .copyWith(color: colors.mutedForeground),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ),
           );
 
     return Column(
@@ -120,6 +155,7 @@ class CnChart extends StatelessWidget {
   ) {
     final colors = CnTheme.of(context).colors;
     final palette = colors.charts;
+    final totals = List.filled(labels.length, 0.0);
 
     return [
       for (var index = 0; index < series.length; index++)
@@ -131,13 +167,15 @@ class CnChart extends StatelessWidget {
           fillColor: series[index].fillColor,
           showPoints: series[index].showPoints,
           values: [
-            for (final label in labels)
-              series[index].data
-                  .firstWhere(
-                    (point) => point.label == label,
-                    orElse: () => const CnChartPoint('', 0),
-                  )
-                  .value,
+            for (var i = 0; i < labels.length; i++)
+              totals[i] =
+                  (stacked ? totals[i] : 0) +
+                  series[index].data
+                      .firstWhere(
+                        (point) => point.label == labels[i],
+                        orElse: () => const CnChartPoint('', 0),
+                      )
+                      .value,
           ],
         ),
     ];
@@ -218,6 +256,8 @@ class _CnChartPainter extends CustomPainter {
     required this.showGrid,
     required this.gridLines,
     required this.gridColor,
+    required this.stacked,
+    required this.curved,
   });
   final List<String> labels;
   final List<_CnChartSeriesLayout> series;
@@ -225,6 +265,8 @@ class _CnChartPainter extends CustomPainter {
   final bool showGrid;
   final int gridLines;
   final Color gridColor;
+  final bool stacked;
+  final bool curved;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -299,32 +341,15 @@ class _CnChartPainter extends CustomPainter {
     final lineSeries = series
         .where((entry) => entry.type == .line || entry.type == .area)
         .toList();
-    if (lineSeries.isEmpty) {
-      return;
-    }
-
     final count = labels.length;
     final step = count == 1 ? 0.0 : rect.width / (count - 1);
 
     for (final entry in lineSeries) {
-      final path = Path();
       final paint = Paint()
         ..color = entry.color
         ..strokeWidth = entry.lineWidth
         ..style = PaintingStyle.stroke;
-
-      for (var index = 0; index < entry.values.length; index++) {
-        final value = entry.values[index];
-        final x = rect.left + step * index;
-        final y = rect.bottom - (value / maxValue) * rect.height;
-        if (index == 0) {
-          path.moveTo(x, y);
-        } else {
-          path.lineTo(x, y);
-        }
-      }
-
-      canvas.drawPath(path, paint);
+      canvas.drawPath(_linePath(entry, rect, maxValue), paint);
 
       if (entry.showPoints) {
         final pointPaint = Paint()..color = entry.color;
@@ -338,34 +363,49 @@ class _CnChartPainter extends CustomPainter {
     }
   }
 
-  void _paintAreas(Canvas canvas, Rect rect, double maxValue) {
-    final areaSeries = series.where((entry) => entry.type == .area).toList();
-    if (areaSeries.isEmpty) {
-      return;
-    }
-
+  Path _linePath(_CnChartSeriesLayout entry, Rect rect, double maxValue) {
     final count = labels.length;
     final step = count == 1 ? 0.0 : rect.width / (count - 1);
-
-    for (final entry in areaSeries) {
-      final path = Path();
-      for (var index = 0; index < entry.values.length; index++) {
-        final value = entry.values[index];
-        final x = rect.left + step * index;
-        final y = rect.bottom - (value / maxValue) * rect.height;
-        if (index == 0) {
-          path.moveTo(x, y);
-        } else {
-          path.lineTo(x, y);
-        }
+    final path = Path();
+    for (var index = 0; index < entry.values.length; index++) {
+      final x = rect.left + step * index;
+      final y = rect.bottom - (entry.values[index] / maxValue) * rect.height;
+      if (index == 0) {
+        path.moveTo(x, y);
+      } else if (curved) {
+        final previous =
+            rect.bottom - (entry.values[index - 1] / maxValue) * rect.height;
+        final middle = x - step / 2;
+        path.cubicTo(middle, previous, middle, y, x, y);
+      } else {
+        path.lineTo(x, y);
       }
-      path.lineTo(rect.right, rect.bottom);
-      path.lineTo(rect.left, rect.bottom);
-      path.close();
+    }
+    return path;
+  }
 
-      final fillPaint = Paint()
-        ..color = entry.fillColor ?? entry.color.withValues(alpha: 0.18)
-        ..style = PaintingStyle.fill;
+  void _paintAreas(Canvas canvas, Rect rect, double maxValue) {
+    final areaSeries = series.where((entry) => entry.type == .area).toList();
+
+    // The highest stack comes first, so the others stay visible on top of it.
+    for (final entry in stacked ? areaSeries.reversed : areaSeries) {
+      final path = _linePath(entry, rect, maxValue)
+        ..lineTo(rect.right, rect.bottom)
+        ..lineTo(rect.left, rect.bottom)
+        ..close();
+      final fillPaint = Paint()..style = PaintingStyle.fill;
+      if (entry.fillColor != null) {
+        fillPaint.color = entry.fillColor!;
+      } else {
+        fillPaint.shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            entry.color.withValues(alpha: 0.6),
+            entry.color.withValues(alpha: 0.1),
+          ],
+        ).createShader(rect);
+      }
       canvas.drawPath(path, fillPaint);
     }
   }
@@ -389,6 +429,8 @@ class _CnChartPainter extends CustomPainter {
         oldDelegate.padding != padding ||
         oldDelegate.showGrid != showGrid ||
         oldDelegate.gridLines != gridLines ||
-        oldDelegate.gridColor != gridColor;
+        oldDelegate.gridColor != gridColor ||
+        oldDelegate.stacked != stacked ||
+        oldDelegate.curved != curved;
   }
 }

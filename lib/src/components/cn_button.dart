@@ -113,7 +113,11 @@ class CnButton extends StatelessWidget {
                 mainAxisSize: expand ? .max : .min,
                 mainAxisAlignment: .center,
                 spacing: 8,
-                children: [?leading, child, ?trailing],
+                children: [
+                  ?leading,
+                  if (expand) Flexible(child: child) else child,
+                  ?trailing,
+                ],
               ),
       ),
     );

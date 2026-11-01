@@ -19,6 +19,9 @@ class const CnTabs<T>({
   final ValueChanged<T>? onChanged,
   final CnTabsVariant variant = .standard,
   final Axis direction = .horizontal,
+
+  /// Shown at the end of the row of triggers.
+  final Widget? trailing,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -42,6 +45,7 @@ class const CnTabs<T>({
     );
     final list = variant == .standard
         ? Container(
+            height: direction == .horizontal ? 36 : null,
             padding: const .all(3),
             decoration: BoxDecoration(
               color: theme.colors.muted,
@@ -66,9 +70,26 @@ class const CnTabs<T>({
       );
     }
     return Column(
-      crossAxisAlignment: .start,
-      spacing: 8,
-      children: [list, content],
+      crossAxisAlignment: .stretch,
+      spacing: 16,
+      children: [
+        Row(
+          spacing: 16,
+          children: [
+            Expanded(
+              child: Align(
+                alignment: .centerStart,
+                child: SingleChildScrollView(
+                  scrollDirection: .horizontal,
+                  child: list,
+                ),
+              ),
+            ),
+            ?trailing,
+          ],
+        ),
+        content,
+      ],
     );
   }
 }

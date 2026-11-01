@@ -35,6 +35,10 @@ We take names and features from shadcn/ui. The shape of the API follows Flutter.
 | Alternatives | A named constructor, not "A or B" with an `assert`: `CnPopover.builder`, `CnText.h1`. |
 | Types | Generics instead of `Object?`. |
 
+## Layout
+
+- Layouts adapt to the available width, not the screen. `CnResponsive` builds per `CnBreakpoint` and falls back to the next smaller one.
+
 ## Overlays
 
 - `showCnX(context:, builder:)` with a `WidgetBuilder`. Close with `Navigator.pop`.

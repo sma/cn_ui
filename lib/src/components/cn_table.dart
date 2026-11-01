@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:material_ui/material_ui.dart';
 
 import '../theme/cn_theme.dart';
@@ -42,6 +44,7 @@ class CnTable extends StatelessWidget {
     this.striped = false,
     this.showRowDividers = true,
     this.showColumnDividers = false,
+    this.mutedHeader = false,
     this.defaultColumnWidth,
   }) : assert(columns.length > 0, 'CnTable requires at least one column.');
   final List<CnTableColumn> columns;
@@ -50,6 +53,10 @@ class CnTable extends StatelessWidget {
   final bool striped;
   final bool showRowDividers;
   final bool showColumnDividers;
+  final bool mutedHeader;
+
+  /// How wide columns without a width are. By default, they take the width of
+  /// their content and share the remaining space in proportion to it.
   final TableColumnWidth? defaultColumnWidth;
 
   @override
@@ -77,6 +84,7 @@ class CnTable extends StatelessWidget {
     final tableRows = <TableRow>[
       if (showHeader)
         TableRow(
+          decoration: mutedHeader ? BoxDecoration(color: colors.muted) : null,
           children: [
             for (final column in columns)
               _buildCell(
@@ -110,8 +118,7 @@ class CnTable extends StatelessWidget {
           border: Border.all(color: borderColor),
         ),
         child: Table(
-          defaultColumnWidth:
-              defaultColumnWidth ?? const IntrinsicColumnWidth(),
+          defaultColumnWidth: defaultColumnWidth ?? const _ContentColumnWidth(),
           columnWidths: {
             for (var i = 0; i < columns.length; i++)
               if (columns[i].width != null) i: columns[i].width!,
@@ -152,6 +159,31 @@ class CnTable extends StatelessWidget {
       return BoxDecoration(color: colors.muted.withValues(alpha: 0.5));
     }
     return null;
+  }
+}
+
+/// Shares the width of a table in proportion to the content of its columns,
+/// like the automatic layout of an HTML table.
+class _ContentColumnWidth extends TableColumnWidth {
+  const _ContentColumnWidth();
+
+  @override
+  double minIntrinsicWidth(Iterable<RenderBox> cells, double containerWidth) {
+    return cells.fold(0, (width, cell) {
+      return math.max(width, cell.getMinIntrinsicWidth(double.infinity));
+    });
+  }
+
+  @override
+  double maxIntrinsicWidth(Iterable<RenderBox> cells, double containerWidth) {
+    return cells.fold(0, (width, cell) {
+      return math.max(width, cell.getMaxIntrinsicWidth(double.infinity));
+    });
+  }
+
+  @override
+  double flex(Iterable<RenderBox> cells) {
+    return maxIntrinsicWidth(cells, double.infinity);
   }
 }
 
@@ -228,6 +260,7 @@ class CnDataTable<T> extends StatefulWidget {
     this.striped = false,
     this.showRowDividers = true,
     this.showColumnDividers = false,
+    this.mutedHeader = false,
     this.enableHorizontalScroll = true,
     this.minTableWidth,
     this.emptyState,
@@ -259,7 +292,8 @@ class CnDataTable<T> extends StatefulWidget {
   final Widget Function(BuildContext context, T row)? rowActionsBuilder;
   final TableColumnWidth? actionsColumnWidth;
 
-  /// The ids of the hidden columns. Without it, the table has no column menu.
+  /// The ids of the hidden columns. With [onHiddenColumnsChanged], the table
+  /// also shows a menu for them. Without it, the menu can live somewhere else.
   final Set<String>? hiddenColumns;
   final ValueChanged<Set<String>>? onHiddenColumnsChanged;
   final String columnVisibilityLabel;
@@ -267,6 +301,7 @@ class CnDataTable<T> extends StatefulWidget {
   final bool striped;
   final bool showRowDividers;
   final bool showColumnDividers;
+  final bool mutedHeader;
   final bool enableHorizontalScroll;
   final double? minTableWidth;
   final Widget? emptyState;
@@ -370,20 +405,30 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
       striped: widget.striped,
       showRowDividers: widget.showRowDividers,
       showColumnDividers: widget.showColumnDividers,
+      mutedHeader: widget.mutedHeader,
     );
 
     if (widget.enableHorizontalScroll) {
-      table = SingleChildScrollView(
-        scrollDirection: .horizontal,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minWidth: widget.minTableWidth ?? 0),
-          child: table,
+      // Fills the available width and only scrolls if the content needs more.
+      final content = table;
+      table = LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          scrollDirection: .horizontal,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: math.max(
+                constraints.maxWidth,
+                widget.minTableWidth ?? 0,
+              ),
+            ),
+            child: IntrinsicWidth(child: content),
+          ),
         ),
       );
     }
 
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: .stretch,
       children: [
         if (widget.title != null)
           Padding(
@@ -393,9 +438,7 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
               child: widget.title!,
             ),
           ),
-        if (widget.searchable ||
-            widget.actions != null ||
-            widget.hiddenColumns != null)
+        if (widget.searchable || widget.actions != null || _showsColumnMenu)
           Padding(padding: const .only(bottom: 12), child: _buildToolbar()),
         table,
         if (showFooter)
@@ -433,9 +476,14 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     );
   }
 
+  bool get _showsColumnMenu {
+    return widget.hiddenColumns != null &&
+        widget.onHiddenColumnsChanged != null;
+  }
+
   Widget _buildToolbar() {
     final trailingItems = <Widget>[];
-    if (widget.hiddenColumns != null) {
+    if (_showsColumnMenu) {
       trailingItems.add(_buildColumnVisibilityMenu());
     }
     if (widget.actions != null) {

@@ -1,7 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../cn_ui.dart';
+import 'dashboard_data.dart';
 
+/// A rebuild of the shadcn/ui block dashboard-01.
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
@@ -10,283 +12,217 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  String _range = '3m';
-  String _section = 'outline';
+  bool _sidebarVisible = true;
+  int _range = 90;
+  String _tab = 'outline';
   int _rowsPerPage = 10;
   int _page = 1;
   Set<String> _selection = {};
+  Set<String> _hiddenColumns = {};
 
   @override
   Widget build(BuildContext context) {
     final colors = CnTheme.of(context).colors;
-    final cnTheme = CnTheme.of(context);
 
-    return Container(
-      color: colors.background,
-      child: Row(
-        crossAxisAlignment: .start,
+    Widget page(double inset) {
+      return CnSidebarInset(
+        child: Column(
+          crossAxisAlignment: .stretch,
+          children: [
+            _SiteHeader(
+              inset: inset,
+              onToggleSidebar: () {
+                setState(() => _sidebarVisible = !_sidebarVisible);
+              },
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: inset, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: .stretch,
+                  spacing: 24,
+                  children: [
+                    const _SectionCards(),
+                    _VisitorsChart(
+                      range: _range,
+                      onRangeChanged: (value) {
+                        setState(() => _range = value);
+                      },
+                    ),
+                    _DocumentsTable(
+                      tab: _tab,
+                      onTabChanged: (value) => setState(() => _tab = value),
+                      rowsPerPage: _rowsPerPage,
+                      onRowsPerPageChanged: (value) {
+                        setState(() => _rowsPerPage = value);
+                      },
+                      page: _page,
+                      onPageChanged: (value) => setState(() => _page = value),
+                      selection: _selection,
+                      onSelectionChanged: (value) {
+                        setState(() => _selection = value);
+                      },
+                      hiddenColumns: _hiddenColumns,
+                      onHiddenColumnsChanged: (value) {
+                        setState(() => _hiddenColumns = value);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ColoredBox(
+      color: colors.sidebar,
+      child: CnResponsive(
+        small: (context, _) => page(16),
+        medium: (context, _) => Row(
+          crossAxisAlignment: .stretch,
+          children: [
+            if (_sidebarVisible) const _AppSidebar(),
+            Expanded(child: page(24)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AppSidebar extends StatelessWidget {
+  const _AppSidebar();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = CnTheme.of(context);
+
+    return CnSidebar(
+      variant: .inset,
+      expandedWidth: 240,
+      child: Column(
+        crossAxisAlignment: .stretch,
+        spacing: 8,
         children: [
-          SizedBox(
-            width: 240,
-            child: CnSidebar(
-              expandedWidth: 240,
-              collapsedWidth: 240,
-              child: Column(
-                crossAxisAlignment: .stretch,
-                spacing: 12,
+          CnSidebarHeader(
+            child: Padding(
+              padding: const .symmetric(horizontal: 8),
+              child: Row(
+                spacing: 8,
                 children: [
-                  CnSidebarHeader(
-                    child: Row(
-                      mainAxisAlignment: .spaceBetween,
-                      children: [
-                        Row(
-                          spacing: 8,
-                          children: [
-                            Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: colors.foreground,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.circle,
-                                size: 12,
-                                color: colors.background,
-                              ),
-                            ),
-                            Text(
-                              'Acme Inc.',
-                              style: CnTheme.of(context).text.sm.semibold,
-                            ),
-                          ],
-                        ),
-                        Icon(
-                          Icons.mail_outline,
-                          size: 18,
-                          color: colors.mutedForeground,
-                        ),
-                      ],
-                    ),
-                  ),
-                  CnButton(
-                    variant: .secondary,
-                    expand: true,
-                    size: .sm,
-                    onPressed: () {},
-                    leading: const Icon(Icons.add, size: 16),
-                    child: const Text('Quick Create'),
-                  ),
-                  CnSidebarContent(
-                    children: [
-                      CnSidebarGroup(
-                        children: const [
-                          CnSidebarItem(
-                            leading: Icon(Icons.dashboard_outlined),
-                            label: Text('Dashboard'),
-                            selected: true,
-                          ),
-                          CnSidebarItem(
-                            leading: Icon(Icons.timer_outlined),
-                            label: Text('Lifecycle'),
-                          ),
-                          CnSidebarItem(
-                            leading: Icon(Icons.insights_outlined),
-                            label: Text('Analytics'),
-                          ),
-                          CnSidebarItem(
-                            leading: Icon(Icons.folder_outlined),
-                            label: Text('Projects'),
-                          ),
-                          CnSidebarItem(
-                            leading: Icon(Icons.people_outline),
-                            label: Text('Team'),
-                          ),
-                        ],
-                      ),
-                      const CnSidebarSeparator(),
-                      CnSidebarGroup(
-                        title: Text('Documents'),
-                        children: [
-                          Column(
-                            crossAxisAlignment: .stretch,
-                            spacing: 4,
-                            children: const [
-                              CnSidebarItem(
-                                leading: Icon(Icons.layers_outlined),
-                                label: Text('Data Library'),
-                              ),
-                              CnSidebarItem(
-                                leading: Icon(Icons.insert_chart_outlined),
-                                label: Text('Reports'),
-                              ),
-                              CnSidebarItem(
-                                leading: Icon(Icons.auto_awesome_outlined),
-                                label: Text('Word Assistant'),
-                              ),
-                              CnSidebarItem(
-                                leading: Icon(Icons.more_horiz),
-                                label: Text('More'),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const CnSidebarSeparator(),
-                      CnSidebarGroup(
-                        children: const [
-                          CnSidebarItem(
-                            leading: Icon(Icons.settings_outlined),
-                            label: Text('Settings'),
-                          ),
-                          CnSidebarItem(
-                            leading: Icon(Icons.help_outline),
-                            label: Text('Get Help'),
-                          ),
-                          CnSidebarItem(
-                            leading: Icon(Icons.search),
-                            label: Text('Search'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  CnSidebarFooter(
-                    child: CnContextMenu(
-                      entries: [
-                        CnMenuAction(label: Text('Account'), onSelected: () {}),
-                        CnMenuAction(label: Text('Billing'), onSelected: () {}),
-                        CnMenuAction(
-                          label: Text('Notifications'),
-                          onSelected: () {},
-                        ),
-                        const CnMenuSeparator(),
-                        CnMenuAction(
-                          label: Text('Log out'),
-                          role: .destructive,
-                          onSelected: () {},
-                        ),
-                      ],
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colors.background,
-                          borderRadius: BorderRadius.circular(cnTheme.radius),
-                          border: Border.all(color: colors.border),
-                        ),
-                        child: Row(
-                          spacing: 10,
-                          children: [
-                            const CnAvatar(size: .md, child: Text('SD')),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: .start,
-                                spacing: 2,
-                                children: [
-                                  Text(
-                                    'shadcn',
-                                    style: CnTheme.of(context).text.sm.semibold,
-                                  ),
-                                  Text(
-                                    'me@acme.com',
-                                    style: CnTheme.of(context).text.xs.copyWith(
-                                      color: colors.mutedForeground,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            CnContextMenu(
-                              entries: [
-                                CnMenuAction(
-                                  label: Text('Account'),
-                                  onSelected: () {},
-                                ),
-                                CnMenuAction(
-                                  label: Text('Billing'),
-                                  onSelected: () {},
-                                ),
-                                CnMenuAction(
-                                  label: Text('Notifications'),
-                                  onSelected: () {},
-                                ),
-                                const CnMenuSeparator(),
-                                CnMenuAction(
-                                  label: Text('Log out'),
-                                  role: .destructive,
-                                  onSelected: () {},
-                                ),
-                              ],
-                              child: Icon(
-                                Icons.more_vert,
-                                color: colors.mutedForeground,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  const Icon(Icons.adjust, size: 20),
+                  Text('Acme Inc.', style: theme.heading.base.semibold),
                 ],
               ),
             ),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(32, 24, 32, 48),
-              child: Column(
-                crossAxisAlignment: .start,
-                spacing: 24,
+          Row(
+            spacing: 8,
+            children: [
+              Expanded(
+                child: CnButton(
+                  size: .sm,
+                  expand: true,
+                  onPressed: () {},
+                  leading: const Icon(Icons.add_circle),
+                  child: const Text('Quick Create'),
+                ),
+              ),
+              CnButton.icon(
+                variant: .outline,
+                size: .sm,
+                onPressed: () {},
+                icon: const Icon(Icons.mail_outline),
+              ),
+            ],
+          ),
+          const CnSidebarContent(
+            spacing: 16,
+            children: [
+              CnSidebarGroup(
                 children: [
-                  Row(
-                    mainAxisAlignment: .spaceBetween,
-                    children: [
-                      Row(
-                        spacing: 12,
-                        children: [
-                          Icon(
-                            Icons.folder_open_outlined,
-                            size: 18,
-                            color: colors.mutedForeground,
-                          ),
-                          const CnSeparator(direction: .vertical, length: 16),
-                          Text(
-                            'Documents',
-                            style: CnTheme.of(context).heading.base.semibold,
-                          ),
-                        ],
-                      ),
-                      CnButton(
-                        variant: .ghost,
-                        size: .sm,
-                        onPressed: () {},
-                        child: const Text('GitHub'),
-                      ),
-                    ],
+                  CnSidebarItem(
+                    leading: Icon(Icons.dashboard_outlined),
+                    label: Text('Dashboard'),
                   ),
-                  const _SummaryRow(),
-                  _VisitorsChart(
-                    range: _range,
-                    onRangeChanged: (value) => setState(() => _range = value),
+                  CnSidebarItem(
+                    leading: Icon(Icons.list_alt),
+                    label: Text('Lifecycle'),
                   ),
-                  _SectionTable(
-                    selectedTab: _section,
-                    onTabChanged: (value) => setState(() => _section = value),
-                    rowsPerPage: _rowsPerPage,
-                    selection: _selection,
-                    onSelectionChanged: (value) {
-                      setState(() => _selection = value);
-                    },
-                    page: _page,
-                    onPageChanged: (value) => setState(() => _page = value),
-                    onRowsPerPageChanged: (value) {
-                      setState(() => _rowsPerPage = value);
-                    },
+                  CnSidebarItem(
+                    leading: Icon(Icons.bar_chart),
+                    label: Text('Analytics'),
+                  ),
+                  CnSidebarItem(
+                    leading: Icon(Icons.folder_outlined),
+                    label: Text('Projects'),
+                  ),
+                  CnSidebarItem(
+                    leading: Icon(Icons.people_outline),
+                    label: Text('Team'),
                   ),
                 ],
+              ),
+              CnSidebarGroup(
+                title: Text('Documents'),
+                children: [
+                  CnSidebarItem(
+                    leading: Icon(Icons.storage),
+                    label: Text('Data Library'),
+                  ),
+                  CnSidebarItem(
+                    leading: Icon(Icons.description_outlined),
+                    label: Text('Reports'),
+                  ),
+                  CnSidebarItem(
+                    leading: Icon(Icons.article_outlined),
+                    label: Text('Word Assistant'),
+                  ),
+                  CnSidebarItem(
+                    leading: Icon(Icons.more_horiz),
+                    label: Text('More'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const CnSidebarGroup(
+            children: [
+              CnSidebarItem(
+                leading: Icon(Icons.settings_outlined),
+                label: Text('Settings'),
+              ),
+              CnSidebarItem(
+                leading: Icon(Icons.help_outline),
+                label: Text('Get Help'),
+              ),
+              CnSidebarItem(leading: Icon(Icons.search), label: Text('Search')),
+            ],
+          ),
+          CnSidebarFooter(
+            child: CnItem(
+              leading: const CnAvatar(child: Text('CN')),
+              title: const Text('shadcn'),
+              description: Text('m@example.com', style: theme.text.xs),
+              trailing: CnDropdownMenu.builder(
+                entries: [
+                  CnMenuAction(label: const Text('Account'), onSelected: () {}),
+                  CnMenuAction(label: const Text('Billing'), onSelected: () {}),
+                  CnMenuAction(
+                    label: const Text('Notifications'),
+                    onSelected: () {},
+                  ),
+                  const CnMenuSeparator(),
+                  CnMenuAction(label: const Text('Log out'), onSelected: () {}),
+                ],
+                builder: (context, toggle) => CnButton.icon(
+                  variant: .ghost,
+                  size: .xs,
+                  onPressed: toggle,
+                  icon: const Icon(Icons.more_vert),
+                ),
               ),
             ),
           ),
@@ -296,59 +232,112 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-class _SummaryRow extends StatelessWidget {
-  const _SummaryRow();
+class _SiteHeader extends StatelessWidget {
+  const _SiteHeader({required this.inset, required this.onToggleSidebar});
+  final double inset;
+  final VoidCallback onToggleSidebar;
 
   @override
   Widget build(BuildContext context) {
-    final colors = CnTheme.of(context).colors;
+    final theme = CnTheme.of(context);
 
-    return IntrinsicHeight(
+    return Container(
+      height: 48,
+      padding: EdgeInsets.symmetric(horizontal: inset),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: theme.colors.border)),
+      ),
       child: Row(
-        spacing: 16,
+        spacing: 8,
         children: [
-          Expanded(
-            child: _MetricCard(
-              title: 'Total Revenue',
-              value: r'$1,250.00',
-              delta: '+12.5%',
-              deltaColor: colors.primary,
-              headline: 'Trending up this month',
-              subtext: 'Visitors for the last 6 months',
-            ),
+          CnButton.icon(
+            variant: .ghost,
+            size: .xs,
+            onPressed: onToggleSidebar,
+            icon: const Icon(Icons.view_sidebar_outlined),
           ),
-          Expanded(
-            child: _MetricCard(
-              title: 'New Customers',
-              value: '1,234',
-              delta: '-20%',
-              deltaColor: colors.destructive,
-              headline: 'Down 20% this period',
-              subtext: 'Acquisition needs attention',
-            ),
-          ),
-          Expanded(
-            child: _MetricCard(
-              title: 'Active Accounts',
-              value: '45,678',
-              delta: '+12.5%',
-              deltaColor: colors.primary,
-              headline: 'Strong user retention',
-              subtext: 'Engagement exceeds targets',
-            ),
-          ),
-          Expanded(
-            child: _MetricCard(
-              title: 'Growth Rate',
-              value: '4.5%',
-              delta: '+4.5%',
-              deltaColor: colors.primary,
-              headline: 'Steady performance increase',
-              subtext: 'Meets growth projections',
-            ),
+          const CnSeparator(direction: .vertical, length: 16),
+          Text('Documents', style: theme.heading.base.medium),
+          const Spacer(),
+          CnButton(
+            variant: .ghost,
+            size: .sm,
+            onPressed: () {},
+            child: const Text('GitHub'),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SectionCards extends StatelessWidget {
+  const _SectionCards();
+
+  static const _cards = [
+    _MetricCard(
+      title: 'Total Revenue',
+      value: r'$1,250.00',
+      delta: '+12.5%',
+      headline: 'Trending up this month',
+      subtext: 'Visitors for the last 6 months',
+    ),
+    _MetricCard(
+      title: 'New Customers',
+      value: '1,234',
+      delta: '-20%',
+      headline: 'Down 20% this period',
+      subtext: 'Acquisition needs attention',
+    ),
+    _MetricCard(
+      title: 'Active Accounts',
+      value: '45,678',
+      delta: '+12.5%',
+      headline: 'Strong user retention',
+      subtext: 'Engagement exceed targets',
+    ),
+    _MetricCard(
+      title: 'Growth Rate',
+      value: '4.5%',
+      delta: '+4.5%',
+      headline: 'Steady performance increase',
+      subtext: 'Meets growth projections',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return CnResponsive(
+      small: (context, _) => const _CardGrid(columns: 1, children: _cards),
+      medium: (context, _) => const _CardGrid(columns: 2, children: _cards),
+      large: (context, _) => const _CardGrid(columns: 4, children: _cards),
+    );
+  }
+}
+
+/// Equally wide and, per row, equally high children.
+class const _CardGrid({
+  required final int columns,
+  required final List<Widget> children,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: .stretch,
+      spacing: 16,
+      children: [
+        for (var i = 0; i < children.length; i += columns)
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: .stretch,
+              spacing: 16,
+              children: [
+                for (final child in children.skip(i).take(columns))
+                  Expanded(child: child),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
@@ -358,81 +347,53 @@ class _MetricCard extends StatelessWidget {
     required this.title,
     required this.value,
     required this.delta,
-    required this.deltaColor,
     required this.headline,
     required this.subtext,
   });
   final String title;
   final String value;
   final String delta;
-  final Color deltaColor;
   final String headline;
   final String subtext;
 
   @override
   Widget build(BuildContext context) {
-    final colors = CnTheme.of(context).colors;
+    final theme = CnTheme.of(context);
+    final colors = theme.colors;
+    final trend = Icon(
+      delta.startsWith('-') ? Icons.trending_down : Icons.trending_up,
+    );
 
     return CnCard(
-      title: Row(
-        mainAxisAlignment: .spaceBetween,
+      title: Column(
+        crossAxisAlignment: .start,
+        spacing: 6,
         children: [
-          Expanded(
-            child: Text(
-              title,
-              style: CnTheme.of(context).text.xs
-                  .copyWith(color: colors.mutedForeground),
-            ),
+          Text(
+            title,
+            style: theme.text.sm.copyWith(color: colors.mutedForeground),
           ),
-          CnBadge(
-            variant: .outline,
-            child: Row(
-              mainAxisSize: .min,
-              spacing: 4,
-              children: [
-                Icon(
-                  delta.startsWith('-')
-                      ? Icons.arrow_downward
-                      : Icons.arrow_upward,
-                  size: 12,
-                  color: deltaColor,
-                ),
-                Text(
-                  delta,
-                  style: CnTheme.of(context).text.xs.medium
-                      .copyWith(color: deltaColor),
-                ),
-              ],
-            ),
-          ),
+          Text(value, style: theme.heading.xl3.semibold),
         ],
       ),
-      content: Column(
+      action: CnBadge(variant: .outline, leading: trend, child: Text(delta)),
+      footer: Column(
         crossAxisAlignment: .start,
-        spacing: 10,
+        spacing: 6,
         children: [
-          Text(value, style: CnTheme.of(context).heading.xl.semibold),
           Row(
-            mainAxisAlignment: .spaceBetween,
+            spacing: 8,
             children: [
-              Flexible(
-                child: Text(
-                  headline,
-                  style: CnTheme.of(context).text.xs
-                      .copyWith(fontWeight: .w600),
-                ),
-              ),
-              Icon(
-                delta.startsWith('-') ? Icons.trending_down : Icons.trending_up,
-                size: 14,
-                color: colors.mutedForeground,
+              Flexible(child: Text(headline, style: theme.text.sm.medium)),
+              IconTheme.merge(
+                data: IconThemeData(size: 16, color: colors.foreground),
+                child: trend,
               ),
             ],
           ),
           Text(
             subtext,
-            style: CnTheme.of(context).text.xs
-                .copyWith(color: colors.mutedForeground),
+            style: theme.text.sm.copyWith(color: colors.mutedForeground),
           ),
         ],
       ),
@@ -442,314 +403,358 @@ class _MetricCard extends StatelessWidget {
 
 class _VisitorsChart extends StatelessWidget {
   const _VisitorsChart({required this.range, required this.onRangeChanged});
-  final String range;
-  final ValueChanged<String> onRangeChanged;
+  final int range;
+  final ValueChanged<int> onRangeChanged;
+
+  static const _ranges = {
+    90: 'Last 3 months',
+    30: 'Last 30 days',
+    7: 'Last 7 days',
+  };
 
   @override
   Widget build(BuildContext context) {
     final colors = CnTheme.of(context).colors;
+    final data = visitorData.sublist(visitorData.length - range);
 
-    return CnCard(
-      title: Row(
-        mainAxisAlignment: .spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: .start,
-            spacing: 4,
-            children: [
-              Text(
-                'Total Visitors',
-                style: CnTheme.of(context).heading.base.semibold,
-              ),
-              Text(
-                'Total for the last 3 months',
-                style: CnTheme.of(context).text.xs,
-              ),
-            ],
-          ),
-          CnToggleGroup(
-            spacing: 0,
-            required: true,
-            size: .sm,
-            variant: .outline,
-            value: {range},
-            onChanged: (value) {
-              if (value.isNotEmpty) {
-                onRangeChanged(value.first.toString());
-              }
-            },
-            items: const [
-              CnToggleGroupItem(value: '3m', child: Text('Last 3 months')),
-              CnToggleGroupItem(value: '30d', child: Text('Last 30 days')),
-              CnToggleGroupItem(value: '7d', child: Text('Last 7 days')),
-            ],
-          ),
-        ],
-      ),
+    Widget card(Widget action) => CnCard(
+      title: const Text('Total Visitors'),
+      description: Text('Total for the ${_ranges[range]!.toLowerCase()}'),
+      action: action,
       content: CnChart(
-        height: 240,
+        height: 250,
         showLegend: false,
+        stacked: true,
+        curved: true,
         series: [
           CnChartSeries(
-            name: 'Total',
+            name: 'Mobile',
             type: .area,
             showPoints: false,
-            color: colors.mutedForeground,
-            fillColor: colors.mutedForeground.withValues(alpha: 0.22),
-            data: const [
-              CnChartPoint('Apr 5', 22),
-              CnChartPoint('Apr 12', 38),
-              CnChartPoint('Apr 19', 26),
-              CnChartPoint('Apr 26', 44),
-              CnChartPoint('May 3', 28),
-              CnChartPoint('May 10', 50),
-              CnChartPoint('May 17', 34),
-              CnChartPoint('May 24', 47),
-              CnChartPoint('May 31', 32),
-              CnChartPoint('Jun 7', 53),
-              CnChartPoint('Jun 14', 36),
-              CnChartPoint('Jun 21', 48),
-              CnChartPoint('Jun 30', 42),
+            lineWidth: 1,
+            color: colors.primary,
+            data: [
+              for (final (label, _, mobile) in data)
+                CnChartPoint(label, mobile),
             ],
           ),
           CnChartSeries(
-            name: 'Returning',
-            type: .line,
+            name: 'Desktop',
+            type: .area,
             showPoints: false,
-            color: colors.foreground,
-            data: const [
-              CnChartPoint('Apr 5', 10),
-              CnChartPoint('Apr 12', 16),
-              CnChartPoint('Apr 19', 12),
-              CnChartPoint('Apr 26', 18),
-              CnChartPoint('May 3', 14),
-              CnChartPoint('May 10', 20),
-              CnChartPoint('May 17', 15),
-              CnChartPoint('May 24', 19),
-              CnChartPoint('May 31', 16),
-              CnChartPoint('Jun 7', 22),
-              CnChartPoint('Jun 14', 17),
-              CnChartPoint('Jun 21', 21),
-              CnChartPoint('Jun 30', 18),
+            lineWidth: 1,
+            color: colors.primary,
+            data: [
+              for (final (label, desktop, _) in data)
+                CnChartPoint(label, desktop),
             ],
           ),
         ],
       ),
     );
+
+    return CnResponsive(
+      small: (context, _) => card(
+        SizedBox(
+          width: 160,
+          child: CnSelect<int>(
+            size: .sm,
+            value: range,
+            items: [
+              for (final MapEntry(:key, :value) in _ranges.entries)
+                CnSelectItem(value: key, child: Text(value)),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                onRangeChanged(value);
+              }
+            },
+          ),
+        ),
+      ),
+      medium: (context, _) => card(
+        _RangeSelect(value: range, ranges: _ranges, onChanged: onRangeChanged),
+      ),
+    );
   }
 }
 
-class _SectionTable extends StatelessWidget {
-  const _SectionTable({
-    required this.selectedTab,
+class const _RangeSelect({
+  required final int value,
+  required final Map<int, String> ranges,
+  required final ValueChanged<int> onChanged,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CnToggleGroup<int>(
+      spacing: 0,
+      required: true,
+      variant: .outline,
+      value: {value},
+      onChanged: (next) {
+        if (next.isNotEmpty) {
+          onChanged(next.first);
+        }
+      },
+      items: [
+        for (final MapEntry(:key, value: label) in ranges.entries)
+          CnToggleGroupItem(value: key, child: Text(label)),
+      ],
+    );
+  }
+}
+
+class _DocumentsTable extends StatelessWidget {
+  const _DocumentsTable({
+    required this.tab,
     required this.onTabChanged,
     required this.rowsPerPage,
-    required this.selection,
-    required this.onSelectionChanged,
+    required this.onRowsPerPageChanged,
     required this.page,
     required this.onPageChanged,
-    required this.onRowsPerPageChanged,
+    required this.selection,
+    required this.onSelectionChanged,
+    required this.hiddenColumns,
+    required this.onHiddenColumnsChanged,
   });
-  final String selectedTab;
+  final String tab;
   final ValueChanged<String> onTabChanged;
   final int rowsPerPage;
-  final Set<String> selection;
-  final ValueChanged<Set<String>> onSelectionChanged;
+  final ValueChanged<int> onRowsPerPageChanged;
   final int page;
   final ValueChanged<int> onPageChanged;
-  final ValueChanged<int> onRowsPerPageChanged;
+  final Set<String> selection;
+  final ValueChanged<Set<String>> onSelectionChanged;
+  final Set<String> hiddenColumns;
+  final ValueChanged<Set<String>> onHiddenColumnsChanged;
+
+  static const _hideable = {
+    'type': 'Section Type',
+    'status': 'Status',
+    'target': 'Target',
+    'limit': 'Limit',
+    'reviewer': 'Reviewer',
+  };
 
   @override
   Widget build(BuildContext context) {
-    final colors = CnTheme.of(context).colors;
-    return Column(
-      crossAxisAlignment: .start,
-      spacing: 12,
-      children: [
-        Wrap(
-          alignment: .spaceBetween,
-          crossAxisAlignment: .center,
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            CnToggleGroup(
-              spacing: 0,
-              required: true,
-              size: .sm,
-              variant: .outline,
-              value: {selectedTab},
-              onChanged: (value) {
-                if (value.isNotEmpty) {
-                  onTabChanged(value.first.toString());
-                }
-              },
-              items: const [
-                CnToggleGroupItem(value: 'outline', child: Text('Outline')),
-                CnToggleGroupItem(
-                  value: 'performance',
-                  child: Row(
-                    mainAxisSize: .min,
-                    spacing: 4,
-                    children: [
-                      Text('Past Performance'),
-                      CnBadge(variant: .secondary, child: Text('3')),
-                    ],
+    return CnResponsive(
+      small: (context, _) => _build(context, compact: true),
+      large: (context, _) => _build(context, compact: false),
+    );
+  }
+
+  Widget _build(BuildContext context, {required bool compact}) {
+    Widget label(String text, int count) {
+      return Row(
+        mainAxisSize: .min,
+        spacing: 6,
+        children: [
+          Text(text),
+          CnBadge(variant: .secondary, child: Text('$count')),
+        ],
+      );
+    }
+
+    return CnTabs<String>(
+      value: tab,
+      onChanged: onTabChanged,
+      trailing: Row(
+        mainAxisSize: .min,
+        spacing: 8,
+        children: [
+          CnDropdownMenu.builder(
+            width: 224,
+            entries: [
+              for (final MapEntry(:key, :value) in _hideable.entries)
+                CnMenuCheckboxItem(
+                  label: Text(value),
+                  value: !hiddenColumns.contains(key),
+                  onChanged: (visible) => onHiddenColumnsChanged(
+                    visible
+                        ? ({...hiddenColumns}..remove(key))
+                        : {...hiddenColumns, key},
                   ),
                 ),
-                CnToggleGroupItem(
-                  value: 'personnel',
-                  child: Row(
-                    mainAxisSize: .min,
-                    spacing: 4,
-                    children: [
-                      Text('Key Personnel'),
-                      CnBadge(variant: .secondary, child: Text('2')),
-                    ],
-                  ),
-                ),
-                CnToggleGroupItem(
-                  value: 'focus',
-                  child: Text('Focus Documents'),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisSize: .min,
-              spacing: 8,
-              children: [
-                CnButton(
-                  variant: .outline,
-                  size: .sm,
-                  onPressed: () {},
-                  child: const Row(
-                    mainAxisSize: .min,
-                    spacing: 4,
-                    children: [
-                      Icon(Icons.tune, size: 16),
-                      Text('Customize Columns'),
-                      Icon(Icons.expand_more, size: 16),
-                    ],
-                  ),
-                ),
-                CnButton(
-                  size: .sm,
-                  onPressed: () {},
-                  child: const Row(
-                    mainAxisSize: .min,
-                    spacing: 4,
-                    children: [Icon(Icons.add, size: 16), Text('Add Section')],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        CnCard(
-          content: CnDataTable<_DocumentRow>(
-            columns: [
-              CnDataTableColumn<_DocumentRow>(
-                id: 'section',
-                label: const Text('Section'),
-                cellBuilder: (context, row) => Text(row.section),
-              ),
-              CnDataTableColumn<_DocumentRow>(
-                id: 'type',
-                label: const Text('Section Type'),
-                cellBuilder: (context, row) =>
-                    CnBadge(variant: .outline, child: Text(row.type)),
-              ),
-              CnDataTableColumn<_DocumentRow>(
-                id: 'limit',
-                label: const Text('Limit'),
-                numeric: true,
-                cellBuilder: (context, row) => Text(row.limit.toString()),
-              ),
-              CnDataTableColumn<_DocumentRow>(
-                id: 'owner',
-                label: const Text('Owner'),
-                alignment: Alignment.centerRight,
-                cellBuilder: (context, row) => Text(row.owner),
-              ),
             ],
-            rows: _documentRows,
-            rowId: (row) => row.id,
-            selection: selection,
-            onSelectionChanged: onSelectionChanged,
-            page: page,
-            onPageChanged: onPageChanged,
-            rowsPerPage: rowsPerPage,
-            rowsPerPageOptions: const [10, 20, 30],
-            onRowsPerPageChanged: onRowsPerPageChanged,
-            rowActionsBuilder: (context, row) => Align(
-              alignment: Alignment.centerRight,
-              child: CnDropdownMenu(
-                entries: [
-                  CnMenuAction(label: Text('Open'), onSelected: () {}),
-                  CnMenuAction(label: Text('Rename'), onSelected: () {}),
-                  CnMenuAction(label: Text('Duplicate'), onSelected: () {}),
-                  const CnMenuSeparator(),
-                  CnMenuAction(
-                    label: Text('Delete'),
-                    role: .destructive,
-                    onSelected: () {},
-                  ),
-                ],
-                trigger: Icon(
-                  Icons.more_horiz,
-                  size: 18,
-                  color: colors.mutedForeground,
-                ),
-              ),
+            builder: (context, toggle) => CnButton(
+              variant: .outline,
+              size: .sm,
+              onPressed: toggle,
+              leading: const Icon(Icons.view_column_outlined),
+              trailing: const Icon(Icons.expand_more),
+              child: Text(compact ? 'Columns' : 'Customize Columns'),
             ),
           ),
+          CnButton(
+            variant: .outline,
+            size: .sm,
+            onPressed: () {},
+            leading: const Icon(Icons.add),
+            child: const Text('Add Section'),
+          ),
+        ],
+      ),
+      tabs: [
+        CnTab(
+          value: 'outline',
+          label: const Text('Outline'),
+          content: _buildTable(),
+        ),
+        CnTab(
+          value: 'performance',
+          label: label('Past Performance', 3),
+          content: const _Placeholder(),
+        ),
+        CnTab(
+          value: 'personnel',
+          label: label('Key Personnel', 2),
+          content: const _Placeholder(),
+        ),
+        CnTab(
+          value: 'focus',
+          label: const Text('Focus Documents'),
+          content: const _Placeholder(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTable() {
+    return CnDataTable<DocumentRow>(
+      rows: documentRows,
+      rowId: (row) => row.id,
+      mutedHeader: true,
+      selection: selection,
+      onSelectionChanged: onSelectionChanged,
+      hiddenColumns: hiddenColumns,
+      page: page,
+      onPageChanged: onPageChanged,
+      rowsPerPage: rowsPerPage,
+      rowsPerPageOptions: const [10, 20, 30, 40, 50],
+      onRowsPerPageChanged: onRowsPerPageChanged,
+      actionsColumnWidth: const FixedColumnWidth(48),
+      rowActionsBuilder: (context, row) => CnDropdownMenu.builder(
+        width: 144,
+        entries: [
+          CnMenuAction(label: const Text('Edit'), onSelected: () {}),
+          CnMenuAction(label: const Text('Make a copy'), onSelected: () {}),
+          CnMenuAction(label: const Text('Favorite'), onSelected: () {}),
+          const CnMenuSeparator(),
+          CnMenuAction(
+            label: const Text('Delete'),
+            role: .destructive,
+            onSelected: () {},
+          ),
+        ],
+        builder: (context, toggle) => CnButton.icon(
+          variant: .ghost,
+          size: .sm,
+          onPressed: toggle,
+          icon: const Icon(Icons.more_vert),
+        ),
+      ),
+      columns: [
+        CnDataTableColumn(
+          id: 'header',
+          label: const Text('Header'),
+          cellBuilder: (context, row) =>
+              Text(row.header, style: CnTheme.of(context).text.sm.medium),
+        ),
+        CnDataTableColumn(
+          id: 'type',
+          label: const Text('Section Type'),
+          cellBuilder: (context, row) =>
+              CnBadge(variant: .outline, child: Text(row.type)),
+        ),
+        CnDataTableColumn(
+          id: 'status',
+          label: const Text('Status'),
+          cellBuilder: (context, row) => _StatusBadge(status: row.status),
+        ),
+        CnDataTableColumn(
+          id: 'target',
+          label: const Text('Target'),
+          numeric: true,
+          cellBuilder: (context, row) => Text(row.target),
+        ),
+        CnDataTableColumn(
+          id: 'limit',
+          label: const Text('Limit'),
+          numeric: true,
+          cellBuilder: (context, row) => Text(row.limit),
+        ),
+        CnDataTableColumn(
+          id: 'reviewer',
+          label: const Text('Reviewer'),
+          cellBuilder: (context, row) => row.reviewer == 'Assign reviewer'
+              ? const _ReviewerSelect()
+              : Text(row.reviewer),
         ),
       ],
     );
   }
 }
 
-class _DocumentRow {
-  const _DocumentRow({
-    required this.id,
-    required this.section,
-    required this.type,
-    required this.limit,
-    required this.owner,
-  });
-  final String id;
-  final String section;
-  final String type;
-  final int limit;
-  final String owner;
+class const _StatusBadge({required final String status})
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = CnTheme.of(context).colors;
+
+    return CnBadge(
+      variant: .outline,
+      leading: status == 'Done'
+          ? Icon(Icons.check_circle, color: colors.success)
+          : Icon(Icons.autorenew, color: colors.mutedForeground),
+      child: Text(status),
+    );
+  }
 }
 
-final List<_DocumentRow> _documentRows = List.generate(68, (index) {
-  const sections = [
-    "Overview of EMR's Innovative Solutions",
-    'Advanced Algorithms and Machine Learning',
-    'Strategic Research Initiatives',
-    'Customer Success Playbook',
-    'Product Launch Checklist',
-    'Cloud Migration Plan',
-    'Market Expansion Brief',
-    'Competitive Analysis',
-    'Operational Review',
-    'Technical Architecture',
-  ];
-  const types = [
-    'Technical content',
-    'Narrative',
-    'Outline',
-    'Cover page',
-    'Brief',
-  ];
-  const owners = ['shadcn', 'team', 'design', 'growth', 'ops'];
+class _ReviewerSelect extends StatefulWidget {
+  const _ReviewerSelect();
 
-  return _DocumentRow(
-    id: 'doc_$index',
-    section: sections[index % sections.length],
-    type: types[index % types.length],
-    limit: 8 + (index % 24),
-    owner: owners[index % owners.length],
-  );
-});
+  @override
+  State<_ReviewerSelect> createState() => _ReviewerSelectState();
+}
+
+class _ReviewerSelectState extends State<_ReviewerSelect> {
+  String? reviewer;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 176,
+      child: CnSelect<String>(
+        size: .sm,
+        value: reviewer,
+        placeholder: 'Assign reviewer',
+        items: const [
+          CnSelectItem(value: 'Eddie Lake', child: Text('Eddie Lake')),
+          CnSelectItem(
+            value: 'Jamik Tashpulatov',
+            child: Text('Jamik Tashpulatov'),
+          ),
+        ],
+        onChanged: (value) => setState(() => reviewer = value),
+      ),
+    );
+  }
+}
+
+class const _Placeholder() extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = CnTheme.of(context);
+
+    return Container(
+      height: 320,
+      decoration: BoxDecoration(
+        color: theme.colors.muted.withValues(alpha: 0.3),
+        borderRadius: .circular(theme.radii.lg),
+        border: Border.all(color: theme.colors.border),
+      ),
+    );
+  }
+}
