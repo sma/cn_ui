@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../theme/cn_theme.dart';
 
 /// Side positioning for [CnDrawer].
-enum CnDrawerSide { left, right }
+enum CnDrawerSide { start, end }
 
 /// A builder function for creating drawers.
 typedef CnDrawerBuilder = Widget Function(BuildContext context);
@@ -12,16 +12,22 @@ typedef CnDrawerBuilder = Widget Function(BuildContext context);
 Future<T?> showCnDrawer<T>({
   required BuildContext context,
   required CnDrawerBuilder builder,
-  CnDrawerSide side = .left,
+  CnDrawerSide side = .start,
   double size = 360,
   bool barrierDismissible = true,
   Color barrierColor = const Color(0x99000000),
   Duration transitionDuration = const Duration(milliseconds: 260),
 }) {
-  final alignment = side == .left
-      ? Alignment.centerLeft
-      : Alignment.centerRight;
-  final beginOffset = side == .left ? const Offset(-1, 0) : const Offset(1, 0);
+  final alignment = side == .start
+      ? AlignmentDirectional.centerStart
+      : AlignmentDirectional.centerEnd;
+  final beginOffset =
+      side ==
+          (Directionality.of(context) == .ltr
+              ? CnDrawerSide.start
+              : CnDrawerSide.end)
+      ? const Offset(-1, 0)
+      : const Offset(1, 0);
 
   return showGeneralDialog<T>(
     context: context,
@@ -58,7 +64,8 @@ Future<T?> showCnDrawer<T>({
 
 /// A side panel drawer component that slides from the screen edge.
 ///
-/// Provides a modal overlay from the left or right side with optional title, description, content, and actions.
+/// Provides a modal overlay from the left or right side with optional title,
+/// description, content, and actions.
 ///
 /// See also:
 ///
@@ -68,7 +75,7 @@ Future<T?> showCnDrawer<T>({
 class CnDrawer extends StatelessWidget {
   const CnDrawer({
     super.key,
-    this.side = .left,
+    this.side = .start,
     this.title,
     this.description,
     this.content,
@@ -93,15 +100,9 @@ class CnDrawer extends StatelessWidget {
     final close = onClose ?? () => Navigator.of(context).maybePop();
     final radius = cnTheme.radius;
 
-    final borderRadius = side == .left
-        ? BorderRadius.only(
-            topRight: Radius.circular(radius),
-            bottomRight: Radius.circular(radius),
-          )
-        : BorderRadius.only(
-            topLeft: Radius.circular(radius),
-            bottomLeft: Radius.circular(radius),
-          );
+    final borderRadius = side == .start
+        ? BorderRadiusDirectional.horizontal(end: .circular(radius))
+        : BorderRadiusDirectional.horizontal(start: .circular(radius));
 
     return Material(
       color: scheme.surface,
@@ -117,7 +118,7 @@ class CnDrawer extends StatelessWidget {
           children: [
             if (showCloseButton)
               Align(
-                alignment: Alignment.centerRight,
+                alignment: .centerEnd,
                 child: IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: close,

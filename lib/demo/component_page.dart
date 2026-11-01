@@ -162,9 +162,9 @@ class _CnCodeBlockState extends State<CnCodeBlock> {
             style: GoogleFonts.ibmPlexMono(fontSize: 14, height: 20 / 14),
           ),
         ),
-        Positioned(
+        PositionedDirectional(
           top: 8,
-          right: 8,
+          end: 8,
           child: Material(
             color: Colors.transparent,
             child: IconButton(

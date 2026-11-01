@@ -143,8 +143,8 @@ class _CnCarouselState extends State<CnCarousel> {
       children: [
         ClipRRect(borderRadius: .circular(cnTheme.radius), child: pageView),
         if (widget.showArrows && widget.items.length > 1)
-          Positioned(
-            left: 12,
+          PositionedDirectional(
+            start: 12,
             child: _buildArrow(
               icon: Icons.chevron_left,
               enabled: widget.loop || _currentIndex > 0,
@@ -152,8 +152,8 @@ class _CnCarouselState extends State<CnCarousel> {
             ),
           ),
         if (widget.showArrows && widget.items.length > 1)
-          Positioned(
-            right: 12,
+          PositionedDirectional(
+            end: 12,
             child: _buildArrow(
               icon: Icons.chevron_right,
               enabled: widget.loop || _currentIndex < widget.items.length - 1,

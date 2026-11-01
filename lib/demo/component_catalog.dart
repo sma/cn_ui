@@ -1573,23 +1573,23 @@ CnSidebarProvider(
     description: 'Mobile-friendly drawer overlay.',
     examples: [
       ComponentExample(
-        title: 'Left drawer',
+        title: 'Start drawer',
         description: 'Slide in a contextual panel.',
         preview: (context) => const _DrawerPreview(),
         code: '''showCnDrawer(
   context: context,
-  side: .left,
+  side: .start,
   builder: (_) => CnDrawer(title: Text('Share access')),
 )''',
       ),
       ComponentExample(
-        title: 'Right drawer',
+        title: 'End drawer',
         description: 'Use the right side for secondary tasks.',
-        preview: (context) => const _DrawerRightPreview(),
+        preview: (context) => const _DrawerEndPreview(),
         code: '''showCnDrawer(
   context: context,
-  side: .right,
-  builder: (_) => CnDrawer(side: .right, title: Text('Filters')),
+  side: .end,
+  builder: (_) => CnDrawer(side: .end, title: Text('Filters')),
 )''',
       ),
     ],
@@ -3825,9 +3825,9 @@ class _DrawerPreview extends StatelessWidget {
       onPressed: () {
         showCnDrawer(
           context: context,
-          side: .left,
+          side: .start,
           builder: (_) => CnDrawer(
-            side: .left,
+            side: .start,
             title: const Text('Share access'),
             description: const Text('Invite teammates to collaborate.'),
             content: Column(
@@ -4751,8 +4751,8 @@ class _ContextMenuSelectionPreviewState
   }
 }
 
-class _DrawerRightPreview extends StatelessWidget {
-  const _DrawerRightPreview();
+class _DrawerEndPreview extends StatelessWidget {
+  const _DrawerEndPreview();
 
   @override
   Widget build(BuildContext context) {
@@ -4761,9 +4761,9 @@ class _DrawerRightPreview extends StatelessWidget {
       onPressed: () {
         showCnDrawer(
           context: context,
-          side: .right,
+          side: .end,
           builder: (_) => CnDrawer(
-            side: .right,
+            side: .end,
             title: const Text('Filters'),
             description: const Text('Refine results across this view.'),
             content: Column(

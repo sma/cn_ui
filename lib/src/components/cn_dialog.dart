@@ -84,7 +84,7 @@ class CnDialog extends StatelessWidget {
             children: [
               if (showCloseButton)
                 Align(
-                  alignment: Alignment.centerRight,
+                  alignment: .centerEnd,
                   child: IconButton(
                     icon: const Icon(Icons.close),
                     tooltip: 'Close',

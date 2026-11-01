@@ -64,15 +64,15 @@ class CnText extends StatelessWidget {
     );
   }
 
-  Alignment _alignmentFor(TextAlign? align) {
+  AlignmentGeometry _alignmentFor(TextAlign? align) {
     return switch (align) {
-      .center => Alignment.center,
-      .right => Alignment.centerRight,
-      .end => Alignment.centerRight,
-      .left => Alignment.centerLeft,
-      .start => Alignment.centerLeft,
-      .justify => Alignment.centerLeft,
-      null => Alignment.centerLeft,
+      .center => .center,
+      .right => .centerRight,
+      .end => .centerEnd,
+      .left => .centerLeft,
+      .start => .centerStart,
+      .justify => .centerLeft,
+      null => .centerStart,
     };
   }
 

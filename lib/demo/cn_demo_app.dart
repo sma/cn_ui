@@ -27,6 +27,9 @@ class _CnDemoAppState extends State<CnDemoApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: theme.toThemeData(),
+      builder: (context, child) {
+        return Directionality(textDirection: .ltr, child: child!);
+      },
       home: CnDemoScaffold(
         destinations: destinations,
         selectedIndex: selectedIndex,
