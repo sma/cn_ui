@@ -129,11 +129,10 @@ class _CnCommandState extends State<CnCommand> {
 }
 
 /// A group of command items in [CnCommand].
-class CnCommandGroup {
-  const CnCommandGroup({this.label, required this.items});
-  final Widget? label;
-  final List<CnCommandItem> items;
-
+class const CnCommandGroup({
+  final Widget? label,
+  required final List<CnCommandItem> items,
+}) {
   CnCommandGroup filter(String query) {
     if (query.isEmpty) {
       return this;
@@ -144,22 +143,14 @@ class CnCommandGroup {
 }
 
 /// An individual command item in [CnCommandGroup].
-class CnCommandItem {
-  const CnCommandItem({
-    required this.label,
-    this.description,
-    this.keywords = const [],
-    this.onSelected,
-    this.leading,
-    this.trailing,
-  });
-  final String label;
-  final String? description;
-  final List<String> keywords;
-  final VoidCallback? onSelected;
-  final Widget? leading;
-  final Widget? trailing;
-
+class const CnCommandItem({
+  required final String label,
+  final String? description,
+  final List<String> keywords = const [],
+  final VoidCallback? onSelected,
+  final Widget? leading,
+  final Widget? trailing,
+}) {
   bool matches(String query) {
     final searchSpace = [
       label,

@@ -3,18 +3,12 @@ import 'package:material_ui/material_ui.dart';
 import '../theme/cn_theme.dart';
 
 /// An item in a [CnCombobox].
-class CnComboboxItem<T> {
-  const CnComboboxItem({
-    required this.value,
-    required this.label,
-    this.leading,
-    this.enabled = true,
-  });
-  final T value;
-  final String label;
-  final Widget? leading;
-  final bool enabled;
-}
+class const CnComboboxItem<T>({
+  required final T value,
+  required final String label,
+  final Widget? leading,
+  final bool enabled = true,
+});
 
 /// A searchable dropdown select component with autocomplete functionality.
 ///

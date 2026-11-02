@@ -10,23 +10,17 @@ import 'cn_menu_entry.dart';
 import 'cn_select.dart';
 
 /// A column definition for [CnTable].
-class CnTableColumn {
-  const CnTableColumn({
-    required this.label,
-    this.alignment = AlignmentDirectional.centerStart,
-    this.width,
-  });
-  final Widget label;
-  final AlignmentGeometry alignment;
-  final TableColumnWidth? width;
-}
+class const CnTableColumn({
+  required final Widget label,
+  final AlignmentGeometry alignment = AlignmentDirectional.centerStart,
+  final TableColumnWidth? width,
+});
 
 /// A row definition for [CnTable].
-class CnTableRow {
-  const CnTableRow({required this.cells, this.selected = false});
-  final List<Widget> cells;
-  final bool selected;
-}
+class const CnTableRow({
+  required final List<Widget> cells,
+  final bool selected = false,
+});
 
 /// A simple table component for displaying tabular data.
 ///
@@ -188,30 +182,18 @@ class _ContentColumnWidth extends TableColumnWidth {
 }
 
 /// A column definition for [CnDataTable].
-class CnDataTableColumn<T> {
-  const CnDataTableColumn({
-    required this.id,
-    required this.label,
-    required this.cellBuilder,
-    this.toggleLabel,
-    this.sortable = false,
-    this.sortComparator,
-    this.sortValue,
-    this.numeric = false,
-    this.alignment,
-    this.width,
-  });
-  final String id;
-  final Widget label;
-  final String? toggleLabel;
-  final Widget Function(BuildContext context, T row) cellBuilder;
-  final bool sortable;
-  final int Function(T a, T b)? sortComparator;
-  final Comparable Function(T row)? sortValue;
-  final bool numeric;
-  final AlignmentGeometry? alignment;
-  final TableColumnWidth? width;
-
+class const CnDataTableColumn<T>({
+  required final String id,
+  required final Widget label,
+  required final Widget Function(BuildContext context, T row) cellBuilder,
+  final String? toggleLabel,
+  final bool sortable = false,
+  final int Function(T a, T b)? sortComparator,
+  final Comparable Function(T row)? sortValue,
+  final bool numeric = false,
+  final AlignmentGeometry? alignment,
+  final TableColumnWidth? width,
+}) {
   AlignmentGeometry get resolvedAlignment {
     return alignment ??
         (numeric

@@ -1,23 +1,14 @@
 // The sample data of the shadcn/ui block dashboard-01.
 
-class DocumentRow {
-  const DocumentRow(
-    this.id,
-    this.header,
-    this.type,
-    this.status,
-    this.target,
-    this.limit,
-    this.reviewer,
-  );
-  final String id;
-  final String header;
-  final String type;
-  final String status;
-  final String target;
-  final String limit;
-  final String reviewer;
-}
+class const DocumentRow(
+  final String id,
+  final String header,
+  final String type,
+  final String status,
+  final String target,
+  final String limit,
+  final String reviewer,
+);
 
 const documentRows = [
   DocumentRow(

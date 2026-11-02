@@ -16,28 +16,17 @@ typedef CnCalendarDayBuilder = Widget Function(
 
 /// State information for a calendar day in [CnCalendar].
 @immutable
-class CnCalendarDayState {
-  const CnCalendarDayState({
-    required this.date,
-    required this.isOutside,
-    required this.isDisabled,
-    required this.isToday,
-    required this.isSelected,
-    required this.inRange,
-    required this.isRangeStart,
-    required this.isRangeEnd,
-    required this.textStyle,
-  });
-  final DateTime date;
-  final bool isOutside;
-  final bool isDisabled;
-  final bool isToday;
-  final bool isSelected;
-  final bool inRange;
-  final bool isRangeStart;
-  final bool isRangeEnd;
-  final TextStyle? textStyle;
-
+class const CnCalendarDayState({
+  required final DateTime date,
+  required final bool isOutside,
+  required final bool isDisabled,
+  required final bool isToday,
+  required final bool isSelected,
+  required final bool inRange,
+  required final bool isRangeStart,
+  required final bool isRangeEnd,
+  required final TextStyle? textStyle,
+}) {
   bool get isRangeEdge => isRangeStart || isRangeEnd;
   bool get isRangeMiddle => inRange && !isRangeEdge;
 }
@@ -675,8 +664,7 @@ class _CnCalendarState extends State<CnCalendar> {
   }
 }
 
-class _CalendarDayInfo {
-  const _CalendarDayInfo({required this.date, required this.isOutside});
-  final DateTime date;
-  final bool isOutside;
-}
+class const _CalendarDayInfo({
+  required final DateTime date,
+  required final bool isOutside,
+});

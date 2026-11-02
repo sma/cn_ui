@@ -6,31 +6,18 @@ import '../../cn_ui.dart';
 enum CnChartType { bar, line, area }
 
 /// A data point in a [CnChartSeries].
-class CnChartPoint {
-  const CnChartPoint(this.label, this.value);
-  final String label;
-  final double value;
-}
+class const CnChartPoint(final String label, final double value);
 
 /// A data series for [CnChart].
-class CnChartSeries {
-  const CnChartSeries({
-    required this.name,
-    required this.data,
-    this.type = .bar,
-    this.color,
-    this.lineWidth = 2,
-    this.fillColor,
-    this.showPoints = true,
-  });
-  final String name;
-  final List<CnChartPoint> data;
-  final CnChartType type;
-  final Color? color;
-  final double lineWidth;
-  final Color? fillColor;
-  final bool showPoints;
-}
+class const CnChartSeries({
+  required final String name,
+  required final List<CnChartPoint> data,
+  final CnChartType type = .bar,
+  final Color? color,
+  final double lineWidth = 2,
+  final Color? fillColor,
+  final bool showPoints = true,
+});
 
 /// A simple chart component for displaying bar, line, and area charts.
 ///
@@ -223,51 +210,31 @@ class CnChartLegend extends StatelessWidget {
   }
 }
 
-class CnChartLegendItem {
-  const CnChartLegendItem({required this.label, required this.color});
-  final String label;
-  final Color color;
-}
+class const CnChartLegendItem({
+  required final String label,
+  required final Color color,
+});
 
-class _CnChartSeriesLayout {
-  const _CnChartSeriesLayout({
-    required this.name,
-    required this.values,
-    required this.type,
-    required this.color,
-    required this.lineWidth,
-    required this.fillColor,
-    required this.showPoints,
-  });
-  final String name;
-  final List<double> values;
-  final CnChartType type;
-  final Color color;
-  final double lineWidth;
-  final Color? fillColor;
-  final bool showPoints;
-}
+class const _CnChartSeriesLayout({
+  required final String name,
+  required final List<double> values,
+  required final CnChartType type,
+  required final Color color,
+  required final double lineWidth,
+  required final Color? fillColor,
+  required final bool showPoints,
+});
 
-class _CnChartPainter extends CustomPainter {
-  const _CnChartPainter({
-    required this.labels,
-    required this.series,
-    required this.padding,
-    required this.showGrid,
-    required this.gridLines,
-    required this.gridColor,
-    required this.stacked,
-    required this.curved,
-  });
-  final List<String> labels;
-  final List<_CnChartSeriesLayout> series;
-  final EdgeInsets padding;
-  final bool showGrid;
-  final int gridLines;
-  final Color gridColor;
-  final bool stacked;
-  final bool curved;
-
+class const _CnChartPainter({
+  required final List<String> labels,
+  required final List<_CnChartSeriesLayout> series,
+  required final EdgeInsets padding,
+  required final bool showGrid,
+  required final int gridLines,
+  required final Color gridColor,
+  required final bool stacked,
+  required final bool curved,
+}) extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (labels.isEmpty || series.isEmpty) {

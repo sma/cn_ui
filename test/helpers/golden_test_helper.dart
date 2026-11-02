@@ -3,11 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Configuration for a theme variant in golden tests
-class ThemeVariantConfig {
-  const ThemeVariantConfig({required this.name, required this.cnTheme});
-  final String name;
-  final CnTheme cnTheme;
-}
+class const ThemeVariantConfig({
+  required final String name,
+  required final CnTheme cnTheme,
+});
 
 /// The three theme variants used in golden tests
 class GoldenThemeVariants {

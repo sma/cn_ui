@@ -2,16 +2,11 @@ import 'package:material_ui/material_ui.dart';
 
 import '../cn_ui.dart';
 
-class DemoDestination {
-  const DemoDestination({
-    required this.label,
-    required this.icon,
-    required this.page,
-  });
-  final String label;
-  final IconData icon;
-  final Widget page;
-}
+class const DemoDestination({
+  required final String label,
+  required final IconData icon,
+  required final Widget page,
+});
 
 class CnDemoScaffold extends StatelessWidget {
   const CnDemoScaffold({

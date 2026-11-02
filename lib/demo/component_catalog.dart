@@ -2,29 +2,18 @@ import 'package:material_ui/material_ui.dart';
 
 import '../cn_ui.dart';
 
-class ComponentEntry {
-  const ComponentEntry({
-    required this.name,
-    required this.description,
-    required this.examples,
-  });
-  final String name;
-  final String description;
-  final List<ComponentExample> examples;
-}
+class const ComponentEntry({
+  required final String name,
+  required final String description,
+  required final List<ComponentExample> examples,
+});
 
-class ComponentExample {
-  const ComponentExample({
-    required this.title,
-    this.description,
-    required this.preview,
-    required this.code,
-  });
-  final String title;
-  final String? description;
-  final Widget Function(BuildContext context) preview;
-  final String code;
-}
+class const ComponentExample({
+  required final String title,
+  final String? description,
+  required final Widget Function(BuildContext context) preview,
+  required final String code,
+});
 
 /// Holds the value of a controlled component in a preview.
 class _Stateful<T> extends StatefulWidget {
@@ -3084,22 +3073,14 @@ final List<_InvoiceRow> _invoiceRows = [
   ),
 ];
 
-class _InvoiceRow {
-  _InvoiceRow({
-    required this.id,
-    required this.invoice,
-    required this.status,
-    required this.email,
-    required this.amount,
-    required this.date,
-  });
-  final String id;
-  final String invoice;
-  final String status;
-  final String email;
-  final double amount;
-  final DateTime date;
-}
+class _InvoiceRow({
+  required final String id,
+  required final String invoice,
+  required final String status,
+  required final String email,
+  required final double amount,
+  required final DateTime date,
+});
 
 String _formatCurrency(double amount) {
   return '\$${amount.toStringAsFixed(2)}';
