@@ -58,13 +58,13 @@ void main() {
             child: const Text('Next'),
           ),
           CnButton(
-            variant: CnButtonVariant.outline,
+            variant: .outline,
             onPressed: () {},
             leading: const Icon(Icons.download),
             child: const Text('Download'),
           ),
           CnButton(
-            size: CnButtonSize.md,
+            size: .md,
             onPressed: () {},
             child: const Icon(Icons.settings),
           ),

@@ -72,7 +72,7 @@ void main() {
   test('text stays readable in every step between light and dark', () {
     double luminance(Color c) => c.computeLuminance();
     for (var t = 0.0; t <= 1.0; t += 0.05) {
-      final colors = CnColors.light.lerp(CnColors.dark, t);
+      final colors = CnColors.light.lerp(.dark, t);
       final contrast =
           (luminance(colors.foreground) - luminance(colors.background)).abs();
       expect(contrast, greaterThan(0.1), reason: 't=$t');

@@ -118,7 +118,7 @@ class _BreadcrumbItem extends StatelessWidget {
     }
 
     return Material(
-      type: MaterialType.transparency,
+      type: .transparency,
       child: InkWell(
         borderRadius: .circular(theme.radii.sm),
         hoverColor: Colors.transparent,

@@ -38,7 +38,7 @@ class _CnCodeBlockState extends State<CnCodeBlock> {
     return Stack(
       children: [
         Container(
-          width: double.infinity,
+          width: .infinity,
           padding: const .all(16),
           decoration: BoxDecoration(
             color: colors.muted,

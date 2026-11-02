@@ -8,7 +8,7 @@ void main() {
     expect(CnBreakpoint.of(576), CnBreakpoint.medium);
     expect(CnBreakpoint.of(1023), CnBreakpoint.medium);
     expect(CnBreakpoint.of(1024), CnBreakpoint.large);
-    expect(CnBreakpoint.of(double.infinity), CnBreakpoint.large);
+    expect(CnBreakpoint.of(.infinity), CnBreakpoint.large);
   });
 
   Future<void> pumpAt(WidgetTester tester, double width, Widget child) async {

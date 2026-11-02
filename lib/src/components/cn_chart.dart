@@ -348,7 +348,7 @@ class _CnChartPainter extends CustomPainter {
       final paint = Paint()
         ..color = entry.color
         ..strokeWidth = entry.lineWidth
-        ..style = PaintingStyle.stroke;
+        ..style = .stroke;
       canvas.drawPath(_linePath(entry, rect, maxValue), paint);
 
       if (entry.showPoints) {
@@ -393,7 +393,7 @@ class _CnChartPainter extends CustomPainter {
         ..lineTo(rect.right, rect.bottom)
         ..lineTo(rect.left, rect.bottom)
         ..close();
-      final fillPaint = Paint()..style = PaintingStyle.fill;
+      final fillPaint = Paint()..style = .fill;
       if (entry.fillColor != null) {
         fillPaint.color = entry.fillColor!;
       } else {

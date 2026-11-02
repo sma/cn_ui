@@ -47,7 +47,7 @@ class const CnToggle({
     };
 
     return Material(
-      type: MaterialType.transparency,
+      type: .transparency,
       child: InkWell(
         borderRadius: radius,
         onTap: enabled ? () => onChanged!(!value) : null,

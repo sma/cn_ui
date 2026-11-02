@@ -37,7 +37,7 @@ class const CnContextMenu({
           }
 
           return GestureDetector(
-            behavior: HitTestBehavior.translucent,
+            behavior: .translucent,
             onTapDown: openOnTap
                 ? (details) => openAt(details.globalPosition)
                 : null,

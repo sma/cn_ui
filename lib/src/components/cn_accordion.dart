@@ -29,7 +29,7 @@ class const CnAccordion<T>({
   @override
   Widget build(BuildContext context) {
     return Material(
-      type: MaterialType.transparency,
+      type: .transparency,
       child: Column(
         mainAxisSize: .min,
         crossAxisAlignment: .stretch,

@@ -322,7 +322,7 @@ class const _ChoiceSelect<T>({
                         height: 16,
                         decoration: BoxDecoration(
                           color: swatch!(option),
-                          shape: BoxShape.circle,
+                          shape: .circle,
                           border: Border.all(color: colors.border),
                         ),
                       ),
@@ -348,7 +348,7 @@ class _TokenPreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      width: .infinity,
       child: CnCard(
         title: Text(title, style: CnTheme.of(context).heading.base.semibold),
         content: child,

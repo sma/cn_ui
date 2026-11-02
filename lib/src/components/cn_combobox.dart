@@ -159,7 +159,7 @@ class _CnComboboxState<T> extends State<CnCombobox<T>> {
         return Align(
           alignment: AlignmentDirectional.topStart,
           child: Material(
-            type: MaterialType.transparency,
+            type: .transparency,
             child: Container(
               margin: const .only(top: 8),
               constraints: BoxConstraints(

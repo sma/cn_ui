@@ -36,7 +36,7 @@ class const CnEmpty({
                 if (title != null)
                   DefaultTextStyle.merge(
                     style: theme.heading.lg.medium,
-                    textAlign: TextAlign.center,
+                    textAlign: .center,
                     child: title!,
                   ),
                 if (description != null)
@@ -44,7 +44,7 @@ class const CnEmpty({
                     style: theme.text.sm.copyWith(
                       color: theme.colors.mutedForeground,
                     ),
-                    textAlign: TextAlign.center,
+                    textAlign: .center,
                     child: description!,
                   ),
               ],

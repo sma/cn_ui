@@ -174,7 +174,7 @@ class const CnBlockquote({super.key, required final Widget child})
         ),
       ),
       child: DefaultTextStyle.merge(
-        style: theme.text.base.copyWith(fontStyle: FontStyle.italic),
+        style: theme.text.base.copyWith(fontStyle: .italic),
         child: child,
       ),
     );

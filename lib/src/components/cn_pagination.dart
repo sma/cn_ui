@@ -32,7 +32,7 @@ class CnPagination extends StatelessWidget {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
+      crossAxisAlignment: .center,
       children: [
         if (showPrevNext)
           CnButton(

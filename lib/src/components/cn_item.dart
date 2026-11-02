@@ -50,7 +50,7 @@ class const CnItem({
     final radius = BorderRadius.circular(theme.radii.md);
 
     return Material(
-      animationDuration: Duration.zero,
+      animationDuration: .zero,
       color: selected ? colors.accent : Colors.transparent,
       borderRadius: radius,
       child: InkWell(

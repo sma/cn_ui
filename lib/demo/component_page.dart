@@ -58,7 +58,7 @@ class _ExampleBlock extends StatelessWidget {
         _Section(
           title: 'Preview',
           child: Container(
-            width: double.infinity,
+            width: .infinity,
             padding: const .all(20),
             decoration: BoxDecoration(
               color: colors.background,

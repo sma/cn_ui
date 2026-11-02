@@ -57,7 +57,7 @@ class _CnInputGroupState extends State<CnInputGroup> {
           borderRadius: .circular(cnTheme.radii.md),
           border: Border.all(color: borderColor),
         ),
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: .antiAlias,
         child: _CnInputGroupScope(direction: widget.direction, child: content),
       ),
     );
@@ -170,9 +170,9 @@ class CnInputGroupInput extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: placeholder,
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
+        border: .none,
+        enabledBorder: .none,
+        focusedBorder: .none,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 10,
@@ -216,9 +216,9 @@ class CnInputGroupTextarea extends StatelessWidget {
       maxLines: maxLines,
       decoration: InputDecoration(
         hintText: placeholder,
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
+        border: .none,
+        enabledBorder: .none,
+        focusedBorder: .none,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 10,

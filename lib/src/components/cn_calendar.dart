@@ -237,8 +237,7 @@ class _CnCalendarState extends State<CnCalendar> {
 
   Widget _buildHeader(CnTextStyles text, List<DateTime> months) {
     final header = widget.headerVariant;
-    if (header == CnCalendarHeaderVariant.dropdowns &&
-        widget.monthsToDisplay == 1) {
+    if (header == .dropdowns && widget.monthsToDisplay == 1) {
       return Row(
         children: [
           CnButton.icon(

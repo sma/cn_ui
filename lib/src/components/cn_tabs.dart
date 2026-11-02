@@ -120,7 +120,7 @@ class const _CnTabTrigger({
       selected: selected,
       button: true,
       child: Material(
-        type: MaterialType.transparency,
+        type: .transparency,
         child: InkWell(
           onTap: onTap,
           hoverColor: Colors.transparent,

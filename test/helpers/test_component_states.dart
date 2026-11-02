@@ -8,7 +8,7 @@ class ComponentStateGenerator {
   /// Generates all button variants
   static List<Widget> allButtonVariants({
     String label = 'Button',
-    CnButtonSize size = CnButtonSize.md,
+    CnButtonSize size = .md,
   }) {
     return [
       for (final variant in CnButtonVariant.values)
@@ -22,12 +22,10 @@ class ComponentStateGenerator {
   }
 
   /// Generates all button sizes for a specific variant
-  static List<Widget> allButtonSizes({
-    CnButtonVariant variant = CnButtonVariant.primary,
-  }) {
+  static List<Widget> allButtonSizes({CnButtonVariant variant = .primary}) {
     return [
       for (final size in CnButtonSize.values)
-        if (size == CnButtonSize.md)
+        if (size == .md)
           CnButton(
             variant: variant,
             size: size,

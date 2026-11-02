@@ -22,7 +22,7 @@ class const CnNavigationMenu({
     return Wrap(
       spacing: spacing,
       runSpacing: spacing,
-      crossAxisAlignment: WrapCrossAlignment.center,
+      crossAxisAlignment: .center,
       children: [
         for (final item in items)
           _NavigationMenuItem(item: item, menuWidth: menuWidth),

@@ -49,7 +49,7 @@ class const CnBadge({
         child: DefaultTextStyle.merge(
           style: theme.text.xs.medium.copyWith(
             color: foreground,
-            decoration: variant == .link ? TextDecoration.underline : null,
+            decoration: variant == .link ? .underline : null,
           ),
           child: leading == null && trailing == null
               ? child

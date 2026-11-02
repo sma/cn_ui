@@ -4,7 +4,7 @@ part of 'cn_colors.dart';
 // (apps/v4/registry/themes.ts), converted from oklch to sRGB.
 
 const _neutralLight = CnColors(
-  brightness: Brightness.light,
+  brightness: .light,
   background: CnColor(0xFFFFFFFF),
   foreground: CnColor.flat(0xFF0A0A0A),
   card: CnColor(0xFFFFFFFF),
@@ -43,7 +43,7 @@ const _neutralLight = CnColors(
 );
 
 const _neutralDark = CnColors(
-  brightness: Brightness.dark,
+  brightness: .dark,
   background: CnColor(0xFF0A0A0A),
   foreground: CnColor.flat(0xFFFAFAFA),
   card: CnColor(0xFF171717),
@@ -82,7 +82,7 @@ const _neutralDark = CnColors(
 );
 
 const _stoneLight = CnColors(
-  brightness: Brightness.light,
+  brightness: .light,
   background: CnColor(0xFFFFFFFF),
   foreground: CnColor.flat(0xFF0C0A09),
   card: CnColor(0xFFFFFFFF),
@@ -121,7 +121,7 @@ const _stoneLight = CnColors(
 );
 
 const _stoneDark = CnColors(
-  brightness: Brightness.dark,
+  brightness: .dark,
   background: CnColor(0xFF0C0A09),
   foreground: CnColor.flat(0xFFFAFAF9),
   card: CnColor(0xFF1C1917),
@@ -160,7 +160,7 @@ const _stoneDark = CnColors(
 );
 
 const _zincLight = CnColors(
-  brightness: Brightness.light,
+  brightness: .light,
   background: CnColor(0xFFFFFFFF),
   foreground: CnColor.flat(0xFF09090B),
   card: CnColor(0xFFFFFFFF),
@@ -199,7 +199,7 @@ const _zincLight = CnColors(
 );
 
 const _zincDark = CnColors(
-  brightness: Brightness.dark,
+  brightness: .dark,
   background: CnColor(0xFF09090B),
   foreground: CnColor.flat(0xFFFAFAFA),
   card: CnColor(0xFF18181B),
@@ -238,7 +238,7 @@ const _zincDark = CnColors(
 );
 
 const _mauveLight = CnColors(
-  brightness: Brightness.light,
+  brightness: .light,
   background: CnColor(0xFFFFFFFF),
   foreground: CnColor.flat(0xFF0C090C),
   card: CnColor(0xFFFFFFFF),
@@ -277,7 +277,7 @@ const _mauveLight = CnColors(
 );
 
 const _mauveDark = CnColors(
-  brightness: Brightness.dark,
+  brightness: .dark,
   background: CnColor(0xFF0C090C),
   foreground: CnColor.flat(0xFFFAFAFA),
   card: CnColor(0xFF1D161E),
@@ -316,7 +316,7 @@ const _mauveDark = CnColors(
 );
 
 const _oliveLight = CnColors(
-  brightness: Brightness.light,
+  brightness: .light,
   background: CnColor(0xFFFFFFFF),
   foreground: CnColor.flat(0xFF0C0C09),
   card: CnColor(0xFFFFFFFF),
@@ -355,7 +355,7 @@ const _oliveLight = CnColors(
 );
 
 const _oliveDark = CnColors(
-  brightness: Brightness.dark,
+  brightness: .dark,
   background: CnColor(0xFF0C0C09),
   foreground: CnColor.flat(0xFFFBFBF9),
   card: CnColor(0xFF1D1D16),
@@ -394,7 +394,7 @@ const _oliveDark = CnColors(
 );
 
 const _mistLight = CnColors(
-  brightness: Brightness.light,
+  brightness: .light,
   background: CnColor(0xFFFFFFFF),
   foreground: CnColor.flat(0xFF090B0C),
   card: CnColor(0xFFFFFFFF),
@@ -433,7 +433,7 @@ const _mistLight = CnColors(
 );
 
 const _mistDark = CnColors(
-  brightness: Brightness.dark,
+  brightness: .dark,
   background: CnColor(0xFF090B0C),
   foreground: CnColor.flat(0xFFF9FBFB),
   card: CnColor(0xFF161B1D),
@@ -472,7 +472,7 @@ const _mistDark = CnColors(
 );
 
 const _taupeLight = CnColors(
-  brightness: Brightness.light,
+  brightness: .light,
   background: CnColor(0xFFFFFFFF),
   foreground: CnColor.flat(0xFF0C0A09),
   card: CnColor(0xFFFFFFFF),
@@ -511,7 +511,7 @@ const _taupeLight = CnColors(
 );
 
 const _taupeDark = CnColors(
-  brightness: Brightness.dark,
+  brightness: .dark,
   background: CnColor(0xFF0C0A09),
   foreground: CnColor.flat(0xFFFBFAF9),
   card: CnColor(0xFF1D1816),

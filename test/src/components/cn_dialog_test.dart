@@ -14,7 +14,7 @@ void main() {
         description: const Text('Are you sure you want to proceed?'),
         actions: [
           CnButton(
-            variant: CnButtonVariant.outline,
+            variant: .outline,
             onPressed: () {},
             child: const Text('Cancel'),
           ),

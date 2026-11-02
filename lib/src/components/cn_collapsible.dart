@@ -30,7 +30,7 @@ class const CnCollapsible({
     const disabled = {WidgetState.disabled};
 
     return Material(
-      type: MaterialType.transparency,
+      type: .transparency,
       child: Column(
         crossAxisAlignment: .stretch,
         children: [

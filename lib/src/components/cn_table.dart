@@ -75,10 +75,10 @@ class CnTable extends StatelessWidget {
     final tableBorder = TableBorder(
       horizontalInside: showRowDividers
           ? BorderSide(color: borderColor)
-          : BorderSide.none,
+          : .none,
       verticalInside: showColumnDividers
           ? BorderSide(color: borderColor)
-          : BorderSide.none,
+          : .none,
     );
 
     final tableRows = <TableRow>[
@@ -124,7 +124,7 @@ class CnTable extends StatelessWidget {
               if (columns[i].width != null) i: columns[i].width!,
           },
           border: tableBorder,
-          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          defaultVerticalAlignment: .middle,
           children: tableRows,
         ),
       ),
@@ -170,20 +170,20 @@ class _ContentColumnWidth extends TableColumnWidth {
   @override
   double minIntrinsicWidth(Iterable<RenderBox> cells, double containerWidth) {
     return cells.fold(0, (width, cell) {
-      return math.max(width, cell.getMinIntrinsicWidth(double.infinity));
+      return math.max(width, cell.getMinIntrinsicWidth(.infinity));
     });
   }
 
   @override
   double maxIntrinsicWidth(Iterable<RenderBox> cells, double containerWidth) {
     return cells.fold(0, (width, cell) {
-      return math.max(width, cell.getMaxIntrinsicWidth(double.infinity));
+      return math.max(width, cell.getMaxIntrinsicWidth(.infinity));
     });
   }
 
   @override
   double flex(Iterable<RenderBox> cells) {
-    return maxIntrinsicWidth(cells, double.infinity);
+    return maxIntrinsicWidth(cells, .infinity);
   }
 }
 
@@ -673,7 +673,7 @@ class _CnDataTableState<T> extends State<CnDataTable<T>> {
     return InkWell(
       onTap: () => _toggleSort(column),
       child: SizedBox(
-        width: double.infinity,
+        width: .infinity,
         child: Row(
           mainAxisSize: .max,
           mainAxisAlignment: column.numeric ? .end : .start,

@@ -14,12 +14,12 @@ void main() {
         content: const Text('This action cannot be undone.'),
         actions: [
           CnButton(
-            variant: CnButtonVariant.outline,
+            variant: .outline,
             onPressed: () {},
             child: const Text('Cancel'),
           ),
           CnButton(
-            variant: CnButtonVariant.destructive,
+            variant: .destructive,
             onPressed: () {},
             child: const Text('Delete'),
           ),

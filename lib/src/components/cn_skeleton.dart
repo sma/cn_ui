@@ -75,7 +75,7 @@ class _CnSkeletonState extends State<CnSkeleton>
         decoration: BoxDecoration(
           color: theme.colors.muted,
           borderRadius: widget.circle ? null : .circular(theme.radii.md),
-          shape: widget.circle ? BoxShape.circle : BoxShape.rectangle,
+          shape: widget.circle ? .circle : .rectangle,
         ),
       ),
     );

@@ -47,7 +47,7 @@ class const CnSidebar({
           curve: Curves.easeOut,
           width: collapsed ? collapsedWidth : expandedWidth,
           padding: const .all(8),
-          clipBehavior: Clip.antiAlias,
+          clipBehavior: .antiAlias,
           decoration: const BoxDecoration(),
           child: DefaultTextStyle.merge(
             style: theme.text.sm.copyWith(color: colors.sidebarForeground),
@@ -68,7 +68,7 @@ class const CnSidebarInset({super.key, required final Widget child})
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 8, 8),
       child: Container(
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: .antiAlias,
         decoration: BoxDecoration(
           color: theme.colors.background,
           borderRadius: .circular(theme.radii.xl),
@@ -286,7 +286,7 @@ class const CnSidebarItem({
     );
 
     final button = Material(
-      type: MaterialType.transparency,
+      type: .transparency,
       child: InkWell(
         borderRadius: radius,
         hoverColor: colors.sidebarAccent,

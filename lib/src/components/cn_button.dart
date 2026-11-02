@@ -80,9 +80,9 @@ class CnButton extends StatelessWidget {
         minimumSize: .all(_square ? Size.square(height) : Size(0, height)),
         maximumSize: _square ? .all(Size.square(height)) : null,
         padding: .all(padding),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        tapTargetSize: .shrinkWrap,
         visualDensity: .standard,
-        animationDuration: Duration.zero,
+        animationDuration: .zero,
         backgroundColor: _background(colors),
         foregroundColor: _foreground(colors),
         iconColor: _foreground(colors),
@@ -94,14 +94,14 @@ class CnButton extends StatelessWidget {
                 group?.borderRadius(radius) ?? BorderRadius.circular(radius),
             side: variant == .outline
                 ? BorderSide(color: colors.input.resolve(states))
-                : BorderSide.none,
+                : .none,
           ),
         ),
         textStyle: .resolveWith((states) {
           final underline =
               variant == .link && states.contains(WidgetState.hovered);
           return underline
-              ? textStyle.copyWith(decoration: TextDecoration.underline)
+              ? textStyle.copyWith(decoration: .underline)
               : textStyle;
         }),
       ),
@@ -123,7 +123,7 @@ class CnButton extends StatelessWidget {
     );
 
     if (expand) {
-      button = SizedBox(width: double.infinity, child: button);
+      button = SizedBox(width: .infinity, child: button);
     }
     return button;
   }

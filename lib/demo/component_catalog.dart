@@ -3365,7 +3365,7 @@ class _CarouselSlide extends StatelessWidget {
               padding: const .all(8),
               decoration: BoxDecoration(
                 color: foreground.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
+                shape: .circle,
               ),
               child: Icon(icon, color: foreground),
             ),
@@ -3415,7 +3415,7 @@ class _TypographyPreview extends StatelessWidget {
               child: Wrap(
                 spacing: 6,
                 runSpacing: 6,
-                crossAxisAlignment: WrapCrossAlignment.center,
+                crossAxisAlignment: .center,
                 children: const [
                   Text('Install with'),
                   CnInlineCode(code: 'flutter pub add cn_ui'),
@@ -5061,7 +5061,7 @@ class _CalendarPresetsPreviewState extends State<_CalendarPresetsPreview> {
             children: [
               _PresetButton(
                 label: 'Today',
-                onPressed: () => _selectPreset(Duration.zero),
+                onPressed: () => _selectPreset(.zero),
               ),
               _PresetButton(
                 label: 'Tomorrow',
@@ -5256,7 +5256,7 @@ class _CalendarBookedPreviewState extends State<_CalendarBookedPreview> {
         dayBuilder: (context, date, state) {
           final unavailable = _isUnavailable(date);
           final style = state.textStyle?.copyWith(
-            decoration: unavailable ? TextDecoration.lineThrough : null,
+            decoration: unavailable ? .lineThrough : null,
             color: unavailable
                 ? CnTheme.of(context).colors.mutedForeground
                       .withValues(alpha: 0.5)
@@ -5322,7 +5322,7 @@ class _CalendarDropdownPreviewState extends State<_CalendarDropdownPreview> {
       child: CnCalendar.single(
         focusedMonth: DateTime(2025, 12, 1),
         value: selectedDate,
-        headerVariant: CnCalendarHeaderVariant.dropdowns,
+        headerVariant: .dropdowns,
         firstYear: 2020,
         lastYear: 2030,
         onChanged: (value) => setState(() => selectedDate = value),
@@ -5480,7 +5480,7 @@ class _TypographyRichPreview extends StatelessWidget {
             child: Wrap(
               spacing: 6,
               runSpacing: 6,
-              crossAxisAlignment: WrapCrossAlignment.center,
+              crossAxisAlignment: .center,
               children: const [
                 Text('Install with'),
                 CnInlineCode(code: 'flutter pub add cn_ui'),

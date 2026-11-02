@@ -64,8 +64,8 @@ class CnTextStyles {
 
 /// Font weight shortcuts for the styles in [CnTextStyles].
 extension CnTextStyleWeights on TextStyle {
-  TextStyle get medium => weight(FontWeight.w500);
-  TextStyle get semibold => weight(FontWeight.w600);
+  TextStyle get medium => weight(.w500);
+  TextStyle get semibold => weight(.w600);
 
   /// Returns this style in another weight.
   ///
@@ -89,7 +89,7 @@ final _googleFontNames = {
 /// [toThemeData] to configure Material widgets from the same tokens.
 @immutable
 class const CnTheme({
-  final CnColors colors = CnColors.light,
+  final CnColors colors = .light,
 
   /// The font for text. An empty name uses the system fonts everywhere.
   final String font = 'Geist',
@@ -110,15 +110,13 @@ class const CnTheme({
   CnRadii get radii => CnRadii(radius);
 
   /// The type scale in [font].
-  CnTextStyles get text => CnTextStyles._of(font);
+  CnTextStyles get text => ._of(font);
 
   /// The type scale in [headingFont].
-  CnTextStyles get heading => CnTextStyles._of(headingFont ?? font);
+  CnTextStyles get heading => ._of(headingFont ?? font);
 
   /// The type scale in [monoFont].
-  CnTextStyles get mono {
-    return CnTextStyles._of(font.trim().isEmpty ? 'monospace' : monoFont);
-  }
+  CnTextStyles get mono => ._of(font.trim().isEmpty ? 'monospace' : monoFont);
 
   /// Converts this theme into a Material theme.
   ThemeData toThemeData() {
@@ -240,7 +238,7 @@ class const CnTheme({
         contentTextStyle: text.sm.copyWith(color: colors.popoverForeground),
         actionTextColor: colors.foreground,
         elevation: 0,
-        behavior: SnackBarBehavior.floating,
+        behavior: .floating,
         shape: surface,
       ),
       tooltipTheme: TooltipThemeData(

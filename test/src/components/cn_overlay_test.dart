@@ -22,7 +22,7 @@ void main() {
     await tester.pump();
     expect(find.text('Content'), findsOneWidget);
 
-    await tester.tapAt(Offset.zero);
+    await tester.tapAt(.zero);
     await tester.pump();
     expect(find.text('Content'), findsNothing);
   });

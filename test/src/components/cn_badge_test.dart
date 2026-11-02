@@ -24,11 +24,8 @@ void main() {
       goldenColumn(
         children: const [
           CnBadge(child: Text('New')),
-          CnBadge(variant: CnBadgeVariant.secondary, child: Text('99+')),
-          CnBadge(
-            variant: CnBadgeVariant.outline,
-            child: Text('Long Badge Text'),
-          ),
+          CnBadge(variant: .secondary, child: Text('99+')),
+          CnBadge(variant: .outline, child: Text('Long Badge Text')),
         ],
         spacing: 16,
       ),

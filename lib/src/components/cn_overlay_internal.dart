@@ -13,7 +13,7 @@ Future<T?> showCnSlideOverlay<T>({
   required bool draggable,
   required double size,
 }) {
-  final isRtl = Directionality.of(context) == TextDirection.rtl;
+  final isRtl = Directionality.of(context) == .rtl;
   final begin = switch (side) {
     .top => const Offset(0, -1),
     .bottom => const Offset(0, 1),
@@ -32,7 +32,7 @@ Future<T?> showCnSlideOverlay<T>({
       final panel = SizedBox(
         width: isVertical ? null : size,
         child: Material(
-          type: MaterialType.transparency,
+          type: .transparency,
           child: _CnOverlaySideScope(side: side, child: builder(context)),
         ),
       );
@@ -86,7 +86,7 @@ class _DragToDismissState extends State<_DragToDismiss>
 
   /// The direction that moves the panel towards its screen edge.
   double get _dismissSign {
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final isRtl = Directionality.of(context) == .rtl;
     return switch (widget.side) {
       .top => -1,
       .bottom => 1,
@@ -185,7 +185,7 @@ class CnSlidePanel extends StatelessWidget {
     final isVertical = side == .top || side == .bottom;
 
     return Material(
-      animationDuration: Duration.zero,
+      animationDuration: .zero,
       color: colors.background,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: colors.border),
@@ -197,7 +197,7 @@ class CnSlidePanel extends StatelessWidget {
         },
       ),
       child: SizedBox(
-        height: isVertical ? null : double.infinity,
+        height: isVertical ? null : .infinity,
         child: Stack(
           children: [
             Padding(
@@ -324,7 +324,7 @@ class _CnAnchoredOverlayState extends State<CnAnchoredOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final isRtl = Directionality.of(context) == .rtl;
     final startX = isRtl ? 1.0 : -1.0;
     final alongX = switch (widget.align) {
       .start => startX,
@@ -378,8 +378,7 @@ class _CnAnchoredOverlayState extends State<CnAnchoredOverlay> {
                 child: Focus(
                   autofocus: true,
                   onKeyEvent: (node, event) {
-                    if (event is KeyDownEvent &&
-                        event.logicalKey == LogicalKeyboardKey.escape) {
+                    if (event is KeyDownEvent && event.logicalKey == .escape) {
                       _hide();
                       return KeyEventResult.handled;
                     }
@@ -409,7 +408,7 @@ class CnPopupSurface extends StatelessWidget {
     return SizedBox(
       width: width ?? 288,
       child: Material(
-        animationDuration: Duration.zero,
+        animationDuration: .zero,
         color: theme.colors.popover,
         textStyle: theme.text.sm.copyWith(
           color: theme.colors.popoverForeground,

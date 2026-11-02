@@ -25,7 +25,7 @@ void main() {
         child: CnCard(
           title: Text(
             'Card Header',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: .bold),
           ),
           content: Text('This is the card content area.'),
         ),
@@ -43,11 +43,11 @@ void main() {
         child: CnCard(
           title: const Text(
             'Complete Card',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: .bold),
           ),
           content: const Text('Card content with all sections.'),
           footer: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: .end,
             children: [
               TextButton(onPressed: () {}, child: const Text('Action')),
             ],

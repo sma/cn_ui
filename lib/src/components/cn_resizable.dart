@@ -30,8 +30,7 @@ class const CnResizable({
             ? constraints.maxWidth
             : constraints.maxHeight;
         final available = mainSize - handleSize;
-        final isRtl =
-            isHorizontal && Directionality.of(context) == TextDirection.rtl;
+        final isRtl = isHorizontal && Directionality.of(context) == .rtl;
 
         void handleDrag(double delta) {
           if (onChanged == null || !available.isFinite || available <= 0) {
@@ -53,7 +52,7 @@ class const CnResizable({
                   ? SystemMouseCursors.resizeColumn
                   : SystemMouseCursors.resizeRow,
               child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
+                behavior: .translucent,
                 onHorizontalDragUpdate: isHorizontal
                     ? (details) => handleDrag(details.delta.dx)
                     : null,
@@ -61,8 +60,8 @@ class const CnResizable({
                     ? null
                     : (details) => handleDrag(details.delta.dy),
                 child: SizedBox(
-                  width: isHorizontal ? handleSize : double.infinity,
-                  height: isHorizontal ? double.infinity : handleSize,
+                  width: isHorizontal ? handleSize : .infinity,
+                  height: isHorizontal ? .infinity : handleSize,
                   child: Center(child: _Handle(isHorizontal: isHorizontal)),
                 ),
               ),

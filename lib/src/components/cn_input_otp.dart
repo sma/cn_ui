@@ -53,7 +53,7 @@ class _CnInputOtpState extends State<CnInputOtp> {
       (index) => FocusNode(
         onKeyEvent: (node, event) {
           if (event is KeyDownEvent &&
-              event.logicalKey == LogicalKeyboardKey.backspace &&
+              event.logicalKey == .backspace &&
               _controllers[index].text.isEmpty) {
             if (index > 0) {
               _controllers[index - 1].selection = TextSelection.collapsed(
@@ -161,7 +161,7 @@ class _CnInputOtpState extends State<CnInputOtp> {
 
     return Wrap(
       spacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
+      crossAxisAlignment: .center,
       children: [
         for (var index = 0; index < widget.length; index++) ...[
           if (widget.groupSize != null &&
@@ -236,8 +236,8 @@ class _OtpSlot extends StatelessWidget {
         autofocus: autofocus,
         obscureText: obscureText,
         textAlign: .center,
-        keyboardType: numericOnly ? TextInputType.number : TextInputType.text,
-        textInputAction: TextInputAction.next,
+        keyboardType: numericOnly ? .number : .text,
+        textInputAction: .next,
         style: CnTheme.of(context).text.sm,
         inputFormatters: inputFormatters,
         maxLines: 1,

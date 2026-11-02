@@ -29,7 +29,7 @@ class _CnDemoAppState extends State<CnDemoApp> {
       builder: (context, theme) => MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: theme.toThemeData(),
-        themeAnimationDuration: Duration.zero,
+        themeAnimationDuration: .zero,
         builder: (context, child) {
           return Directionality(textDirection: .ltr, child: child!);
         },

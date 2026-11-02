@@ -67,7 +67,7 @@ Widget createGoldenTestWidget(Widget child) {
   return MaterialApp(
     debugShowCheckedModeBanner: false,
     home: Directionality(
-      textDirection: TextDirection.ltr,
+      textDirection: .ltr,
       child: Row(
         children: [
           for (final variant in GoldenThemeVariants.all)

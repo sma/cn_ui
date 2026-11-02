@@ -15,7 +15,7 @@ void main() {
           series: [
             CnChartSeries(
               name: 'Sales',
-              type: CnChartType.bar,
+              type: .bar,
               data: [
                 CnChartPoint('Jan', 10),
                 CnChartPoint('Feb', 20),

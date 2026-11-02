@@ -14,13 +14,13 @@ class const CnButtonGroupPosition({
     final corner = Radius.circular(radius);
     if (direction == .horizontal) {
       return BorderRadiusDirectional.horizontal(
-        start: isFirst ? corner : Radius.zero,
-        end: isLast ? corner : Radius.zero,
+        start: isFirst ? corner : .zero,
+        end: isLast ? corner : .zero,
       );
     }
     return BorderRadius.vertical(
-      top: isFirst ? corner : Radius.zero,
-      bottom: isLast ? corner : Radius.zero,
+      top: isFirst ? corner : .zero,
+      bottom: isLast ? corner : .zero,
     );
   }
 }
@@ -48,7 +48,7 @@ class const CnButtonGroup({
 
   @override
   Widget build(BuildContext context) {
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final isRtl = Directionality.of(context) == .rtl;
     // Neighbors overlap by one pixel so that they share their border.
     var overlap = 0;
     final items = <Widget>[];
